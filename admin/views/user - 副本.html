@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	  <meta charset="UTF-8">
+	  <title>用户信息</title>
+	  <meta name="renderer" content="webkit">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	  <link rel="stylesheet" href="../../layui/css/layui.css"  media="all">
+	  <script src="../../layui/layui.js" charset="utf-8"></script>
+	  <script src="../../js/z.js" charset="utf-8"></script>
+      <style>
+            #tab_box{margin:0;}
+            .layui-hidden-i i{display: none;}
+	        .new_layui_table table th,.new_layui_table table td{max-width: 300px;}
+	        .new_layui_table .layui-table-cell{height: auto;white-space:normal;}
+	        .new_table_page{width: 100%;overflow:hidden;}
+      </style>
+
+</head>
+<body>
+
+<!-- <a href=".<%= list.url %>"> -->
+
+<div class="layui-tab" lay-filter="demo" lay-allowclose="true" id="tab_box">
+	  <ul class="layui-tab-title">
+            <% list.forEach(function(list,index){ %>
+                <li lay-id="<%=index%>" <% if(index==0){ %> class="layui-this layui-hidden-i" <% } %> ><%= list.title %></li>
+            <% }) %>
+	  </ul>
+	  <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show" >
+                    <!-- //////////////////////////////////////// -->
+					    <div class="new_layui_table">
+<!-- 					        <table cellspacing="0" cellpadding="0" border="0" class="layui-table">
+					            <thead>
+					                <tr>
+					                    <th data-field="id">
+					                        <div class="layui-table-cell laytable-cell-1-id">
+					                            <span>ID</span>
+					                        </div>
+					                    </th>
+					                    <th data-field="username">
+					                        <div class="layui-table-cell laytable-cell-1-username">
+					                              <span>用户名</span>
+					                        </div>
+					                    </th>
+					                    <th data-field="sex">
+					                        <div class="layui-table-cell laytable-cell-1-sex">
+					                            <span>性别</span>
+					                        </div>
+					                    </th>
+					                    <th data-field="city">
+					                        <div class="layui-table-cell laytable-cell-1-city">
+					                             <span>手机号</span>
+					                        </div>
+					                    </th>
+					                    <th data-field="sign">
+					                        <div class="layui-table-cell laytable-cell-1-sign">
+					                            <span>邮箱</span>
+					                        </div>
+					                    </th>
+					                    <th data-field="classify">
+					                        <div class="layui-table-cell laytable-cell-1-classify">
+					                             <span>是否管理员</span>
+					                        </div>
+					                    </th>
+<!-- 					                    <th data-field="wealth">
+						                    <div class="layui-table-cell laytable-cell-1-wealth">
+						                        <span>是否封号</span>
+						                    </div>
+					                    </th> -->
+					                    <th data-field="9">
+					                        <div class="layui-table-cell laytable-cell-1-9" align="center">
+					                             <span></span>
+					                        </div>
+					                    </th>
+					                </tr>
+					            </thead>
+					            <tbody>
+
+							            <% data.forEach(function(list,index){ %>
+							                <tr data-index="0" class="">
+							                    <td data-field="id">
+							                        <div class="layui-table-cell laytable-cell-1-id"><%= list.id %></div>
+							                    </td>
+							                    <td data-field="username">
+							                        <div class="layui-table-cell laytable-cell-1-username"><%= list.username %></div>
+							                    </td>
+							                    <td data-field="sex">
+							                        <div class="layui-table-cell laytable-cell-1-sex"><% if(list.sex==0){ %> 女 <% }else{ %> 男 <% } %></div>
+							                    </td>
+							                    <td data-field="city">
+							                        <div class="layui-table-cell laytable-cell-1-city"><%= list.phone %></div>
+							                    </td>
+							                    <td data-field="sign">
+							                        <div class="layui-table-cell laytable-cell-1-sign"><%= list.email %></div>
+							                    </td>
+							                    <td data-field="classify">
+							                        <div class="layui-table-cell laytable-cell-1-classify"><% if(list.is_admin==1){ %> 是 <% }else{ %> 否 <% } %></div>
+							                    </td>
+<!-- 							                    <td data-field="wealth">
+							                        <div class="layui-table-cell laytable-cell-1-wealth">
+							                              <div class="layui-form">
+														      <input type="checkbox" name="yyy" lay-skin="switch" lay-text="ON|OFF" <% if(list.is_valid==0){ %> checked <% } %>>
+														      <div class="layui-unselect layui-form-switch <% if(list.is_valid==0){ %> layui-form-onswitch <% } %>" lay-skin="_switch">
+														          <em>ON</em><i></i>
+														      </div>
+														  </div>
+							                        </div>
+							                    </td> -->
+							                    <td data-field="9" align="center" data-off="true">
+							                        <div class="layui-table-cell laytable-cell-1-9" style="padding:0px;">
+								                            <a class="layui-btn layui-btn-primary layui-btn-xs site-demo-active" data-userId="<%= list.id %>" data-tabId="_1" data-url="./role" title="查看详情">查看详情</a>
+								                            <a class="layui-btn layui-btn-xs site-demo-active"  data-userId="<%= list.id %>" data-tabId="_2" data-url="./role" title="设置权限">设置权限</a>
+								                            <a class="layui-btn layui-btn-danger layui-btn-xs site-demo-active" data-userId="<%= list.id %>" data-tabId="_3" data-url="./role" title="设置角色">设置角色</a>
+							                        </div>
+							                    </td>
+							                </tr>
+							            <% }) %>
+					            </tbody>
+					        </table> -->
+					        <!-- 分页 -->
+					        <div id="test1"></div>
+                    <!-- //////////////////////////////////////// -->
+        </div>
+	  </div>
+</div>
+
+ <script>
+layui.use(['form','element','laypage'], function(){			 
+			  var $ = layui.jquery
+				  ,form = layui.form
+				  ,laypage = layui.laypage
+				  ,table = layui.table	
+				  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+
+			    var tab_box = $('#tab_box')[0],  
+			        tab_title = tab_box.children[0],  //tab导航
+			        tab_content = tab_box.children[1]; //tab导航内容
+                    changeTCH();
+              function changeTCH(){
+			        tab_content.style.height=window.innerHeight-62+'px';
+			        tab_content.style.overflowY='scroll';
+			        var tab_content_iframes=tab_content.getElementsByTagName('iframe');
+			        for(var i=0;i<tab_content_iframes.length;i++){
+					        tab_content_iframes[i].style.width='100%';
+					        tab_content_iframes[i].style.height=window.innerHeight-62+'px';
+					        tab_content_iframes[i].style.overflowY='scroll';
+			        }
+              }
+			  //触发事件
+			  var active = {
+					    tabAdd: function(id,tabId,title,url){
+					         //新增一个Tab项						      
+						      var content='<iframe scrolling="auto" allowtransparency="true" id="layui-layer-iframe1" name="layui-layer-iframe1" onload="this.className=\'\';" class="" frameborder="0" src="'+url+'" style="width:100%;overflow-y:scroll;height:'+(window.innerHeight-62)+'px'+'"></iframe>';
+							      element.tabAdd('demo', {
+								        title: title //用于演示
+								        ,content: content 
+								        ,id: tabId //实际使用一般是规定好的id，这里以时间戳模拟下
+							      })
+					    }
+					    ,tabDelete: function(othis){
+						      //删除指定Tab项
+						      element.tabDelete('demo', '44'); //删除：“商品管理”
+						      othis.addClass('layui-btn-disabled');
+					    }
+					    ,tabChange: function(id){
+						      //切换到指定Tab项
+						      element.tabChange('demo', id); //切换到：用户管理
+					    }
+			  };
+			  
+			  $('.site-demo-active').on('click', function(){
+					    var _this=$(this),
+					        hasTab=false,//是否有这个tab
+					        user_id=_this[0].getAttribute('data-userId'),
+					        tabId=_this[0].getAttribute('data-tabId'),
+					        url=_this[0].getAttribute('data-url'),
+					        title=_this[0].getAttribute('title');
+
+						    for(var i=0;i<tab_title.children.length;i++){
+						    	   if(tab_title.children[i].getAttribute('lay-id')==tabId){
+	                                      hasTab=true;
+						    	   }
+						    }
+						    url=url+'/'+user_id;
+						    if(hasTab){//导航已经有这个了
+	                                active.tabChange(tabId);
+	                                var li_index = $('#tab_box .layui-tab-title .layui-this')[0].getAttribute('data-li-index');
+	                                tab_content.children[li_index].getElementsByTagName('iframe')[0].src=url;
+						    }else{//导航没有添加
+								    active.tabAdd(user_id,tabId,title,url);
+								    active.tabChange(tabId);
+								    tab_title.children[tab_title.children.length-1].setAttribute('data-li-index',(tab_title.children.length-1))
+						    }
+						    // console.log(tab_title.children[tab_title.children.length-1])
+
+			  });
+			  
+			  //Hash地址的定位
+			  var layid = location.hash.replace(/^#demo=/, '');
+			  element.tabChange('demo', layid);
+			  
+			  element.on('tab(demo)', function(elem){
+			        location.hash = 'demo='+ $(this).attr('lay-id');
+			        // 
+			  });
+
+
+		  //监听指定开关
+		  form.on('switch(switchTest)', function(data){
+			    layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+			      offset: '6px'
+			    });
+			    layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+		  });	  
+		  //监听提交
+		  form.on('submit(demo1)', function(data){
+			    layer.alert(JSON.stringify(data.field), {
+			      title: '最终的提交信息'
+			    })
+			    return false;
+		  });   
+		  $.ajax({
+			    	url:'/admin/user/getUserCount',
+			    	success:function(res){
+			    		 console.log(res);
+			    		 if(res.code==200){
+							  
+                              laypageCount(15);
+                              console.log(laypage);
+			    		 }
+			    	},
+			    	error:function(res){
+			    		console.log(res);
+			    	}
+		    })
+		 //执行一个laypage实例
+		 function laypageCount(count){
+				  laypage.render({
+					    elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+					    ,count: count //数据总数，从服务端得到
+					    ,limit:15
+					    ,layout:['prev', 'page', 'next' , 'limit' , 'count' , 'skip']
+					    ,jump: function(obj, first){
+								    //obj包含了当前分页的所有参数，比如：
+								    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+								    console.log(obj.limit); //得到每页显示的条数
+								    
+								    //首次不执行
+								    if(!first){
+								      //do something
+								    }
+						  }
+				  });
+		 }
+		 laypageCount(15);
+  
+		  table.render({
+		    elem: '#test'
+		    ,url:'/demo/table/user/'
+		    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+		    ,cols: [[
+		      {field:'id', width:80, title: 'ID', sort: true}
+		      ,{field:'username', width:80, title: '用户名'}
+		      ,{field:'sex', width:80, title: '性别', sort: true}
+		      ,{field:'city', width:80, title: '城市'}
+		      ,{field:'sign', title: '签名', width: '30%', minWidth: 100} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+		      ,{field:'experience', title: '积分', sort: true}
+		      ,{field:'score', title: '评分', sort: true}
+		      ,{field:'classify', title: '职业'}
+		      ,{field:'wealth', width:137, title: '财富', sort: true}
+		    ]]
+		  });
+
+});
+</script>
+</body>
+</html>

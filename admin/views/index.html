@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>WIN10-UI</title>
+    <link rel='Shortcut Icon' type='image/x-icon' href="./img/windows.ico"/>
+    <script type="text/javascript" src="./js/jquery-2.2.4.min.js"></script>
+    <link href="./css/animate.css" rel="stylesheet">
+    <script type="text/javascript" src="./component/layer-v3.0.3/layer/layer.js"></script>
+    <link rel="stylesheet" href="./component/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="./css/default.css" rel="stylesheet">
+    <script type="text/javascript" src="./js/win10.js"></script>
+    <style>
+        * {
+            font-family: "Microsoft YaHei", 微软雅黑, "MicrosoftJhengHei", 华文细黑, STHeiti, MingLiu
+        }
+
+        /*磁贴自定义样式*/
+         .win10-block-content-text {
+             line-height: 44px;
+             text-align: center;
+             font-size: 16px;
+         }
+         #layer_title_borwer{
+                position: absolute;
+                top: 0;
+                left: 0px;
+                z-index: 1000;
+                background: rgba(49, 49, 50,1);
+                height: 41px;
+                overflow:hidden;
+                width: 40%;
+         }
+         #layer_title_borwer input{border:0;line-height: 40px;background: rgba(255,255,255,0.5);padding-left: 10px;padding-right:10px;width: 60%;}
+         #layer_title_borwer button{border:0;line-height: 40px;padding-left: 30px;padding-right:30px;cursor: pointer;}
+         #win10-shortcuts .shortcut .title{overflow:hidden;height: 3em;}
+    </style>
+    <script>
+        Win10.onReady(function () {
+
+            //设置壁纸
+            Win10.setBgUrl({
+                main: './img/wallpapers/main.jpg',
+                mobile: './img/wallpapers/mobile.jpg',
+            });
+
+            Win10.setAnimated([
+                'animated flip',
+                'animated bounceIn',
+            ], 0.01);
+        });
+    </script>
+</head>
+<body>
+<div id="win10">
+    <div class="desktop">
+        <div id="win10-shortcuts" class="shortcuts-hidden">
+                       <!-- 桌面菜单 -->
+
+                             
+                      <% list.forEach(function(list){ %>
+                             <div class="shortcut"
+                                 onclick="Win10.openUrl('.<%= list.url %>',
+                                 '<img class=\'icon\' src=\'./img/icon/win10.png\'/>','<%= list.title %>')">
+                                <img class="icon" src="./img/icon/win10.png"/>
+                                <div class="title"><%= list.title %></div>
+                            </div>
+                      <% }) %>
+
+
+        </div>
+        <div id="win10-desktop-scene"></div>
+    </div>
+    <div id="win10_command_center" class="hidden_right">
+        <div class="title">
+            <h4 style="float: left">消息中心 </h4>
+            <span id="win10_btn_command_center_clean_all">全部清除</span>
+        </div>
+        <div class="msgs"></div>
+    </div>
+    <div id="win10_task_bar">
+        <div id="win10_btn_group_left" class="btn_group">
+                    <a href="/admin/logout" title="退出登录">
+                         <div class="btn"><i class="icon fa fa-power-off fa-fw"></i></div>
+                    </a>
+                    <div class="btn" onclick="Win10.openUrl('./brower','<img class=\'icon\' src=\'./img/icon/win10.png\' id=\'title-browser\'/>','浏览器','',openCallback)">
+                          <span class="fa fa-internet-explorer"></span>
+                    </div>
+        </div>
+        <div id="win10_btn_group_middle" class="btn_group"></div>
+        <div id="win10_btn_group_right" class="btn_group">
+                    <div class="btn" id="win10_btn_time"></div>
+                    <div class="btn" id="win10_btn_command"><span id="win10-msg-nof" class="fa fa-comment-o"></span></div>
+                    <div class="btn" id="win10_btn_show_desktop"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 点击左下角浏览器按钮弹框可以输入浏览器地址
+function openCallback(layero_opened){
+        console.log(layero_opened);
+        var div=document.createElement('div');
+        var input=document.createElement('input');
+        var button=document.createElement('button');
+        input.type='text';
+        input.placeholder='请输入网址!';
+        button.innerHTML='GO';
+        div.id='layer_title_borwer';
+        var data_class='class_'+layero_opened.selector.split('#')[1];
+        div.setAttribute('data-class',data_class);
+
+        button.addEventListener('click',function(e){
+                if(input.value==''){
+                       return false;
+                }
+                e.path[2].getElementsByTagName('iframe')[0].src=input.value;
+        },false)
+
+        div.appendChild(input);
+        div.appendChild(button);
+        layero_opened[0].appendChild(div);
+}
+</script>
+</body>
+</html>

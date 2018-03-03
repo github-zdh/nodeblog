@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	  <meta charset="UTF-8">
+	  <title>用户角色</title>
+	  <meta name="renderer" content="webkit">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	  <link rel="stylesheet" href="../../layui/css/layui.css"  media="all">
+	  <script src="../../layui/layui.js" charset="utf-8"></script>
+	  <!-- <script src="../../js/z.js" charset="utf-8"></script> -->
+      <style>
+            #tab_box{margin:0;}
+            .layui-hidden-i i{display: none;}
+	        .new_layui_table table th,.new_layui_table table td{max-width: 300px;}
+	        .new_layui_table .layui-table-cell{height: auto;white-space:normal;}
+	        .new_table_page{width: 100%;overflow:hidden;}
+	        .layui-field-title{margin:20px 0 10px;}
+      </style>
+
+</head>
+<body>
+
+			<fieldset class="layui-elem-field layui-field-title">
+			      <legend><%= username %> --- 角色权限管理</legend>
+			</fieldset>
+
+
+            <div class="layui-tab-content" id="addRole">
+                  <div style="text-align: right;">
+	                   <input type="text" min="1" value="" placeholder="请输入用户角色" class="layui-input" style="display: inline-block;width: auto;">
+	                   <button class="layui-btn" data-type="parseTable">添加角色</button>
+                  </div>
+            </div>
+
+			<div class="layui-tab" lay-filter="demo" lay-allowclose="true" id="tab_box">
+				  <div class="layui-tab-content">
+			        <div class="layui-tab-item layui-show" >
+			                    <!-- //////////////////////////////////////// -->
+
+								        <div id="table" lay-filter="table"></div>
+								        <!-- 分页 -->
+								        <div id="test1"></div>
+			                    <!-- //////////////////////////////////////// -->
+			        </div>
+				  </div>
+			</div>
+ 
+<script type="text/html" id="barDemo">
+		  <div style="text-align: left;">
+				  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" lay-filter="barDemo" data-id="{{d.id}}">查看权限</a>
+				  
+				  {{#  if(d.current_user_id ==1 ){ }}
+				  1
+				        <a class="layui-btn layui-btn-xs" lay-event="edit" lay-filter="barDemo" data-id="{{d.id}}">设置权限</a>
+				  {{# }else if(d.id != 1 ){ }}
+				         
+				         2<a class="layui-btn layui-btn-xs" lay-event="edit" lay-filter="barDemo" data-id="{{d.id}}">设置权限</a>
+				  {{#  } }}
+
+				  {{#  if(d.id > 1){ }}
+				      <a class="layui-btn layui-btn-xs" lay-event="edit" lay-filter="barDemo" data-id="{{d.id}}">修改角色</a>
+				  {{#  } }}
+		  </div>		  
+</script>
+ 
+
+
+<script type="text/html" id="checkboxTpl">
+	  <!-- 这里的 checked 的状态只是演示 -->
+	  <input type="checkbox" name="lock" value="{{d.id}}" title="开启权限" lay-filter="lockDemo" {{ d.id == 1000000000000 ? 'checked' : '' }} {{ d.id == 1 ? 'disabled' : '' }}>
+</script>
+
+
+
+ <script>
+layui.use(['jquery','form','element','laypage','table'], function(){			 
+			  var $ = layui.jquery
+				  ,form = layui.form
+				  ,laypage = layui.laypage
+				  ,table = layui.table	
+				  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+
+
+		  //监听指定开关
+		  form.on('switch(switchTest)', function(data){
+			    layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+			      offset: '6px'
+			    });
+			    layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+		  });	  
+		  //监听提交
+		  form.on('submit(demo1)', function(data){
+			    layer.alert(JSON.stringify(data.field), {
+			      title: '最终的提交信息'
+			    })
+			    return false;
+		  }); 
+
+		  
+
+		//表格实例
+		function table_table(){
+				table.render({
+					     elem: '#table'
+					    ,url:'/admin/user/roleList'
+					    ,cols: [[ //标题栏
+							      {field: 'id', title: 'ID', sort: true}
+							      ,{field: 'name', title: '角色'}
+							      ,{field:'lock', title:'是否开启权限', templet: '#checkboxTpl'}
+							      ,{field: 'template', title: '操作',  toolbar: '#barDemo', align:'center'}
+					    ]]
+					    // ,data: [{"id":1,"username":'username',"sex":"sex","phone":"phone","email":"email","is_admin":"is_admin"}]
+					    // ,skin: 'line' //表格风格
+					    ,even: false
+					    ,page: true //是否显示分页
+					    ,response: {
+							  // {"code":0,"msg":"","count":1000,"data":[]} 默认
+							  // statusName: 'status' //数据状态的字段名称，默认：code
+							  statusCode: 200 //成功的状态码，默认：0
+							  // ,msgName: 'hint' //状态信息的字段名称，默认：msg
+							  // ,countName: 'total' //数据总数的字段名称，默认：count
+							  // ,dataName: 'rows' //数据列表的字段名称，默认：data
+						} 
+					    ,done: function(res, curr, count){
+							    //如果是异步请求数据方式，res即为你接口返回的信息。
+							    //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+							    console.log(res);
+							    
+							    //得到当前页码
+							    console.log(curr); 
+							    
+							    //得到数据总量
+							    console.log(count);
+						}
+					    //,limits: [5, 7, 10]
+					    ,limit: 10 //每页默认显示的数量
+				  });
+		}
+		table_table();
+
+
+	  //监听封号操作
+	  form.on('checkbox(lockDemo)', function(obj){
+	         layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+	         var _this=this;
+	         $.ajax({
+		         	   url:'/admin/user/changRole',
+		         	   data:{
+		         	   	    id:_this.value,
+		         	   	    checked:obj.elem.checked
+		         	   },
+		         	   success:function(res){
+			         	   	    res = JSON.parse(res);
+			         	   	    layer.msg(res.msg);
+		         	   },
+		         	   error:function(err){
+		         	   	    console.log(err);
+		         	   }
+	         })
+	  });
+
+		 //监听工具条 (操作)
+	  table.on('tool(table)', function(obj){
+		        var data = obj.data;
+		        console.log(data);
+			    if(obj.event === 'detail'){
+			      layer.msg('ID：'+ data.id + ' 的查看操作');
+			    } else if(obj.event === 'edit'){
+			      
+			    } else if(obj.event === 'edit'){
+			      layer.alert('编辑行：<br>'+ JSON.stringify(data))
+			    }
+	  });
+
+	  // 提交添加角色
+	  $('#addRole .layui-btn').click(function(){
+	         var value = $('#addRole .layui-input')[0].value;
+	         if(value==''){
+	         	   layer.msg('请输入用户角色');
+	         	   return false;
+	         }
+	         $.ajax({
+		         	   url:'/admin/user/addRole',
+		         	   data:{
+		         	   	    name:value
+		         	   },
+		         	   success:function(res){
+			         	   	    res = JSON.parse(res);
+			         	   	    console.log(res);
+			         	   	    layer.msg(res.msg);
+			         	   	    if(res.code==200){
+			         	   	    	table_table()
+			         	   	    }
+		         	   },
+		         	   error:function(err){
+		         	   	    console.log(err);
+		         	   }
+	         })
+	  })
+	  // 删除角色
+	  function delRole(id,callback){
+	         $.ajax({
+		         	   url:'/admin/user/delRole',
+		         	   data:{
+		         	   	    id:id//动态获取
+		         	   },
+		         	   success:function(res){
+			         	   	    res = JSON.parse(res);
+			         	   	    if(callback){
+			         	   	    	callback(res);
+			         	   	    }
+		         	   },
+		         	   error:function(err){
+		         	   	    console.log(err);
+				         	if(callback){
+			         	   	    	callback({
+			         	   	    		msg:'error',
+			         	   	    	});
+			         	   	}
+		         	   }
+	         })
+	  }
+
+});
+</script>
+</body>
+</html>
