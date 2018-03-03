@@ -44,15 +44,31 @@
                                                 <div class="layui-form-item">
                                                       <label class="layui-form-label">来源</label>
                                                       <div class="layui-input-block">
-                                                        <input type="text" name="source" value="<%= webPageInfo.editArt.source %>" autocomplete="off" placeholder="请输入来源描述(选填)" class="layui-input">
+                                                        <input type="text" name="source" value="<%= webPageInfo.editArt.source %>" autocomplete="off" placeholder="请输入来源描述(选填/最多可输入100字)" class="layui-input">
                                                       </div>
                                                 </div>
                                         </div>
-<!--                                         <div class="layui-form-item layui-form-text">
-                                              <div class="layui-input-block">
-                                                    <textarea id="layedit" style="display: none;"></textarea>
-                                              </div>
-                                        </div> -->
+                                        <div class="layui-col-md12">
+                                                <div class="layui-form-item">
+                                                      <label class="layui-form-label" style="width: 100%;text-align: left;">新帖描述</label>
+                                                      <div style="margin-top:10px;">
+                                                             <textarea name="description" value="<%= webPageInfo.editArt.description %>" id="" cols="30" rows="10" class="layui-input" style="height: 100px;padding-top:7px;padding-bottom: 7px;" id="description" placeholder="最多可输入300字；超出部分将会被...替换掉"></textarea>
+                                                      </div>
+                                                </div>
+                                        </div>
+                                        <div class="layui-col-md5">
+                                                <div class="layui-form-item">
+                                                      <label class="layui-form-label">图片</label>
+                                                      <div class="layui-input-block" style="margin-top:10px;">
+                                                           <label type="button" class="layui-btn upload-img" id="uploadArtImg" style="vertical-align: top;">
+                                                                 <i class="layui-icon"></i>
+                                                                 上传头像
+                                                            </label>
+                                                            <input class="layui-upload-file" type="file" name="fileImg">
+                                                            <img src="<%= webPageInfo.editArt.img %>" alt="" id="uploadImg" style="width: 160px;height: 160px;">
+                                                      </div>
+                                                </div>
+                                        </div>
                                         <div class="layui-form-item layui-form-text">
                                               <div class="layui-input-block">
                                                       <% include ./include/ueditor.html %>
@@ -63,6 +79,7 @@
                                         </div>
                                   </div>
                         </form>
+
             </div>  
     </div>
 
@@ -71,11 +88,12 @@
 
       <script>
           //JavaScript代码区域
-          layui.use(['jquery','element','layer','form','layedit'], function(){
+          layui.use(['jquery','element','layer','form','upload'], function(){
                     var $ = layui.jquery,
                         element = layui.element,
                         layer = layui.layer,
                         // layedit = layui.layedit,
+                        upload=  layui.upload,
                         form = layui.form;
                    //监听导航点击
                     element.on('nav(navdemo)', function(elem){
@@ -95,6 +113,27 @@
                     //                     ,type:'post'
                     //                 }
                     // }); //建立编辑器
+
+                    //执行实例 //修改 头像
+                    var uploadInst = upload.render({
+                            elem: '#uploadArtImg' //绑定元素
+                            ,url: '/ajax/addImg/?loadType=2' //上传接口
+                            ,done: function(res){
+                                    //上传完毕回调
+                                    console.log(res);                                            
+                                    if(res.code==0){
+                                         layer.alert('上传成功',{time:2000, shift: 6 ,icon:6});
+                                         z.getId('uploadImg').src=res.data.src;
+                                         return false;
+                                    }
+                                    layer.alert(res.msg,{time:2000, shift: 6 ,icon:5}); 
+                            }
+                            ,error: function(){
+                                 //请求异常回调
+                                 layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5}); 
+                            }
+                    }); 
+
                     
                     form.on('submit(demo2)',function(data){
                              //有待完成(IE不支持)；还有不能上传太多文本
@@ -102,6 +141,11 @@
                             // data.field.content=layedit.getContent(layeditIndex);
                             data.field.content = UE.getEditor('editor').getContent();
                             delete data.field.editorValue;
+                            let src = z.getId('uploadImg').src;
+                            data.field.img='';
+                            if(src.indexOf('upload')!==-1){
+                                   data.field.img = '/upload'+src.split('upload')[1];
+                            }                            
                             if(data.field.title==''){
                                  layer.msg('请输入标题',{time:2000, shift: 6 ,icon:5});
                                  return false;
@@ -114,6 +158,10 @@
                                  layer.msg('来源描述最多100字符!',{time:2000, shift: 6 ,icon:5});
                                  return false;
                             }
+                            if(data.field.description.length>300){
+                                 data.field.description = data.field.description.substr(0,300)+'...';
+                            }
+                            
                             if(!UE.getEditor('editor').hasContents()){
                                  layer.msg('请编辑上传文章/帖子',{time:2000, shift: 6 ,icon:5});
                                  return false;

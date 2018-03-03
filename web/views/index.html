@@ -22,6 +22,11 @@
                                                   <a href="/index/articleDetails/<%= item.id %>" class="layui-col-xs7"><%= item.title %></a>
                                                   <span class="layui-badge layui-btn-danger">置顶</span>
                                             </h2>
+                                            <p class="description">
+                                                 <a href="/index/articleDetails/<%= item.id %>">
+                                                     <%= item.description %>
+                                                 </a>
+                                            </p>
                                             <div class="info">
                                                  <div class="inline-block info_title layui-col-xs9">
                                                      <a href="/user/homepage/<%= item.user_id %>"><cite><%= item.username %></cite></a>
@@ -94,18 +99,19 @@
                                         limit:obj.limit
                                    },
                                    success:function(data){
-                                         // console.log(data);
+                                         console.log(data);
                                          var data = JSON.parse(data);
                                          if(data.code==200){
                                                 function articeItem(obj){
                                                     return '<li>'+
                                                                     '<a href="/user/homepage/'+obj.user_id+'" class="block user_img">'+
-                                                                         '<img src="'+obj.user_img+'">'+
+                                                                         '<img src="'+(obj.img!=''?obj.img:obj.user_img)+'">'+
                                                                     '</a>'+
                                                                     '<h2>'+
                                                                           '<span class="layui-span layui-badge">'+obj.clas_name+'</span>'+
                                                                           '<a href="/index/articleDetails/'+obj.id+'" class="layui-col-xs7">'+obj.title+'</a>'+
                                                                     '</h2>'+
+                                                                    '<p class="description"><a href="/index/articleDetails/'+obj.id+'">'+obj.description+'</a></p>'+
                                                                    ' <div class="info">'+
                                                                         ' <div class="inline-block info_title layui-col-xs9">'+
                                                                             '<a href="/user/homepage/'+obj.user_id+'" >'+

@@ -60,14 +60,16 @@
              .artice_content .layui-breadcrumb a{padding:0 10px;font-size: 16px;}
              .artice_content .layui-breadcrumb a.ad{font-size: 14px;padding:0;}
              .replies{margin-top:15px;background: #fff;padding:20px;}
-             .artice_ul li{position: relative;padding: 15px 15px 15px 75px; border-bottom: 1px dotted #e2e2e2;}
+             .artice_ul li{position: relative;padding: 15px 15px 15px 135px; border-bottom: 1px dotted #e2e2e2;}
              .artice_ul li .user_img{position: absolute;left: 15px;top: 15px;}
-             .artice_ul li .user_img img{display: block;width: 45px;height: 45px;margin: 0;border-radius: 2px;}
+             .artice_ul li .user_img img{display: block;width: 100px;height: 100px;margin: 0;border-radius: 2px;}
              .artice_ul li h2{height: 26px;font-size: 0;position: relative;}
              .artice_ul li h2 .layui-span{height: 16px;line-height: 16px;padding: 0 5px;margin-right: 10px;font-size: 12px;border: 1px solid #5FB878;background: none;color: #5FB878;display: inline-block;    border-radius: 2px;vertical-align: -2px;}
              .artice_ul li h2 a{display: inline-block;max-width: 80%;padding-right: 10px;font-size: 16px;white-space: nowrap;overflow: hidden;  text-overflow: ellipsis;top: -2px;position: relative;line-height: 26px;vertical-align: middle;float: none;}
-            .artice_ul li h2 a:hover{color:#FF5722;}
+            .artice_ul li h2 a:hover,.artice_ul li p.description a:hover{color:#FF5722;}
             .artice_ul li h2 .layui-btn-danger{position: absolute;top:2px;right: 0px;}
+            .artice_ul li p.description{margin-bottom: 10px;height: 59px;line-height: 20px;overflow: hidden;word-break: break-all;text-indent: 2em;}
+            .artice_ul li p.description a{color: #666;}
             .artice_ul .info{position: relative;color: #999;}
             .artice_ul .info_title{float: none;}
             .artice_ul .info_title a{display: inline-block;margin-right: 15px;}

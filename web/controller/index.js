@@ -183,6 +183,8 @@ obj.editArticle=function (req, res, next) {
                 title:'',//标题
                 source:'',//来源
                 source_link:'',//来源链接
+                img:'',//图片
+                description:'',//描述
                 content:'',//内容
   	  }
   	 
@@ -277,7 +279,9 @@ obj.addArtContent=function (req, res, next) {
 		                     " source = " +  "'"+query.source+"',"+
 		                     " update_time = " +  com.timestamp()+","+
 		                     " content = " +  "'"+query.content+"'"+
-				  " where id = "+ query.artListId ;
+		                     " img = " +  query.img+","+
+		                     " description = " +  "'"+query.description+"'"+
+				             " where id = "+ query.artListId ;
 
 				  sql.runSql(getArtUserId,function(err,data){
 					  	  // console.log(data);
@@ -297,7 +301,7 @@ obj.addArtContent=function (req, res, next) {
 						  })
 				  })
 		  }else{
-				  var addArt = "insert into z_articles_list (user_id,art_clas_id,title,source_link,source,time,update_time,content) values ("+
+				  var addArt = "insert into z_articles_list (user_id,art_clas_id,title,source_link,source,time,update_time,content,img,description) values ("+
 		                      req.session[__webUserInfo__].id+","+
 		                      query.clas+","+
 		                      "'"+query.title+"',"+
@@ -305,7 +309,9 @@ obj.addArtContent=function (req, res, next) {
 		                      "'"+query.source+"',"+
 		                      com.timestamp()+","+
 		                      com.timestamp()+","+
-		                      "'"+query.content+"'"+
+		                      "'"+query.content+"',"+
+		                      "'"+query.img+"',"+
+		                      "'"+query.description+"'"+
 				  ")";
 				  // console.log(addArt);
 				  sql.runSql(addArt,function(err,data){
@@ -342,7 +348,9 @@ obj.addCommentPoint=function(req,res){
 }
 
 obj.point = (req,res,nuser_id,id,sqlTable) => {
-          var getpointNum = "select point_num,point_user_id from "+sqlTable+" where  id ="+id;
+          // var getpointNum = "select * from "+sqlTable+" where  id ="+id;
+          var getpointNum = "select point_num,point_user_id from "+sqlTable+" where  id ="+id
+		  // console.log(getpointNum);
 		  sql.runSql(getpointNum,function(err,data){
 			  	  if(err){
 			  	  	    return base.errorMsg(req,res,'查询失败');
@@ -350,7 +358,9 @@ obj.point = (req,res,nuser_id,id,sqlTable) => {
                   var point_num = 0 ;//最后加入数据库中的点赞数
                   var ct_userId_arr = '';//最后加入数据库中的点赞用户ID
                   var pointBool = false;//判断是否点赞过
-
+                  if(data.length==0){
+                  	      return res.end(base.returnjson(res,200,"文章/帖子不存在"));//帖子不存在
+                  }
 			  	  if(data[0].point_user_id==null){//数据库中没有数据
                         point_num = 1 ;
                         ct_userId_arr = nuser_id;
@@ -412,29 +422,39 @@ obj.replyPoint=(req,res) => {
           	   return res.end(base.returnjson(res,100,"请登录")); 
           }
           var userId = req.session[__webUserInfo__].id;
-          let getReplyCount = 'SELECT count(1) from z_articles_comment where art_list_id ='+query.id+' and user_id = '+userId;
-          sql.runSql(getReplyCount,(err,data) => {
-	          	  if(err){
-	                   return res.end(base.returnjson(res,100,"查询失败"));
-	          	  }
-	          	  if(data[0]['count(1)']>10){//每个人每个帖子最多评论11次
-                          return res.end(base.returnjson(res,100,"每个人每个帖子最多评论11次"));
-	          	  }else{
-				          let replyPoint = 'insert into z_articles_comment (user_id,art_list_id,content,time) values ('+userId+','+query.id+',"'+query.motto+'",'+time+')';
-				          sql.runSql(replyPoint,(err,data) => {
-					          	  if(err){
-					                   return res.end(base.returnjson(res,100,"查询失败"));
-					          	  }
-						          let update_num = 'update z_articles_list set comment_num = (select count(*) from z_articles_comment where art_list_id='+query.id+') where id='+query.id;
-						          // console.log(update_num);
-						          sql.runSql(update_num,(err,data) => {
-						          	  if(err){
-						                   return res.end(base.returnjson(res,100,"查询失败"));
-						          	  }						          	  
-						          	  return res.end(base.returnjson(res,200,"回复成功"));
-						          })
-				          })
-	          	  }
+          var getReplyCount = 'SELECT count(1) from z_articles_comment where art_list_id ='+query.id+' and user_id = '+userId;
+          let getpointNum = "select * from z_articles_list where  id ="+query.id ;
+		  sql.runSql(getpointNum,function(err,data){
+				  	  if(err){
+				  	  	    return base.errorMsg(req,res,'查询失败');
+				  	  }
+	                  if(data.length==0){
+	                  	      return res.end(base.returnjson(res,200,"文章/帖子不存在"));//帖子不存在
+	                  }
+			          sql.runSql(getReplyCount,(err,data) => {
+				          	  if(err){
+				                   return res.end(base.returnjson(res,100,"查询失败"));
+				          	  }
+
+				          	  if(data[0]['count(1)']>10){//每个人每个帖子最多评论11次
+			                          return res.end(base.returnjson(res,100,"每个人每个帖子最多评论11次"));
+				          	  }else{
+							          let replyPoint = 'insert into z_articles_comment (user_id,art_list_id,content,time) values ('+userId+','+query.id+',"'+query.motto+'",'+time+')';
+							          sql.runSql(replyPoint,(err,data) => {
+								          	  if(err){
+								                   return res.end(base.returnjson(res,100,"查询失败"));
+								          	  }
+									          let update_num = 'update z_articles_list set comment_num = (select count(*) from z_articles_comment where art_list_id='+query.id+') where id='+query.id;
+									          // console.log(update_num);
+									          sql.runSql(update_num,(err,data) => {
+									          	  if(err){
+									                   return res.end(base.returnjson(res,100,"查询失败"));
+									          	  }						          	  
+									          	  return res.end(base.returnjson(res,200,"回复成功"));
+									          })
+							          })
+				          	  }
+			          })
           })
 }
 

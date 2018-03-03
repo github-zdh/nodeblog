@@ -9,7 +9,7 @@ var com = require(__ROOTDIR__+'/config/common');
 //不管是否登录都通过这个控件
 function publicControl(req, res, next){
 			// 模拟已经登录
-            // config.analogLogon(req,res);
+            config.analogLogon(req,res);
 
 
 		  // 网址路径 例如：http://127.0.0.1:1337/

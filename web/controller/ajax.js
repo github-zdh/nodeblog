@@ -47,7 +47,8 @@ upload.render({
 /*
      loadType:
      0=> 默认上传路径
-     1=>上传图片后插入 用户表；=>用户头像 上传路径:
+     1=>上传图片后插入 用户表；=>用户头像 上传路径:/upload/user_img
+     2=>上传图片后插入 文章表；=>文章头像 上传路径:/upload/art_img
 
 */
 exports.addImg=function (req, res, next) {
@@ -71,6 +72,13 @@ exports.addImg=function (req, res, next) {
                             }
                             loadPath = 'public/upload/user_img/'+user.username;
                       break;
+                      case 2:
+                            if(!user){
+                                 res.end(JSON.stringify({"code": 100,"msg": "请登录"}));
+                                 return false;
+                            }
+                            loadPath = 'public/upload/art_img/'+user.username;
+                      break;
                       default:
                             loadPath = 'public/upload/images';
                 }
@@ -87,7 +95,7 @@ exports.addImg=function (req, res, next) {
                         return res.end(JSON.stringify({"code": 100,"msg": "修改失败"}));
           		    },
           		    endCallback:function(url){//最后回调函数
-          	    	       url = url.replace(/\\/g,'/').replace('public',__host__);
+          	    	       url = url.replace(/\\/g,'/').replace('public','');
           	    	       callbackFn(loadType,url);
                          if(loadType==1){
                                req.session[__webUserInfo__].user_img = url;
@@ -106,7 +114,6 @@ exports.addImg=function (req, res, next) {
           		                  	   }
           		                  })
           		            break;
-
           		       }
                 }
 
