@@ -1,0 +1,117 @@
+<!-- 省市区三级联动 -->
+<div class="layui-col-sm4">
+      <select name="province" lay-filter="province" id="select_province"></select>
+</div>
+<div class="layui-col-sm4">
+      <select name="city" lay-filter="city" id="select_city"></select>
+</div>
+<div class="layui-col-sm4">
+      <select name="area" lay-filter="area" id="select_area"></select>
+</div>
+
+<script src="../../../js/city.js"></script>
+<script>
+    var cityObj = {};
+    cityObj.provinceIndex=0;
+    cityObj.cityIndex=0;
+    cityObj.areaIndex=0;
+    cityObj.init=function(obj){
+            cityObj.provinceDoc = z.getId('select_province');
+            cityObj.cityDoc = z.getId('select_city');
+            cityObj.areaDoc = z.getId('select_area');
+
+            cityObj.provinceJson=[];
+            cityObj.cityJson=[];
+            cityObj.areaJson=[];
+
+            cityObj.provinceHTML='';
+            cityObj.cityHTML='';
+            cityObj.areaHTML='';
+
+            if(obj!=null){
+                  if(cityObj.provinceIndex!=obj.provinceIndex){
+                        cityObj.cityIndex=0;
+                        cityObj.areaIndex=0;
+                  }
+                  cityObj.provinceIndex = obj.provinceIndex!=null ? obj.provinceIndex : cityObj.provinceIndex;
+                  cityObj.cityIndex     = obj.cityIndex!=null ? obj.cityIndex : cityObj.cityIndex;
+                  cityObj.areaIndex     = obj.areaIndex!=null ? obj.areaIndex : cityObj.areaIndex;
+            }
+            console.log(obj);
+
+            cityObj.provinceFn();
+            cityObj.cityFn(cityObj.provinceIndex);
+            cityObj.areaFn(cityObj.provinceIndex,cityObj.cityIndex);
+    }
+
+    cityObj.provinceFn=function(){
+            cityObj.provinceDoc.innerHTM='';
+            for(var i=0;i<area_json.length;i++){
+                    cityObj.provinceJson.push({
+                           value:area_json[i].value,
+                           text:area_json[i].text
+                    });
+                    if(cityObj.provinceIndex==i){
+
+                         cityObj.provinceHTML+=('<option value="'+area_json[i].text+'" selected>'+area_json[i].text+'</option>');
+                    }else{
+                         cityObj.provinceHTML+=('<option value="'+area_json[i].text+'">'+area_json[i].text+'</option>');
+                    }
+            }
+            cityObj.provinceDoc.innerHTML = cityObj.provinceHTML;
+    }
+    cityObj.cityFn=function(pIndex){
+            cityObj.cityDoc.innerHTM='';
+            for(var i=0;i<area_json[pIndex].children.length;i++){
+                    cityObj.cityJson.push({
+                           value:area_json[pIndex].children[i].value,
+                           text:area_json[pIndex].children[i].text
+                    });
+                    if(cityObj.cityIndex==i){
+                          cityObj.cityHTML+=('<option value="'+area_json[pIndex].children[i].text+'" selected>'+area_json[pIndex].children[i].text+'</option>');
+                    }else{
+                         cityObj.cityHTML+=('<option value="'+area_json[pIndex].children[i].text+'">'+area_json[pIndex].children[i].text+'</option>');
+                    }
+            }
+            cityObj.cityDoc.innerHTML = cityObj.cityHTML;
+    }
+
+
+    cityObj.areaFn=function(pIndex,cIndex){
+             cityObj.areaDoc.innerHTM='';
+             for(var i=0;i<area_json[pIndex].children[cIndex].children.length;i++){
+                    cityObj.areaJson.push({
+                           value:area_json[pIndex].children[cIndex].children[i].value,
+                           text:area_json[pIndex].children[cIndex].children[i].text
+                    });
+                    cityObj.areaHTML+=('<option value="'+area_json[pIndex].children[cIndex].children[i].text+'">'+area_json[pIndex].children[cIndex].children[i].text+'</option>');
+            }
+            cityObj.areaDoc.innerHTML = cityObj.areaHTML;
+    }
+    
+    
+
+</script>
+<script>
+
+layui.use('form', function(){       
+          var form = layui.form; //Tab的切换功能，切换事件监听等，需要依赖element模块
+          cityObj.init();
+          form.render();
+          // 省
+          form.on('select(province)', function(data){
+                  console.log(data.elem.selectedIndex); //得到select原始DOM对象
+                  cityObj.init({
+                         provinceIndex:data.elem.selectedIndex
+                  });
+                  form.render();
+          }); 
+          // 市
+          form.on('select(city)', function(data){
+                  cityObj.init({
+                         cityIndex:data.elem.selectedIndex
+                  });
+                  form.render();
+          });
+})
+</script>

@@ -1,0 +1,73 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+<script src="../../../socket.io/socket.io.js"></script>
+<script src="../../../js/jquery-2.2.4.min.js"></script>
+     
+     <section class="section"></section>
+     <section class="section_msg" style="padding:10px;"></section>
+     <div>
+           <input type="text" name="name" class="new_msg">
+           <button>usernameLogin</button>
+     </div>
+
+      <script>
+             var socketIo = io();
+             $('button').click(function(){
+             	    console.log();
+             	    var username='user_1';
+                  var value=$('.new_msg').val();
+             	    $(this).text('正在登陆。。。');
+                   console.log({username:username,value:value});
+                  socketIo.emit('new msg',{username:username,value:value});
+             	    // setTimeout(function(){
+                  //     console.log({username:username,value:value});
+             	    // 	  socketIo.emit('new msg',{username:username,value:value});
+             	    // },1000)
+             	    // setTimeout(function(){
+             	    // 	  window.location.href='./socketIo';
+             	    // },1500)             	    
+             })
+              socketIo.on('new message',function(data){
+                   $('.section').html(' ');
+                   var ul = document.createElement('ul');
+                   data=JSON.parse(data);
+                   for(var i=0;i<data.length;i++){
+                   	     var li = document.createElement('li');
+                   	     li.innerHTML = JSON.stringify(data[i]);
+                         var a = document.createElement('a');
+                         a.style.color="#ff0000";
+                         a.target="_blank"
+                         a.href='./socket_room';
+                         a.innerHTML = '聊天';
+                         li.appendChild(a);
+                   	     ul.appendChild(li);
+                   }
+                   $('.section').append(ul);
+              })
+              socketIo.on('new msg',function(data){
+                   console.log(data);
+                   $('.section_msg').html(' ');
+
+                   var ul = document.createElement('ul');
+                   var li = document.createElement('li');
+                   data=JSON.parse(data);
+                   li.style.padding='10px';
+                   li.innerHTML = data.username+'______'+data.value;
+                   ul.appendChild(li);
+                   $('.section_msg').append(ul);
+              })
+               socketIo.on('new msg',function(data){
+                   console.log(data);
+                   $('.section_msg').html(' ');
+
+                   var ul = document.createElement('ul');
+                   var li = document.createElement('li');
+                   data=JSON.parse(data);
+                   li.style.padding='10px';
+                   li.innerHTML = data.username+'______'+data.value;
+                   ul.appendChild(li);
+                   $('.section_msg').append(ul);
+              })
+      </script>
+   </body>
+</html>

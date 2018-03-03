@@ -1,0 +1,394 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+
+
+    <div class="layui-container" style="margin-top:30px;">
+         <div class="layui-row layui-col-space15">
+             <div class="layui-col-md3 layui-show-lg-inline-block layui-show-md-inline-block layui-hide-sm layui-hide-xs"> 
+                  <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md11" style="padding:0;">
+                               <% include ./include/memberLeft.html %>
+                        </div>
+                  </div>
+             </div>
+
+             <div class="layui-col-md9 add_article whiteBC" style="padding:15px;">
+                        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                              <ul class="layui-tab-title">
+                                    <li class="layui-this">我的资料</li>
+                                    <li>修改昵称</li>
+                                    <li>头像</li>
+                                    <li>签名/座右铭</li>
+                                    <li>修改密码</li>
+                                    <li>修改邮箱</li>
+                              </ul>
+                              <div class="layui-tab-content">
+                                    <div class="layui-tab-item layui-show">
+                                          <form class="layui-form layui-form-pane artice_t15" action="">
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">用户名</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux"><%= webPageInfo.userInfo.username %></div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">昵称</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux">
+                                                                  <%= (webPageInfo.userInfo.nickname||'暂无') %>
+                                                                  </div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">头像</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <img src="<%= webPageInfo.userInfo.user_img %>" width="60px" height="60px" id="baseSet_user_img">
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">性别</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux">
+                                                                  <%= (webPageInfo.userInfo.sex==1?'男':'女') %>
+                                                                  </div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">手机</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux">
+                                                                  <%= (webPageInfo.userInfo.phone||'暂无') %>
+                                                                  </div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">邮箱</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux">
+                                                                  <%= webPageInfo.userInfo.email %>
+                                                                  </div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">注册时间</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux" z-template="z.timeout({time:<%= webPageInfo.userInfo.addtime %>})"></div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">地址</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux">
+                                                                                <%= webPageInfo.userInfo.province %>
+                                                                                <%= webPageInfo.userInfo.city %>
+                                                                                <%= webPageInfo.userInfo.area %>
+                                                                  </div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md3">
+                                                                 <label class="layui-form-label">签名/座右铭</label>
+                                                          </div>
+                                                          <div class="layui-col-md9">                                                                  
+                                                                  <div class="layui-form-mid layui-word-aux">
+                                                                           <%= webPageInfo.userInfo.motto %>
+                                                                  </div>
+                                                          </div>
+                                                    </div>
+                                          </form>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                          <form class="layui-form layui-form-pane artice_t15" action="">
+
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md6">
+                                                                  <div class="layui-form-item">
+                                                                          <label class="layui-form-label">昵称</label>
+                                                                          <div class="layui-input-block">
+                                                                            <input type="text" name="nickname" value="<%= webPageInfo.userInfo.nickname %>" autocomplete="off" placeholder="修改昵称" class="layui-input" lay-verify="required">
+                                                                          </div>
+                                                                  </div>
+                                                          </div>
+                                                          <div class="layui-col-md6">
+                                                                  
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-form-item">
+                                                                <button class="layui-btn" lay-submit="" lay-filter="nickname">提交</button>
+                                                           </div>
+                                                    </div>
+                                          </form>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                         <form class="layui-form layui-form-pane artice_t15" action="">
+                                               <div class="avatar-add">
+                                                     <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过50KB</p>
+                                                     <button type="button" class="layui-btn upload-img" lay-submit="" id="uploadUserImg">
+                                                             <i class="layui-icon"></i>
+                                                             上传头像
+                                                     </button>
+                                                     <input class="layui-upload-file" type="file" name="file"> 
+                                                     <img src="<%= webPageInfo.userInfo.user_img %>" id="user_img">
+                                                     <span class="loading"></span>
+                                               </div>
+                                         </form>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                          <form class="layui-form layui-form-pane artice_t15" action="">
+                                                <div class="layui-form-item layui-form-text">
+                                                      <label class="layui-form-label">签名/座右铭</label>
+                                                      <div class="layui-input-block">
+                                                        <textarea placeholder="随便写些什么刷下存在感" name="motto" lay-verify="required" class="layui-textarea"></textarea>
+                                                      </div>
+                                                </div>
+                                                <div class="layui-form-item" style="margin-top:10px;">
+                                                      <button class="layui-btn" lay-submit="" lay-filter="motto">提交</button>
+                                                </div>
+                                          </form>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                          <form class="layui-form layui-form-pane artice_t15" action="">
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md6">
+                                                                  <div class="layui-form-item">
+                                                                          <label class="layui-form-label">密码</label>
+                                                                          <div class="layui-input-block">
+                                                                            <input type="password" name="password" autocomplete="off" placeholder="密码" class="layui-input" lay-verify="required">
+                                                                          </div>
+                                                                  </div>
+                                                          </div>
+                                                          <div class="layui-col-md6">
+                                                                  
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md6">
+                                                                  <div class="layui-form-item">
+                                                                          <label class="layui-form-label">确认密码</label>
+                                                                          <div class="layui-input-block">
+                                                                            <input type="password" name="ConfirmPassword" autocomplete="off" placeholder="确认密码" class="layui-input" lay-verify="required">
+                                                                          </div>
+                                                                  </div>
+                                                          </div>
+                                                          <div class="layui-col-md6">
+                                                                  
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-form-item">
+                                                                <button class="layui-btn" lay-submit="" lay-filter="resetPassword">提交</button>
+                                                           </div>
+                                                    </div>
+                                          </form>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                          <!-- 修改邮箱 -->
+                                          <form class="layui-form layui-form-pane artice_t15" action="">
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-md6">
+                                                                  <div class="layui-form-item">
+                                                                          <label class="layui-form-label">邮箱</label>
+                                                                          <div class="layui-input-block">
+                                                                            <input type="email" name="email" value="<%= webPageInfo.userInfo.email %>" lay-verify="email" autocomplete="off" placeholder="邮箱" class="layui-input" id="reEmail">
+                                                                          </div>
+                                                                  </div>
+                                                          </div>
+                                                          <div class="layui-col-md6">
+                                                                  
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-col-sm6">
+                                                                  <div class="layui-form-item">
+                                                                          <label class="layui-form-label">验证</label>
+                                                                          <div class="layui-input-block">
+                                                                            <input type="text" name="code" lay-verify="code" autocomplete="off" placeholder="验证" class="layui-input">
+                                                                          </div>
+                                                                  </div>
+                                                          </div>
+                                                          <div class="layui-col-sm6">
+                                                               <div class="layui-btn" id="getReEmailCode">获取验证</div>
+                                                          </div>
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-form-item">
+                                                                <button class="layui-btn" lay-submit="" lay-filter="email">提交</button>
+                                                           </div>
+                                                    </div>
+                                          </form>
+                                    </div>
+                              </div>
+                        </div>
+              </div>
+        </div>  
+    </div>
+
+</script>
+
+ <!-- lay-filter="uploadUserImg"  -->
+      <script>
+          //JavaScript代码区域
+          layui.use(['jquery','element','layer','form','upload'], function(){
+                var $ = layui.jquery,
+                    element = layui.element,
+                    layer = layui.layer,
+                    upload=layui.upload,
+                    form = layui.form;
+
+                    //执行实例 //修改 头像
+                    var uploadInst = upload.render({
+                            elem: '#uploadUserImg' //绑定元素
+                            ,url: '/ajax/addImg/?loadType=1' //上传接口
+                            ,done: function(res){
+                                    //上传完毕回调
+                                    console.log(res);                                            
+                                    if(res.code==0){
+                                         z.getId('user_img').src=res.data.src;
+                                         layer.alert('上传成功',{time:2000, shift: 6 ,icon:6});
+                                         z.getId('top_user_img').src=res.data.src;
+                                         z.getId('baseSet_user_img').src=res.data.src;
+                                         return false;
+                                    }
+                                    layer.alert(res.msg,{time:2000, shift: 6 ,icon:5}); 
+                            }
+                            ,error: function(){
+                                 //请求异常回调
+                                 layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5}); 
+                            }
+                    }); 
+                    
+
+                    //修改 昵称
+                    form.on('submit(nickname)', function(data){
+                          if(data.field.nickname.length>15){
+                                  layer.alert('最多可输入15字',{time:2000, shift: 6 ,icon:5});  
+                                  return false;
+                          }
+                          $.ajax({
+                               url:'/user/nickname',
+                               data:data.field,
+                               success:function(res){
+                                      var res = JSON.parse(res);
+                                      layer.alert(res.msg,{time:2000, shift: 6 ,icon:6});                     
+                               },
+                               error:function(){
+                                      layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5}); 
+                               }
+                          })            
+                          return false;
+                    });
+
+                    //修改 签名/座右铭
+                    form.on('submit(motto)', function(data){
+                          $.ajax({
+                               url:'/user/motto',
+                               data:data.field,
+                               success:function(res){
+                                      var res = JSON.parse(res);
+                                      layer.alert(res.msg,{time:2000, shift: 6 ,icon:6});                     
+                               },
+                               error:function(){
+                                      layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5}); 
+                               }
+                          })            
+                          return false;
+                    });
+
+                    //修改密码
+                    form.on('submit(resetPassword)', function(data){
+                          if(data.field.ConfirmPassword!=data.field.password){
+                                  layer.alert('两次输入密码不一致',{time:2000, shift: 6 ,icon:5});  
+                                  return false;
+                          }
+                          $.ajax({
+                               url:'/login/resetpaypswd',
+                               data:data.field,
+                               success:function(res){
+                                      var res = JSON.parse(res);
+                                      layer.alert(res.msg,{time:2000, shift: 6 ,icon:6});                   
+                               },
+                               error:function(){
+                                      layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5});  
+                               }
+                          })            
+                          return false;
+                    });
+
+
+                    //修改邮箱
+                    form.on('submit(email)', function(data){
+                          $.ajax({
+                               url:'/user/reSetEmail',
+                               data:data.field,
+                               success:function(res){
+                                      var res = JSON.parse(res);
+                                      layer.alert(res.msg);                      
+                               },
+                               error:function(){
+                                      layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5});      
+                               }
+                          })            
+                          return false;
+                    });
+                    //获取验证码
+                    function getCode(email){
+                          console.log(email);
+                          var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                          if(!reg.test(email)){
+                                layer.msg('请输入正确的邮箱!');
+                                return false;
+                          }
+                          $.ajax({
+                                 url:'/login/sendEmail',
+                                 data:{
+                                      email:email
+                                 },
+                                 success:function(res){
+                                        var res = JSON.parse(res);
+                                        layer.alert(res.msg,{time:2000, shift: 6 ,icon:6});  
+                                 },
+                                 error:function(){
+                                        layer.alert('请求超时！！！',{time:2000, shift: 6 ,icon:5});  
+                                 }
+                          })
+                    }
+                    z.getId('getReEmailCode').onclick=function(){
+                          var _this=this;
+                          if(z.hasClass(_this,'layui-btn-disabled')){
+                               layer.alert('正在发送验证码!');
+                               return false;
+                          }
+                          z.addClass(_this,'layui-btn-disabled');
+                          z.countdown(60,function(timeI){
+                               _this.innerHTML = timeI;
+                          },function(){
+                               z.removeClass(_this,'layui-btn-disabled');
+                               _this.innerHTML = '获取验证';
+                          });
+                          getCode(z.getId('reEmail').value);
+                          return false;
+                    }
+          });
+
+      </script>
+
+
+<% include ./include/footer.html %>
+

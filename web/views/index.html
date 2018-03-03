@@ -1,0 +1,145 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+<% include ./include/stop.html %>
+<script>
+      var runSql123 = '123';
+</script>
+
+    <div class="layui-container">
+               <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md9">
+                          <% if(__webPageInfo__.isTop.length!=0){ %>
+                          <div class="artice_content">
+                                <div class="breadcrumb">
+                                      <h3 style="color: #666;">置顶</h3>
+                                </div>
+                                <ul class="artice_ul">
+                                    <% __webPageInfo__.isTop.forEach(function(item,index){ %>
+                                     <li>
+                                            <a href="/user/homepage/<%= item.user_id %>" class="block user_img"><img src="<%= item.user_img %>"></a>
+                                            <h2>
+                                                  <span class="layui-span layui-badge"><%= item.clas_name %></span>
+                                                  <a href="/index/articleDetails/<%= item.id %>" class="layui-col-xs7"><%= item.title %></a>
+                                                  <span class="layui-badge layui-btn-danger">置顶</span>
+                                            </h2>
+                                            <div class="info">
+                                                 <div class="inline-block info_title layui-col-xs9">
+                                                     <a href="/user/homepage/<%= item.user_id %>"><cite><%= item.username %></cite></a>
+                                                     <span class="time" z-template="z.timeout({time:<%= item.time %>})"></span>
+                                                     <span class="time" style="vertical-align:-2px;">
+                                                           <i class="layui-icon">&#xe6c6;</i>
+                                                           &nbsp;<%= (item.point_num|0) %>
+                                                     </span>
+                                                 </div>
+                                                 <span class="layui-tell">
+                                                       <i class="layui-icon">&#xe611;</i>
+                                                       &nbsp;<%= (item.comment_num|0) %>
+                                                 </span>
+                                            </div>
+                                     </li>
+                                     <% }) %>
+                                </ul>
+                          </div>
+                          <% } %>
+                          <div class="artice_content artice_t15">
+                                <!-- <div class="breadcrumb">
+                                      <span class="layui-breadcrumb" lay-separator="|">
+                                          <a href="">娱乐</a>
+                                          <a href="">八卦</a>
+                                          <a href="">体育</a>
+                                          <a href="">搞笑</a>
+                                          <a href="">视频</a>
+                                          <a href="">游戏</a>
+                                          <a href="">综艺</a>
+
+                                      </span>
+                                </div> -->
+                                <div class="breadcrumb">
+                                      <h3 style="color: #666;">文章列表</h3>
+                                </div>
+                                <!-- 文章列表 -->
+                                <% if(webPageInfo.articles_num!=0){ %>
+                                <ul class="artice_ul" id="article_ul"></ul>
+                                <div id="test1" style="text-align: center;padding:50px 0;"></div>
+                                <% }else{ %>
+                                <div style="text-align: center;padding:50px 0;font-size: 16px;">很遗憾，没有搜到!</div>
+                                <% } %>
+                          </div>
+                    </div>
+                    <div class="layui-col-md3">
+                              <% include ./include/right.html %>
+                    </div>
+               </div>  
+    </div>
+
+    <script>
+          //JavaScript代码区域
+          layui.use(['jquery','element','layer','laypage'], function(){
+                var $ = layui.jquery,
+                    element = layui.element,
+                    layer = layui.layer,
+                    laypage = layui.laypage;
+                //执行一个laypage实例
+                laypage.render({
+                      elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+                      ,count: '<%= webPageInfo.articles_num %>'
+                      ,groups:3
+                      ,limit: 30
+                      ,jump: function(obj){
+                            console.log(obj);
+                            $.ajax({
+                                   url:"/index/getArtList",
+                                   data:{
+                                        curr:obj.curr,
+                                        limit:obj.limit
+                                   },
+                                   success:function(data){
+                                         // console.log(data);
+                                         var data = JSON.parse(data);
+                                         if(data.code==200){
+                                                function articeItem(obj){
+                                                    return '<li>'+
+                                                                    '<a href="/user/homepage/'+obj.user_id+'" class="block user_img">'+
+                                                                         '<img src="'+obj.user_img+'">'+
+                                                                    '</a>'+
+                                                                    '<h2>'+
+                                                                          '<span class="layui-span layui-badge">'+obj.clas_name+'</span>'+
+                                                                          '<a href="/index/articleDetails/'+obj.id+'" class="layui-col-xs7">'+obj.title+'</a>'+
+                                                                    '</h2>'+
+                                                                   ' <div class="info">'+
+                                                                        ' <div class="inline-block info_title layui-col-xs9">'+
+                                                                            '<a href="/user/homepage/'+obj.user_id+'" >'+
+                                                                                '<cite>'+obj.username+'</cite>'+
+                                                                            '</a>'+
+                                                                            ' <span class="time">'+ z.timeout({time:obj.time})+'</span>'+
+                                                                            ' <span class="time" style="vertical-align:-2px;"><i class="layui-icon">&#xe6c6;</i>&nbsp;'+(obj.point_num|0)+'</span>'+
+                                                                         '</div>'+
+                                                                         '<span class="layui-tell">'+
+                                                                              ' <i class="layui-icon">&#xe611;</i>&nbsp;'+(obj.comment_num|0)+''+
+                                                                         '</span>'+
+                                                                    '</div>'+
+                                                            '</li>';
+                                                }
+                                                if(data.result.length!=0){
+                                                      var InnnerHTML = '';
+                                                      for(var i=0;i<data.result.length;i++){
+                                                           InnnerHTML += articeItem(data.result[i]);
+                                                      }
+                                                      z.getId('article_ul').innerHTML = InnnerHTML;
+                                                }
+
+                                         }else{
+                                              layer.msg('请求超时！');
+                                         }
+                                   },
+                                   error:function(err){
+                                        layer.msg('请求超时！！！');
+                                   }
+                            })
+                      }
+                });
+
+          });
+
+   </script>
+<% include ./include/footer.html %>

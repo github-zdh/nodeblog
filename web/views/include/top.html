@@ -1,0 +1,105 @@
+    <div class="header_nav" style="background-color: #393D49;">
+        <div class="layui-container">
+                   <div class="layui-row layui-col-space1">
+                        <div class="layui-col-lg9 layui-col-md9 layui-col-sm6 layui-col-xs3">
+                              <a class="logo inline_block" href="/index">
+                                     <h1 class="logo">ZDH</h1>
+                              </a>
+                              <ul class="layui-nav nav layui-show-lg-inline-block layui-show-md-inline-block layui-hide-sm layui-hide-xs" lay-filter="">
+                                  <% webPageInfo.top.nav_list.forEach(function(list,index){ %>
+                                  <li class="layui-nav-item">
+                                      <a href="<%= list.href %>"><%= list.title %></a>
+                                      <% if(webPageInfo.top.nav_list[index].child.length!=0){ %>
+                                      <dl class="layui-nav-child"> 
+                                          <% webPageInfo.top.nav_list[index].child.forEach(function(childList,childIndex){ %>
+                                          <dd><a href="<%= childList.href %>"><%= childList.title %></a></dd>
+                                          <% }) %>
+                                      </dl>
+                                      <% } %>
+                                  </li>
+                                  <% }) %>
+                              </ul>
+                        </div>
+                        <div class="layui-col-lg3 layui-col-md3 layui-col-sm6 layui-col-xs9">
+                              <div class="layui-nav login_register" lay-filter="">
+                                    <% if(webPageInfo.top.is_login){ %>
+                                    <li class="layui-nav-item">
+                                          <a href="javascript:;">
+                                              <img src="<%= webPageInfo.userInfo.user_img %>" class="layui-nav-img" id="top_user_img">
+                                          </a>
+                                          <dl class="layui-nav-child"> 
+                                              <% webPageInfo.webAdmin.user_nav.forEach(function(item,index){ %>
+                                              <dd><a href="<%= item.href %><% if(item.title=='我的主页'){ %><%= webPageInfo.userInfo.id %><% } %> "><%= item.title %></a></dd>
+                                              <% }) %>
+                                              <dd><a href="/index/addArticle">发布帖子</a></dd>
+                                              <dd><a href="javascript:void(0);" id="logout">退出登录</a></dd>
+                                          </dl>
+                                    </li>
+                                    <% }else{ %>
+                                    <li class="layui-nav-item"><a href="<%= webPageInfo.top.login_url %>">登录</a></li>
+                                    <li class="layui-nav-item"><a href="<%= webPageInfo.top.register_url %>">注册</a></li>
+                                    <% } %>
+                                    <% if(webPageInfo.top.nav_list.length!=0){ %>
+                                    <li class="layui-nav-item layui-hide-md">
+                                        <a href="javascript:void(0)" class="layui-icon" onclick="L_demoNav.className='small_show_box block';" style="font-size: 30px; vertical-align: 3px;">
+                                           &#xe65f;
+                                        </a>
+                                    </li>
+                                    <% } %>
+                              </div>
+                        </div>
+                   </div>  
+        </div>
+    </div>
+
+  <!-- 小屏幕时显示 -->
+    <div class="layui-hide-md">
+          <div class="small_show_box none " id="L_demoNav">     
+                <div class="small_nav_hide layui-side" onclick="L_demoNav.className='small_show_box none';"></div>
+                <div class="layui-side layui-bg-black">
+                  <div class="layui-side-scroll">                        
+                       <ul class="layui-nav layui-nav-tree site-demo-nav" lay-filter="navdemo">
+                          <% webPageInfo.top.nav_list.forEach(function(list,index){ %>
+                          <li class="layui-nav-item">
+                              <a class="<%= list.href %>" href="javascript:;"><%= list.title %></a>
+                              <% if(webPageInfo.top.nav_list[index].child.length!=0){ %>
+                              <dl class="layui-nav-child">
+                                  <% webPageInfo.top.nav_list[index].child.forEach(function(childList,childIndex){ %>
+                                  <dd class="">
+                                    <a href="<%= childList.href %>"><%= childList.title %></a>
+                                  </dd>
+                                  <% }) %>
+                              </dl>
+                              <% } %>
+                          </li>
+                          <% }) %>
+                      </ul>
+                    </div>
+                </div>
+          </div> 
+    </div>
+
+    <script>
+          if(z.getId('logout')){
+                  z.getId('logout').onclick=function(){
+                           z.ajax({
+                                url:'/login/logout',
+                                type:'get',
+                                sCallback:function(res){
+                                     console.log(res);
+                                     if(res.code==200){
+                                          z.layer.msg('退出成功',{time:2000, shift: 6 ,icon:6});
+                                          setTimeout(function(){
+                                               window.location.replace('/index');
+                                          },2000)
+                                          return false;
+                                     }
+                                     z.layer.msg('请求超时',{time:2000, shift: 6 ,icon:6});
+                                },
+                                eCallback:function(){
+                                     z.layer.msg('请求超时',{time:2000, shift: 6 ,icon:6});
+                                }
+                           })
+                 }
+          }       
+    </script>

@@ -1,0 +1,98 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+        
+
+        <!-- 用户信息 -->
+        <div class="member_userInfo whiteBC">
+               <!-- <%= JSON.stringify(webPageInfo) %> -->
+               <div class="user_img"><img src="<%= webPageInfo.personalInfo.user_img %>" width="100px" height="100px"></div>
+               <h1><%= webPageInfo.personalInfo.nickname||webPageInfo.personalInfo.username %></h1>
+               <div class="time_address">
+                      <span><i class="layui-icon">&#xe637;</i>&nbsp;<span z-template="z.timeout({time:<%= webPageInfo.personalInfo.addtime %>})"></span> 加入</span>
+                      <span>
+                            <i class="layui-icon">&#xe715;</i>&nbsp;
+                            <%= webPageInfo.personalInfo.province %>
+                            <%= webPageInfo.personalInfo.city %>
+                            <%= webPageInfo.personalInfo.area %>
+                      </span>
+               </div>
+               <div class="autograph"> <%= (webPageInfo.personalInfo.motto||'（这个人懒得留下签名）') %></div>
+        </div>
+
+        <div class="layui-container artice_t15 whiteBC">
+               <div class="layui-row layui-col-space15 add_article" style="padding:15px;">
+                      <h3 class="add_article_title"><span>发表过的文章</span></h3>
+                      <% if(webPageInfo.articles_num!=0||webPageInfo.articles_num!=''){ %>
+                            <ul class="article_list" id="article_ul"></ul>
+                            <div id="test1" style="text-align: center;padding:50px 0;"></div>
+                      <% }else{ %>
+                            <div style="padding:50px 0 ;text-align: center;color:#666;font-size: 14px;">这个人懒得发表文章!</div>
+                      <% } %>
+               </div>  
+        </div>
+
+
+
+
+    <script>
+          //JavaScript代码区域
+          layui.use(['jquery','element','layer','laypage'], function(){
+                var $ = layui.jquery,
+                    element = layui.element,
+                    layer = layui.layer,
+                    laypage = layui.laypage;
+               //监听导航点击
+                element.on('nav(navdemo)', function(elem){
+                    //console.log(elem)
+                    layer.msg(elem.text());
+                });
+                //执行一个laypage实例
+                laypage.render({
+                      elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+                      ,count: '<%= webPageInfo.articles_num %>'
+                      ,groups:3
+                      ,limit: 30
+                      ,jump: function(obj){
+                            // console.log(obj);
+                            $.ajax({
+                                   url:"/index/getArtList",
+                                   data:{
+                                        uid:'<%= webPageInfo.personalInfo.uid %>',
+                                        curr:obj.curr,
+                                        limit:obj.limit
+                                   },
+                                   success:function(data){
+                                         // console.log(data);
+                                         var data = JSON.parse(data);
+                                         if(data.code==200){
+                                                function articeItem(obj){
+                                                    return '<li>'+
+                                                                  '<a href="/index/articleDetails/'+obj.id+'" class="layui-row layui-col-space15 block">'+
+                                                                     ' <div class="layui-col-sm9 title">'+obj.title+'</div>'+
+                                                                     ' <div class="layui-col-sm3 atime">'+z.timeout({time:obj.time})+' &nbsp;'+(obj.point_num|0)+'赞/'+(obj.comment_num|0)+'答'+
+                                                                      '</div>'+
+                                                                 ' </a>'+
+                                                            '</li>';
+                                                }
+                                                var InnnerHTML = '';
+                                                for(var i=0;i<data.result.length;i++){
+                                                     InnnerHTML += articeItem(data.result[i]);
+                                                }
+
+                                                z.getId('article_ul').innerHTML = InnnerHTML;
+
+                                         }else{
+                                              layer.msg('请求超时！');
+                                         }
+                                   },
+                                   error:function(err){
+                                        layer.msg('请求超时！！！');
+                                   }
+                            })
+                      }
+                });
+
+          });
+
+   </script>
+<% include ./include/footer.html %>

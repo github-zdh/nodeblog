@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>示例登陆页</title>
+    <style>
+        #win10-login {
+            background: url('./img/wallpapers/login.jpg') no-repeat fixed;
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;
+            position: fixed;
+            z-index: -1;
+            top: 0;
+            left: 0;
+        }
+
+        #win10-login-box {
+                width: 300px;
+                position: fixed;
+                top:50%;
+                left: 50%;
+                margin-left: -150px;
+                transform:translate(0,-60%);
+                -webkit-transform:translate(0,-60%);
+                -moz-transform:translate(0,-60%);
+                -ms-transform:translate(0,-60%);
+                -o-transform:translate(0,-60%);
+        }
+
+        .win10-login-box-square {
+            width: 105px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background-color: darkgray;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .win10-login-box-square::after {
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+
+        .win10-login-box-square .content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        input {
+            width: 90%;
+            display: block;
+            border: 0;
+            margin: 0 auto;
+            line-height: 36px;
+            font-size: 13px;
+            padding: 0 1em;
+            border-radius: 5px;
+            margin-bottom: 11px;
+        }
+
+        .login{
+            width: 91%;
+            color: #999;
+        }
+        input[type='submit']{
+             width: 100%;
+             background: rgba(0,0,255,0.65);
+             color:#fff;
+        }
+        .code input{width: 30%; float: left;}
+        .code img{width: 30%; float: left;margin-left: 5%;height: 36px;}
+        .code input[type='submit']{width: 20%; float: right;background: rgba(0,0,255,0.65);color:#fff;cursor: pointer;}
+    </style>
+</head>
+<body>
+<div id="win10-login">
+    <div style="height: 10%;min-height: 120px"></div>
+    <div id="win10-login-box">
+        <div class="win10-login-box-square">
+            <img src="./img/avatar.jpg" class="content"/>
+        </div>
+        <p style="font-size: 24px;color: white;text-align: center">你好！请登录</p>
+        <form target="_self"  method="post"  action="/admin/login"  enctype="multipart/form-data">
+            <!--用户名-->
+            <input type="text" placeholder="请输入用户名" name="username" class="login">
+            <!--密码-->
+            <input type="password" placeholder="请输入密码" name="password" class="login">
+            <!--登陆按钮-->
+            <div class="code">
+                  <input type="text" placeholder="请输入验证码" class="inputCode">
+                  <img src="./img/wallpapers/login.jpg">
+                  <input type="submit"  value="注册" class="login"/>
+                  <br style="clear: both;" />
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+<script src="../../../socket.io/socket.io.js"></script>
+<script src="../../../js/jquery-2.2.4.min.js"></script>
+     <div>
+           <input type="text" name="name" class="username">
+           <button>usernameLogin</button>
+     </div>
+      <script>
+             var socketIo = io();
+             $('button').click(function(){
+             	    console.log();
+             	    var username=$('.username').val();
+             	    $(this).text('正在登陆。。。');
+             	    setTimeout(function(){
+             	    	  socketIo.emit('login',username);
+             	    },1000)
+             	    // setTimeout(function(){
+             	    // 	  window.location.href='./socketIo';
+             	    // },1500)             	    
+             })
+              socketIo.on('new message',function(data){
+                   console.log(data);
+              })
+      </script>
+   </body>
+</html>

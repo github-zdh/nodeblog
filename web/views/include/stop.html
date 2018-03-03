@@ -1,0 +1,35 @@
+<div class="sheader whiteBC">
+      <div class="layui-container">
+                 <div class="layui-row layui-col-space1">
+                      <div class="layui-col-lg9 layui-col-md6 layui-col-sm6 layui-col-xs7">
+                           <div class="layui-col-lg6 search_keyword"> 
+                                 <form class="layui-form layui-form-pane form-search" action="">
+                                       <input type="text" name="keyword"  lay-verify="required" placeholder="请输入文章标题" autocomplete="off" class="layui-input">
+                                       <button class="layui-btn layui-icon" lay-submit='' lay-filter="search">&#xe615;</button>
+                                 </form>
+                           </div>
+                      </div>
+                      <div class="layui-col-lg3 layui-col-md6 layui-col-sm6 layui-col-xs5" style="text-align: right;">
+                            <a href="/index/addArticle" class="layui-btn">发表新帖</a>
+                      </div>
+                 </div>  
+      </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','form'], function(){
+          var element = layui.element,
+              form = layui.form,
+              layer = layui.layer;
+              form.on('submit(search)',function(data){
+                    if(document.location.pathname.indexOf('/index/searchList/')==-1){
+                          window.location.href="/index/searchList/?keyword="+data.field.keyword;
+                    }else{
+                          var url = "/index/searchList/?keyword="+data.field.keyword;
+                          window.location.replace(url);
+                    }
+                    return false;
+              })
+    });
+
+</script>

@@ -1,0 +1,402 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+<% include ./include/stop.html %>
+
+    <div class="layui-container">
+               <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md9 article_details">
+                          <div class="artice_content">
+                          <!-- <%= JSON.stringify(webPageInfo) %> -->
+                                <div class="breadcrumb">
+                                      <h3 style="color: #666;font-style: 20px;"><%= webPageInfo.posts.title %></h3>
+                                      <div class="fly-detail-info">
+                                            <span class="layui-badge layui-bg-green fly-detail-column"> <%= webPageInfo.posts.clas_name %>  </span>
+<!--                                             <span class="layui-badge" style="background-color: #999;">未结</span>
+                                            <span class="layui-badge layui-bg-black">置顶</span>
+                                            <span class="layui-badge layui-bg-red">精帖</span> -->
+                                            <span class="comment_nums">
+                                                <a href="javascript:void(0)" class="reported" style="font-size: 12px;" title="举报" id="reported" data-art="<%= webPageInfo.posts.id %>">
+                                                    <i class="layui-icon" title="举报">&#xe69c;</i>&nbsp;举报
+                                                </a>
+                                                <a href="#comment"><i class="layui-icon" title="回复">&#xe611;</i>&nbsp;<%= webPageInfo.posts.commentLenght||0 %></a>
+                                                <a href="javascript:void(0)" id="addArtPoint" data-posts-id="<%= webPageInfo.posts.id %>">
+                                                      <i class="layui-icon" title="人气">&#xe6c6;</i>&nbsp;
+                                                      <span id="point_num"><%= webPageInfo.posts.point_num||0 %></span>
+                                                </a> 
+                                            </span>
+                                      </div>
+                                      <% if(webPageInfo.posts.source_href!=''){ %>
+                                      <div class="fly-detail-info">
+                                            来源：
+                                            <a href="<%= webPageInfo.posts.source_link %>">
+                                                 <% if(webPageInfo.posts.source!=''){ %>
+                                                     <%= webPageInfo.posts.source %>
+                                                 <% }else{ %>
+                                                     <%= webPageInfo.posts.source_link %>
+                                                 <% } %>
+                                            </a>
+                                      </div>
+                                      <% } %>
+                                </div>
+                                <div class="user_info">
+                                      <ul class="article_ul">
+                                           <li>
+                                                  <a href="/user/homepage/<%= (webPageInfo.posts.user_id) %>" class="block user_img">
+                                                      <img src="<%= (webPageInfo.posts.user_img) %>">
+                                                  </a>
+                                                  <h2>
+                                                        <a href="/user/homepage/<%= (webPageInfo.posts.user_id) %>" class="layui-col-xs7">
+                                                           <%= (webPageInfo.posts.nickname||webPageInfo.posts.username) %>
+                                                        </a>
+                                                  </h2>
+                                                  <div class="info">
+                                                       <div class="inline-block info_title layui-col-xs9">
+                                                           <span class="time" z-template="z.timeout({time:<%= webPageInfo.posts.time %>})"></span>
+                                                       </div>
+                                                  </div>
+                                           </li>
+                                     </ul>
+                                </div>
+                                <div class="article_details_content" id="article_details_content" style="word-break: break-all;">
+                                      <div id="overImg_100"><%- webPageInfo.posts.content %></div>
+                                </div>
+                          </div>
+                          <div class="artice_content article_details artice_t15">                                
+                                <div class="replies">
+                                      <fieldset class="layui-elem-field layui-field-title " style="text-align: center;">
+                                            <legend>回帖</legend>
+                                      </fieldset>
+                                </div>
+                                <% if(webPageInfo.posts.commentLenght!=0){ %>
+                                    <ul class="article_ul" id="article_ul"></ul>
+                                    <div id="test1" style="padding:30px 0 0;text-align: center;"></div>
+                                <% }else{ %>
+                                    <div style="padding:10px 0 30px;text-align: center;color:#666;font-size: 14px;">等待你的回复!</div>
+                                <% } %>
+                               <div style="padding:20px;">
+                                          <form class="layui-form layui-form-pane artice_t15" action="">
+                                                    <div class="layui-form-item layui-form-text" id="comment">
+                                                          <label class="layui-form-label">回复</label>
+                                                          <div class="layui-input-block">
+                                                               <textarea placeholder="随便写些什么刷下存在感(最多100字)" name="motto" class="layui-textarea" id="commentTextarea" lay-verify="motto"></textarea>
+                                                          </div>
+                                                          <!-- <textarea id="layedit" style="display: none;"></textarea> -->
+                                                    </div>
+                                                    <div class="layui-row layui-col-space15 layui-form-item">
+                                                          <div class="layui-form-item">
+                                                                <button class="layui-btn" lay-submit="" lay-filter="reply">提交回复</button>
+                                                                <!-- <button class="layui-btn" lay-submit="" lay-filter="demo2">跳转式提交</button> -->
+                                                           </div>
+                                                    </div>
+                                          </form>
+                               </div>
+                          </div>
+                    </div>
+                    <div class="layui-col-md3">
+                              <% include ./include/right.html %>
+                    </div>
+               </div>  
+    </div>
+
+
+      <script>
+          //JavaScript代码区域
+          layui.use(['jquery','element','layer','laypage','form','layedit'], function(){
+                var $ = layui.jquery,
+                    form = layui.form,
+                    layedit=layui.layedit,
+                    element = layui.element,
+                    layer = layui.layer,
+                    laypage = layui.laypage;
+                var curr = 1;//主要是用于判断当前查看评论的位置
+                var count = parseInt('<%= webPageInfo.posts.commentLenght %>');//总共有多少条评论
+               //监听导航点击
+                element.on('nav(navdemo)', function(elem){
+                  //console.log(elem)
+                  layer.msg(elem.text());
+                });
+                //执行一个laypage实例
+                laypageFn();
+                function laypageFn(){
+                          laypage.render({
+                                elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+                                ,count: count
+                                ,groups:3
+                                ,limit: 15
+                                ,jump: function(obj){
+                                      // console.log(obj);
+                                      curr=obj.curr;
+                                      $.ajax({
+                                             url:"/index/getArtComment",
+                                             data:{
+                                                  id:'<%= webPageInfo.posts.id %>',
+                                                  curr:obj.curr,
+                                                  limit:obj.limit
+                                             },
+                                             success:function(data){
+                                                   // console.log(data);
+                                                   var data = JSON.parse(data);
+                                                   if(data.code==200){
+                                                          function articeItem(obj,index){
+                                                              return '<div class="artice_item">'+
+                                                                            ' <li>'+
+                                                                                    '<a href="" class="block user_img"><img src="'+obj.user_img+'"></a>'+
+                                                                                    '<h2>'+
+                                                                                         ' <a href="" class="layui-col-xs7">'+obj.username+'</a>'+
+                                                                                   ' </h2>'+
+                                                                                    '<div class="info">'+
+                                                                                        ' <div class="inline-block info_title layui-col-xs9">'+
+                                                                                            '<span class="time">'+z.timeout({time:obj.time})+'</span>'+
+                                                                                         '</div>'+
+                                                                                    '</div>'+
+                                                                             '</li>'+
+                                                                             '<div class="art_content">'+obj.content+'</div>'+
+                                                                              '<span class="comment_nums">'+
+                                                                                  //暂时不添加到数据库；只能 @
+                                                                                  '<a href="#comment" onclick="comment(\''+obj.id+'\',\''+obj.username+'\')">'+
+                                                                                        '<i class="layui-icon" title="回复">&#xe611;</i> '+
+                                                                                        // (obj.comment_num||0)+
+                                                                                  '</a>'+
+                                                                                  '<a href="javascript:void(0)" data-class="addCommentPoint" data-id="'+obj.id+'" data-index="'+index+'">'+
+                                                                                      '<i class="layui-icon" title="人气">&#xe6c6;</i> '+
+                                                                                      '<span>'+(obj.point_num||0) +'</span>'+
+                                                                                   '</a> '+
+                                                                              '</span>'+
+                                                                       '</div>';
+                                                          }
+                                                          if(data.result.length!=0){
+                                                                  var InnnerHTML = '';
+                                                                  for(var i=0;i<data.result.length;i++){
+                                                                       InnnerHTML += articeItem(data.result[i],i);
+                                                                  }
+                                                                  z.getId('article_ul').innerHTML = InnnerHTML;
+
+                                                                  // onclick="addCommentPoint(\''+obj.id+'\',\''+index+'\')"
+                                                                  for(var i=0;i<z.getDataClass('addCommentPoint').length;i++){
+                                                                       z.getDataClass('addCommentPoint')[i].onclick=function(){
+                                                                              var _this = this;
+                                                                              addCommentPointAjax(_this,_this.getAttribute('data-id'),_this.getAttribute('data-index'));
+                                                                       }
+                                                                  }
+                                                                  function addCommentPointAjax(_this,id,index){
+                                                                       z.ajax({
+                                                                            url:'/index/addCommentPoint',
+                                                                            type:'get',
+                                                                            data:{
+                                                                                comment_id:id
+                                                                            },
+                                                                            sCallback:function(res){
+                                                                                     if(res.code==200){
+                                                                                          z.getTagName('span',_this)[0].innerHTML=res.result.point_num;
+                                                                                     }
+                                                                                     if(res.msg=='true'){
+                                                                                           layer.msg('点赞成功');
+                                                                                     }else if(res.msg=='false'){
+                                                                                           layer.msg('取消成功',{time:2000, shift: 6 ,icon:5});
+                                                                                     }else{
+                                                                                           layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
+                                                                                     }
+                                                                            },
+                                                                            eCallback:function(){
+                                                                                 layer.msg('请求超时！！！',{time:2000, shift: 6 ,icon:5});
+                                                                            }
+                                                                       })
+                                                                  }
+                                                          }
+                                                   }else{
+                                                        layer.msg(data.msg);
+                                                   }
+                                             },
+                                             error:function(err){
+                                                  layer.msg('请求超时！！！',{time:2000, shift: 6 ,icon:5});
+                                             }
+                                      })
+                                }
+                          });
+                }
+
+               
+                 z.getId('addArtPoint').onclick=function(){
+                          var posts_id = this.getAttribute('data-posts-id');
+                          z.ajax({
+                               url:'/index/addArtPoint',
+                               data:{
+                                    posts_id:posts_id
+                               },
+                               sCallback:function(res){
+                                   if(res.code==200){
+                                       z.getId('point_num').innerHTML=res.result.point_num;
+                                   }
+                                   if(res.msg=='true'){
+                                         layer.msg('点赞成功',{time:2000, shift: 6 ,icon:6});
+                                   }else if(res.msg=='false'){
+                                         layer.msg('取消成功',{time:2000, shift: 6 ,icon:5});
+                                   }else{
+                                         layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
+                                   }
+                               },
+                               eCallback:function(err){
+                                   console.log(err);
+                               }
+                          })
+                 }
+
+                 z.getId('reported').onclick=function(){
+                              var data_art = this.getAttribute('data-art');
+                              z.ajax({
+                                     url:'/index/judgeReport',
+                                     data:{
+                                          art_id:data_art
+                                     },
+                                     sCallback:function(res){
+                                           if(res.code==200){
+                                                reportedFn('举报内容/原因',1);
+                                                return false;
+                                           }
+                                           layer.msg(res.msg,{time:2000,shift:6,icon:5});
+                                     },
+                                     eCallback:function(err){
+                                         console.log(err);
+                                     }
+                              })
+                              function reportedFn(title,shift,style){
+                                        layer.open({
+                                              title: title 
+                                              ,shift:shift
+                                              ,content: '<textarea placeholder="请输入举报内容/原因" style="width:100%;border:0;height:100px;'+(style||'')+'"></textarea>'
+                                              ,btn: ['确定', '取消']
+                                              ,yes: function(index, layero){
+                                                //按钮【按钮一】的回调
+                                                       var content = z.getTagName('textarea',layero[0])[0].value;
+                                                       if(content==''){
+                                                             reportedFn('举报内容/原因',6,'border:1px solid red;');
+                                                             return false;
+                                                       }else{
+                                                              console.log('提交')
+                                                              z.ajax({
+                                                                   url:'/index/report',
+                                                                   data:{
+                                                                        art_id:data_art,
+                                                                        content:content
+                                                                   },
+                                                                   sCallback:function(res){
+                                                                         layer.msg(res.msg,{shift:6,icon:6});
+                                                                   },
+                                                                   eCallback:function(err){
+                                                                       console.log(err);
+                                                                   }
+                                                              })
+                                                       }
+                                              }
+                                              ,cancel: function(){ 
+                                                //右上角关闭回调
+                                                
+                                                //return false 开启该代码可禁止点击该按钮关闭
+                                              }
+                                        });
+                              }
+                 }
+
+                // $('#article_ul li .addCommentPoint')[0].click(function(){
+                //   console.log('0')
+                // })
+
+
+                 // 提交回复、评论
+			    // layedit.set({
+			    //         uploadImage: {
+			    //             url: 'ajax/addArticleImg' //接口url
+			    //             ,type:'post'
+			    //         }
+			    // });
+			    // //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+			    // var layeditIndex = layedit.build('layedit',{
+			    //           uploadImage: {
+			    //                     url: '../ajax/addArticleImg' //接口url
+			    //                     ,type:'post'
+			    //                 }
+			    // }); //建立编辑器
+
+			    // form.on('submit(reply)',function(data){
+			    //          //有待完成(IE不支持)；还有不能上传太多文本
+			    //         // 把富文本编辑器的赋值到content中
+			    //         data.field.content=layedit.getContent(layeditIndex);
+			    //         if(data.field.title.length>100){
+			    //              layer.msg('标题最多100字符!');
+			    //              return false;
+			    //         }
+			    //         if(data.field.source.length>100){
+			    //              layer.msg('来源描述最多100字符!');
+			    //              return false;
+			    //         }
+			    //         if(data.field.content.length>35000){
+			    //              layer.msg('上传文本过大；请重新编辑！');
+			    //              return false;
+			    //         }
+			    //         console.log(data.field);
+			    //         $.ajax({
+			    //              url:'/index/addArtContent',
+			    //              type:'get',
+			    //              data:data.field,
+			    //              success:function(res){
+			    //                     console.log(res);     
+			    //                     var res = JSON.parse(res);
+			    //                     layer.msg(res.msg);
+			    //                     if(res.code==200){
+			    //                          window.location.replace(res.result.url);
+			    //                     }
+			                                                                                 
+			    //              },
+			    //              error:function(){
+			                  
+			    //              }
+			    //         })
+			    //         return false;
+			    // })
+                 // 提交回复、评论
+                 form.on('submit(reply)',function(data){
+                            // console.log(data)
+                            $.ajax({
+                                     url:"/index/replyPoint",
+                                     type:'get',
+                                     data:{
+                                          id:'<%= webPageInfo.posts.id %>',
+                                          motto:data.field.motto
+                                     },
+                                     success:function(res){
+                                          var res =  JSON.parse(res);
+                                          console.log(res);
+                                          if(res.code==200){
+                                               layer.msg('添加成功',{time:2000, shift: 6 ,icon:6});
+                                               // console.log(curr);
+                                               count++;
+                                               if(curr==1){//如果为1 重新请求加载评论接口
+                                                      laypageFn();
+                                               }
+                                               // laypageFn();
+                                               return false;
+                                          }
+                                          layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
+                                     },
+                                     error:function(err){
+                                         layer.msg('请求超时')
+                                     }
+                            })
+                            return false;
+                 })
+
+          });
+          function comment(id,username){
+                location.hash = '#comment';
+                z.getId('commentTextarea').value=z.getId('commentTextarea').value+'@'+username+' ' 
+
+          }
+          
+           // 富文本编辑器中图片超出显示100%
+           z.overImg_100();
+
+
+      </script>
+
+
+<% include ./include/footer.html %>

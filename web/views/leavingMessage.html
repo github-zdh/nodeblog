@@ -1,0 +1,71 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+
+    <div class="layui-container artice_t15 whiteBC">
+             <div class="layui-row layui-col-space15 add_article" style="padding:15px;">
+                    <h3 class="add_article_title"><span>发表新帖</span></h3>
+                        <form class="layui-form layui-form-pane artice_t15" action="">
+                                  <div class="layui-row layui-col-space15 layui-form-item">
+                                        <div class="layui-col-md3">
+                                                <div class="layui-form-item">
+                                                        <label class="layui-form-label">所在专栏</label>
+                                                        <div class="layui-input-block">
+                                                          <select name="interest" lay-filter="aihao">
+                                                                  <% webPageInfo.clas.forEach(function(list,index){ %>
+                                                                  <option value="<%=list.id%>"><%=list.clas_name%></option>
+                                                                  <% }) %>
+                                                          </select>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="layui-col-md9">
+                                                <div class="layui-form-item">
+                                                        <label class="layui-form-label">标题</label>
+                                                        <div class="layui-input-block">
+                                                          <input type="text" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                              <label class="layui-form-label">来源</label>
+                                              <div class="layui-input-block">
+                                                <input type="text" name="title" autocomplete="off" placeholder="请输入来源(选填)" class="layui-input">
+                                              </div>
+                                        </div>
+                                        <div class="layui-form-item layui-form-text">
+                                              <label class="layui-form-label">文本域</label>
+                                              <div class="layui-input-block">
+                                                <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+                                              </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                              <button class="layui-btn" lay-submit="" lay-filter="demo2">跳转式提交</button>
+                                        </div>
+                                  </div>
+                        </form>
+
+
+
+
+
+
+
+             </div>  
+    </div>
+
+      <script>
+          //JavaScript代码区域
+          layui.use(['element','layer','form'], function(){
+                var element = layui.element,
+                    layer = layui.layer,
+                    form = layui.form;
+               //监听导航点击
+                element.on('nav(navdemo)', function(elem){
+                  //console.log(elem)
+                  layer.msg(elem.text());
+                });
+          });
+
+      </script>
+
+<% include ./include/footer.html %>

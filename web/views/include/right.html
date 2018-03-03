@@ -1,0 +1,73 @@
+<div class="artice_content">
+      <div class="breadcrumb">
+              <h3 style="color: #666;">签到</h3>
+      </div>
+      <div style="padding:20px;text-align: center;">
+            <button class="layui-btn layui-btn-danger <% if(__webPageInfo__.sign){ %> layui-btn-disabled <% } %>" id="z_sign">今日签到</button>
+      </div>                                    
+</div>
+<div class="artice_content artice_t15">
+      <style>
+          #test-n1,#layui-laydate1,.layui-laydate-main,#test-n1 table{width: 100%;}
+          .artice_content .layui-laydate{
+                 border: 0; 
+                 box-shadow:none; 
+          }
+          .artice_content .layui-laydate-footer{display: none;}
+      </style>
+      <div class="site-demo-laydate">
+            <div class="layui-inline" id="test-n1"></div>
+      </div>                                  
+</div>
+
+<div class="artice_content artice_t15">
+<!--   <div class="breadcrumb">
+        <span class="layui-breadcrumb" lay-separator="/">
+            <a href="javascript:void(0);" class="ad">众筹广告位</a>
+            <a href="javascript:void(0);" class="ad">独立广告位</a>
+        </span>
+  </div> -->
+      <div style="padding:20px;text-align: center;">
+            <img src="../../../images/web/1.gif" width="100%">
+      </div>                                    
+</div>
+
+
+<script>
+    //JavaScript代码区域
+    layui.use(['jquery','element','layer','laydate'], function(){
+          var $ = layui.jquery,
+              element = layui.element,
+              laydate = layui.laydate,
+              layer = layui.layer;
+              // 时间
+               laydate.render({
+                      elem: '#test-n1'
+                      ,position: 'static'
+                      ,btns: ['clear']
+              });
+
+              var z_sign = z.getId('z_sign');
+              z_sign.onclick=function(){
+                    if(z.hasClass(z_sign,'layui-btn-disabled')){
+                         layer.msg('已经签到了',{time:2000, shift: 6 ,icon:5});
+                         return false;
+                    }
+                    z.ajax({
+                         url:'/user/sign',
+                         type:'get',
+                         sCallback:function(res){
+                               if(res.code==200){
+                                    layer.msg(res.msg,{time:2000, shift: 6 ,icon:6});
+                                    z.addClass(z_sign,'layui-btn-disabled');
+                                    return false;
+                               }
+                               layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
+                         }
+                    })
+              }
+
+    });
+
+</script>
+

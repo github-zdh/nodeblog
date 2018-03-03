@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	  <meta charset="UTF-8">
+	  <title>用户信息</title>
+	  <meta name="renderer" content="webkit">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	  <link rel="stylesheet" href="../../layui/css/layui.css"  media="all">
+	  <script src="../../layui/layui.js" charset="utf-8"></script>
+	  <script src="../../js/z.js" charset="utf-8"></script>
+	  <style>
+	        .new_layui_table table th,.new_layui_table table td{max-width: 300px;}
+	        .new_layui_table .layui-table-cell{height: auto;white-space:normal;}
+	        .new_table_page{width: 100%;overflow:hidden;}
+	  </style>
+</head>
+<body style="">
+
+    <div class="new_layui_table">
+        <table cellspacing="0" cellpadding="0" border="0" class="layui-table">
+            <thead>
+                <tr>
+                    <th data-field="id">
+                        <div class="layui-table-cell laytable-cell-1-id">
+                            <span>ID</span>
+                        </div>
+                    </th>
+                    <th data-field="username">
+                        <div class="layui-table-cell laytable-cell-1-username">
+                              <span>用户名</span>
+                        </div>
+                    </th>
+                    <th data-field="sex">
+                        <div class="layui-table-cell laytable-cell-1-sex">
+                            <span>性别</span>
+                        </div>
+                    </th>
+                    <th data-field="city">
+                        <div class="layui-table-cell laytable-cell-1-city">
+                             <span>手机号</span>
+                        </div>
+                    </th>
+                    <th data-field="sign">
+                        <div class="layui-table-cell laytable-cell-1-sign">
+                            <span>邮箱</span>
+                        </div>
+                    </th>
+                    <th data-field="classify">
+                        <div class="layui-table-cell laytable-cell-1-classify">
+                             <span>是否管理员</span>
+                        </div>
+                    </th>
+                    <th data-field="wealth">
+                    <div class="layui-table-cell laytable-cell-1-wealth">
+                        <span>是否封号</span>
+                    </div>
+                    </th>
+                    <th data-field="9">
+                        <div class="layui-table-cell laytable-cell-1-9" align="center">
+                             <span></span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+		            <% data.forEach(function(list,index){ %>
+		                <tr data-index="0" class="">
+		                    <td data-field="id">
+		                        <div class="layui-table-cell laytable-cell-1-id"><%= list.id %></div>
+		                    </td>
+		                    <td data-field="username">
+		                        <div class="layui-table-cell laytable-cell-1-username"><%= list.username %></div>
+		                    </td>
+		                    <td data-field="sex">
+		                        <div class="layui-table-cell laytable-cell-1-sex"><% if(list.sex==0){ %> 女 <% }else{ %> 男 <% } %></div>
+		                    </td>
+		                    <td data-field="city">
+		                        <div class="layui-table-cell laytable-cell-1-city"><%= list.phone %></div>
+		                    </td>
+		                    <td data-field="sign">
+		                        <div class="layui-table-cell laytable-cell-1-sign"><%= list.email %></div>
+		                    </td>
+		                    <td data-field="classify">
+		                        <div class="layui-table-cell laytable-cell-1-classify"><% if(list.is_admin==0){ %> 否 <% }else{ %> 是 <% } %></div>
+		                    </td>
+		                    <td data-field="wealth">
+		                        <div class="layui-table-cell laytable-cell-1-wealth">
+		                              <div class="layui-form">
+									      <input type="checkbox" name="yyy" lay-skin="switch" lay-text="ON|OFF" <% if(list.is_valid==0){ %> checked <% } %>>
+									      <div class="layui-unselect layui-form-switch <% if(list.is_valid==0){ %> layui-form-onswitch <% } %>" lay-skin="_switch">
+									          <em>ON</em><i></i>
+									      </div>
+									  </div>
+		                        </div>
+		                    </td>
+		                    <td data-field="9" align="center" data-off="true">
+		                        <div class="layui-table-cell laytable-cell-1-9" style="padding:0px;">
+		                            <a class="layui-btn layui-btn-primary layui-btn-xs site-demo-active"  data-id="<%= list.id %>" data-tabId="<%= list.id %>" data-url="./role" title="查看详情">查看详情</a>
+		                            <a class="layui-btn layui-btn-xs site-demo-active"  data-id="<%= list.id %>" data-tabId="<%= list.id %>" data-url="./role" title="设置权限">设置权限</a>
+		                            <a class="layui-btn layui-btn-danger layui-btn-xs site-demo-active"  data-id="<%= list.id %>" data-tabId="<%= list.id %>" data-url="./role" title="设置角色">设置角色</a>
+		                        </div>
+		                    </td>
+		                </tr>
+		            <% }) %>
+            </tbody>
+        </table>
+        <!-- 分页 -->
+        <div class="new_table_page">
+                <div class="layui-table-page">
+                    <div id="layui-table-page1">
+                        <div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-2">
+                            <a href="javascript:;" class="layui-laypage-prev layui-disabled" data-page="0">
+                                <i class="layui-icon"></i>
+                            </a>
+                            <span class="layui-laypage-curr">
+                                <em class="layui-laypage-em"></em>
+                                <em>1</em>
+                            </span>
+                            <a href="javascript:;" data-page="2">2</a>
+                            <a href="javascript:;" data-page="3">3</a>
+                            <span class="layui-laypage-spr">…</span>
+                            <a href="javascript:;" class="layui-laypage-last" title="尾页" data-page="100">100</a>
+                            <a href="javascript:;" class="layui-laypage-next" data-page="2">
+                                <i class="layui-icon"></i>
+                            </a>
+                            <span class="layui-laypage-skip">
+                                到第
+                                <input type="text" min="1" value="1" class="layui-input">
+                                页
+                                <button type="button" class="layui-laypage-btn">确定</button>
+                            </span>
+                            <span class="layui-laypage-count">共 1000 条</span>
+                            <span class="layui-laypage-limits">
+                                <select lay-ignore="">
+                                        <option value="10" selected="">10 条/页</option>
+                                        <option value="20">20 条/页</option>
+                                        <option value="30">30 条/页</option>
+                                        <option value="40">40 条/页</option>
+                                        <option value="50">50 条/页</option>
+                                        <option value="60">60 条/页</option>
+                                        <option value="70">70 条/页</option>
+                                        <option value="80">80 条/页</option>
+                                        <option value="90">90 条/页</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+<script>
+layui.use(['form','element'], function(){
+	      var form = layui.form,
+	          element=layui.element;
+		  //监听指定开关
+		  form.on('switch(switchTest)', function(data){
+			    layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+			      offset: '6px'
+			    });
+			    layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+		  });	  
+		  //监听提交
+		  form.on('submit(demo1)', function(data){
+			    layer.alert(JSON.stringify(data.field), {
+			      title: '最终的提交信息'
+			    })
+			    return false;
+		  }); 
+	});
+</script>
+
+</body>
+</html>

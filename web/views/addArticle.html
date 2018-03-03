@@ -1,0 +1,170 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+
+
+    <div class="layui-container artice_t15 whiteBC">
+             <div class="layui-row layui-col-space15 add_article" style="padding:15px;">
+                    <h3 class="add_article_title"><span>发表新帖</span></h3>
+                        <form class="layui-form layui-form-pane artice_t15" action="index/addArtContent">
+                                  <div class="layui-row layui-col-space15 layui-form-item">
+                                        <div class="layui-col-md5">
+                                                <div class="layui-form-item">
+                                                        <label class="layui-form-label">所在专栏</label>
+                                                        <div class="layui-input-block">
+                                                          <select name="clas" lay-filter="aihao" lay-verify="required">
+                                                                  <option value=""></option>
+                                                                  <% webPageInfo.clas.forEach(function(list,index){ %>
+                                                                         <% if( list.id == webPageInfo.editArt.art_clas_id ){ %>
+                                                                         <option value="<%=list.id%>" selected=""><%=list.clas_name%></option>
+                                                                         <% }else{ %>
+                                                                         <option value="<%=list.id%>"><%=list.clas_name%></option>
+                                                                         <% } %>
+                                                                  <% }) %>
+                                                          </select>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="layui-col-md7">
+                                                <div class="layui-form-item">
+                                                        <label class="layui-form-label">标题</label>
+                                                        <div class="layui-input-block">
+                                                          <input type="text" name="title" value="<%= webPageInfo.editArt.title %>" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="layui-col-md5">
+                                                <div class="layui-form-item">
+                                                      <label class="layui-form-label">来源链接</label>
+                                                      <div class="layui-input-block">
+                                                        <input type="text" name="source_link" value="<%= webPageInfo.editArt.source_link %>" autocomplete="off" placeholder="请输入来源链接(选填)" class="layui-input">
+                                                      </div>
+                                                </div>
+                                        </div>
+                                        <div class="layui-col-md7">
+                                                <div class="layui-form-item">
+                                                      <label class="layui-form-label">来源</label>
+                                                      <div class="layui-input-block">
+                                                        <input type="text" name="source" value="<%= webPageInfo.editArt.source %>" autocomplete="off" placeholder="请输入来源描述(选填)" class="layui-input">
+                                                      </div>
+                                                </div>
+                                        </div>
+<!--                                         <div class="layui-form-item layui-form-text">
+                                              <div class="layui-input-block">
+                                                    <textarea id="layedit" style="display: none;"></textarea>
+                                              </div>
+                                        </div> -->
+                                        <div class="layui-form-item layui-form-text">
+                                              <div class="layui-input-block">
+                                                      <% include ./include/ueditor.html %>
+                                              </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                              <button class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+                                        </div>
+                                  </div>
+                        </form>
+            </div>  
+    </div>
+
+
+
+
+      <script>
+          //JavaScript代码区域
+          layui.use(['jquery','element','layer','form','layedit'], function(){
+                    var $ = layui.jquery,
+                        element = layui.element,
+                        layer = layui.layer,
+                        // layedit = layui.layedit,
+                        form = layui.form;
+                   //监听导航点击
+                    element.on('nav(navdemo)', function(elem){
+                      //console.log(elem)
+                      layer.msg(elem.text());
+                    });
+                    // layedit.set({
+                    //         uploadImage: {
+                    //             url: 'ajax/addArticleImg' //接口url
+                    //             ,type:'post'
+                    //         }
+                    // });
+                    // //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+                    // var layeditIndex = layedit.build('layedit',{
+                    //           uploadImage: {
+                    //                     url: '../ajax/addArticleImg' //接口url
+                    //                     ,type:'post'
+                    //                 }
+                    // }); //建立编辑器
+                    
+                    form.on('submit(demo2)',function(data){
+                             //有待完成(IE不支持)；还有不能上传太多文本
+                            // 把富文本编辑器的赋值到content中
+                            // data.field.content=layedit.getContent(layeditIndex);
+                            data.field.content = UE.getEditor('editor').getContent();
+                            delete data.field.editorValue;
+                            if(data.field.title==''){
+                                 layer.msg('请输入标题',{time:2000, shift: 6 ,icon:5});
+                                 return false;
+                            }
+                            if(data.field.title.length>100){
+                                 layer.msg('标题最多100字符!',{time:2000, shift: 6 ,icon:5});
+                                 return false;
+                            }
+                            if(data.field.source.length>100){
+                                 layer.msg('来源描述最多100字符!',{time:2000, shift: 6 ,icon:5});
+                                 return false;
+                            }
+                            if(!UE.getEditor('editor').hasContents()){
+                                 layer.msg('请编辑上传文章/帖子',{time:2000, shift: 6 ,icon:5});
+                                 return false;
+                            }
+                            if(data.field.content.length>35000){
+                                 layer.msg('上传文本过大；请重新编辑！',{time:2000, shift: 6 ,icon:5});
+                                 return false;
+                            }
+                            
+                            data.field.artType='add';
+                            if('<%= webPageInfo.editArt.art_clas_id %>'!='0'){
+                                    data.field.artType='edit';
+                                    data.field.artListId='<%= webPageInfo.editArt.id %>';
+                            }
+                            
+                            $.ajax({
+                                 url:'/index/addArtContent',
+                                 type:'get',
+                                 data:data.field,
+                                 success:function(res){
+                                        console.log(res);     
+                                        var res = JSON.parse(res);                                        
+                                        if(res.code==200){
+                                             layer.msg(res.msg,{time:2000,icon:6});
+                                             setTimeout(function(){
+                                                   window.location.replace(res.result.url);
+                                             },2000)
+                                             return false;
+                                        }
+                                        layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
+                                                                                                 
+                                 },
+                                 error:function(){
+                                  
+                                 }
+                            })
+                            return false;
+                    })
+          });
+         
+         var ueSetContent = '<%- webPageInfo.editArt.content %>';//待写入编辑器的内容
+         var ueInterval = setInterval(function(){
+                try {
+                     ue.setContent(ueSetContent);
+                     clearInterval(ueInterval);
+                } catch(e){
+
+                         console.log('等待编辑器创建!');
+                }
+         },300);
+
+      </script>
+
+<% include ./include/footer.html %>
