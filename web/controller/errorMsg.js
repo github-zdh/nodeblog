@@ -17,4 +17,10 @@ exports.msgUrl=function (req, res, next) {
      res.render(config.__web_v__+'/errorMsg',{msg:msg,urlBool:true});
 };
 
+exports.lowVersion=function (req, res, next) {
+	console.log(req.headers['user-agent'])
+     var msg = req.params.msg;
+     res.render(config.__web_v__+'/lowVersion');
+};
+
 

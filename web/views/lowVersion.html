@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-store">
+    <meta http-equiv="Cache-control" content="no-store">
+    <meta http-equiv="Cache" content="no-store">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        .browserContent>div{width:320px;text-align:center;display:inline-block}.browserInfo,.browserName p,.browserNameEN p,.browserTitle{font-size:18px;font-family:"Microsoft YaHei"!important;font-weight:400;font-style:normal;color:#666;text-align:left;line-height:normal}.browserLink,.links{font-family:Helvetica,Myriad,Arial,"Microsoft Yahei",SimSun,serif;font-weight:400;font-style:normal;text-decoration:none}.browserTitle{font-size:14px;margin-top:35px;margin-bottom:5px;text-align:center}.browserName p{margin-top:20px;text-align:center}.browserNameEN p{margin-top:4%;margin-left:80px}.browserName img{width:35%}.browserInfo{margin-top:75px;font-size:26px;color:#333;text-align:center}.browserContent{width:980px;margin:0 auto;display:table}.cloud{position:absolute;bottom:70px;width:100%;z-index:10}.cloud img{width:30%}.rightCloud{position:absolute;right:0}.face{padding-top:5px;position:relative;top:5px;right:15px}.browserLink{color:#0af;float:left;font-size:14px;margin-top:3px;display:block;width:100%;text-align:center}.links{font-size:12px}#banner{min-width:100%}.widthLimit{min-width:auto}#innerContent{position:relative;z-index:20}
+    </style>
+    <script>
+        // browserSupport
+         (function(){function setBrowserInfoByOS(){var mac=/mac/,linux=/(linux)|(x11)/,os=navigator.platform.toLowerCase();if(mac.test(os)){document.getElementById("ie").style.display="none";document.getElementById("firefox").style.display="none"}else linux.test(os)&&(document.getElementById("ie").style.display="none")}window.onload=function(){document.getElementById("chromeVersion").innerHTML="Chrome 43+";document.getElementById("ieVersion").innerHTML="IE 9+";document.getElementById("firefoxVersion").innerHTML="FireFox 38+";setBrowserInfoByOS()}})();
+        // 判断ie
+        if (document.documentMode <= 5)
+        {
+            document.write('<style type="text/css">.browserContent>div {display:inline;}.browserContent{text-align:center;width:100%;}#chrome,#ie,firefox{display:inline-block;}.browserName img{width:auto;}</style>');
+        }
+    </script>
+</head>
+<body>
+
+<div id="content">
+    <div id="innerContent">
+        <div class="widthLimit">
+            <div class="browserContent" style="height: 260px;margin-top: 5%">
+                    <p class="browserInfo"><img src="./images/web/lowVersion/b114887.face.png" class="face" />很抱歉，您的浏览器版本比较旧哦</p>
+                    <p class="browserTitle">为提供更好的服务，我们推荐您使用如下版本浏览器</p>               
+            </div>
+        </div>
+        <div class="widthLimit">
+            <div class="browserContent">
+                <div id="chrome">
+                    <div class="browserName">
+                        <img src="./images/web/lowVersion/0d8b30f.chrome.png">
+                        <p id="chromeVersion"></p>
+                        <a class="browserLink" href="https://www.baidu.com/s?wd=Chrome&ie=UTF-8">下载最新版本</a>
+                    </div>
+                </div>
+                <div id="ie">
+                    <div class="browserName">
+                        <img src="./images/web/lowVersion/93b6fe4.ie.png"  >
+                        <p id="ieVersion"></p>
+                        <a class="browserLink" href="http://www.microsoft.com/zh-cn/download/internet-explorer-9-details.aspx" >下载最新版本</a>
+                    </div>
+                </div>
+                <div id="firefox">
+                    <div class="browserName">
+                        <img src="./images/web/lowVersion/7c1356a.firefox.png" >
+                        <p id="firefoxVersion"></p>
+                        <a class="browserLink" href="https://www.mozilla.org/zh-cn/firefox/new/" >下载最新版本</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>

@@ -11,6 +11,9 @@ function publicControl(req, res, next){
 			// 模拟已经登录
             config.analogLogon(req,res);
 
+	      // 判断低版本
+	      // return res.redirect("/lowVersion");
+
 
 		  // 网址路径 例如：http://127.0.0.1:1337/
 		  __host__ = global.__host__?__host__:'http://'+req.headers.host;
@@ -187,6 +190,9 @@ router.post('/ajax/addImg' , publicControl , require(config.__web_c__+'/ajax').a
 router.get('/errorMsg/:msg' , publicControl , require(config.__web_c__+'/errorMsg').msg );
 // 错误提示页面/重置路径(默认3秒)
 router.get('/errorMsg/:msg/:urlBool' , publicControl , require(config.__web_c__+'/errorMsg').msgUrl );
+// 低版本浏览器
+router.get('/lowVersion' , require(config.__web_c__+'/errorMsg').lowVersion );
+
 // 公告
 router.get('/index/notice' , publicControl , require(config.__web_c__+'/index').notice );
 // 富文本编辑器
