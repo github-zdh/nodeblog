@@ -52,7 +52,7 @@
                                                 <div class="layui-form-item">
                                                       <label class="layui-form-label" style="width: 100%;text-align: left;">新帖描述</label>
                                                       <div style="margin-top:10px;">
-                                                             <textarea name="description" value="<%= webPageInfo.editArt.description %>" id="" cols="30" rows="10" class="layui-input" style="height: 100px;padding-top:7px;padding-bottom: 7px;" id="description" placeholder="最多可输入300字；超出部分将会被...替换掉"></textarea>
+                                                             <textarea name="description" id="" cols="30" rows="10" class="layui-input" style="height: 100px;padding-top:7px;padding-bottom: 7px;" id="description" placeholder="最多可输入300字；超出部分将会被...替换掉"><%= webPageInfo.editArt.description %></textarea>
                                                       </div>
                                                 </div>
                                         </div>
@@ -62,7 +62,7 @@
                                                       <div class="layui-input-block" style="margin-top:10px;">
                                                            <label type="button" class="layui-btn upload-img" id="uploadArtImg" style="vertical-align: top;">
                                                                  <i class="layui-icon"></i>
-                                                                 上传头像
+                                                                 上传图片
                                                             </label>
                                                             <input class="layui-upload-file" type="file" name="fileImg">
                                                             <img src="<%= webPageInfo.editArt.img %>" alt="" id="uploadImg" style="width: 160px;height: 160px;">

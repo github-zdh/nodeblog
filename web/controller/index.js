@@ -278,24 +278,24 @@ obj.addArtContent=function (req, res, next) {
 		                     " source_link = " +  "'"+query.source_link+"',"+
 		                     " source = " +  "'"+query.source+"',"+
 		                     " update_time = " +  com.timestamp()+","+
-		                     " content = " +  "'"+query.content+"'"+
-		                     " img = " +  query.img+","+
+		                     " content = " +  "'"+query.content+"',"+
+		                     " img = " + "'"+ query.img+"',"+
 		                     " description = " +  "'"+query.description+"'"+
 				             " where id = "+ query.artListId ;
 
 				  sql.runSql(getArtUserId,function(err,data){
 					  	  // console.log(data);
 					  	  if(err){
-					  	  	    return base.errorMsg(req,res,'查询失败');
+					  	  	    return res.end(base.returnjson(res,1,"修改失败"));
 					  	  }
 						  if(data[0].user_id != userInfo.id){
-						  	    return res.end(base.returnjson(res,100,"你不能修改别人的文章！"));
+						  	    return res.end(base.returnjson(res,2,"你不能修改别人的文章！"));
 						  }
 						  // console.log(editArt);
 						  sql.runSql(editArt,function(err,data){
 							  	  // console.log(data);
 							  	  if(err){
-							  	  	    return base.errorMsg(req,res,'查询失败');
+							  	  	    return res.end(base.returnjson(res,3,"修改失败"));
 							  	  }
 							  	  return res.end(base.returnjson(res,200,"修改成功",{id:data.insertId,url:'/index/articleDetails/'+query.artListId}));
 						  })
@@ -317,7 +317,7 @@ obj.addArtContent=function (req, res, next) {
 				  sql.runSql(addArt,function(err,data){
 					  	  // console.log(data);
 					  	  if(err){
-					  	  	    return base.errorMsg(req,res,'查询失败');
+					  	  	    return res.end(base.returnjson(res,4,"修改失败"));
 					  	  }
 					  	  return res.end(base.returnjson(res,200,"发布成功",{id:data.insertId,url:'/index/articleDetails/'+data.insertId}));
 				  })
