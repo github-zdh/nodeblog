@@ -52,7 +52,7 @@
                                                 <div class="layui-form-item">
                                                       <label class="layui-form-label" style="width: 100%;text-align: left;">新帖描述</label>
                                                       <div style="margin-top:10px;">
-                                                             <textarea name="description" id="" cols="30" rows="10" class="layui-input" style="height: 100px;padding-top:7px;padding-bottom: 7px;" id="description" placeholder="最多可输入300字；超出部分将会被...替换掉"><%= webPageInfo.editArt.description %></textarea>
+                                                             <textarea name="description" id="" cols="30" rows="10" class="layui-input" style="height: 100px;padding-top:7px;padding-bottom: 7px;" id="description" placeholder="最多可输入100字；超出部分将会被...替换掉"><%= webPageInfo.editArt.description %></textarea>
                                                       </div>
                                                 </div>
                                         </div>
@@ -134,12 +134,16 @@
                             }
                     }); 
 
+
+
                     
                     form.on('submit(demo2)',function(data){
                              //有待完成(IE不支持)；还有不能上传太多文本
                             // 把富文本编辑器的赋值到content中
                             // data.field.content=layedit.getContent(layeditIndex);
-                            data.field.content = UE.getEditor('editor').getContent();
+                            //fieldContent=>如果文本过大切割提交
+                            var fieldContent = '',fieldContentIndex=0;fieldContentArr = [];
+                            fieldContent = data.field.content = UE.getEditor('editor').getContent();
                             delete data.field.editorValue;
                             let src = z.getId('uploadImg').src;
                             data.field.img='';
@@ -158,44 +162,91 @@
                                  layer.msg('来源描述最多100字符!',{time:2000, shift: 6 ,icon:5});
                                  return false;
                             }
-                            if(data.field.description.length>300){
-                                 data.field.description = data.field.description.substr(0,300)+'...';
-                            }
-                            
+
                             if(!UE.getEditor('editor').hasContents()){
                                  layer.msg('请编辑上传文章/帖子',{time:2000, shift: 6 ,icon:5});
                                  return false;
                             }
-                            if(data.field.content.length>35000){
-                                 layer.msg('上传文本过大；请重新编辑！',{time:2000, shift: 6 ,icon:5});
-                                 return false;
+                            // if(data.field.content.length>35000){
+                            //      layer.msg('上传文本过大；请重新编辑！',{time:2000, shift: 6 ,icon:5});
+                            //      return false;
+                            // }
+                            fieldContentIndex = Math.ceil(data.field.content.length/15000);
+                            if(fieldContentIndex!=1){
+                                    for(var i=0;i<fieldContentIndex;i++){
+                                          fieldContentArr.push(fieldContent.substr(i*15000,(i+1)*15000));
+                                    }
+                                    data.field.content = fieldContentArr[0];
                             }
+                            if(data.field.description==''){
+                                   data.field.description = data.field.content.substr(0,100)+'...';
+                             }else{
+                                   if(data.field.description.length>100){
+                                        data.field.description = data.field.description.substr(0,100)+'...';
+                                   }
+                             }                                    
+                            
                             
                             data.field.artType='add';
                             if('<%= webPageInfo.editArt.art_clas_id %>'!='0'){
                                     data.field.artType='edit';
                                     data.field.artListId='<%= webPageInfo.editArt.id %>';
                             }
-                            
+                            // 上传加载动画
+                            var layerLoad = layer.load(0, {shade: 0.1});
                             $.ajax({
                                  url:'/index/addArtContent',
                                  type:'get',
                                  data:data.field,
                                  success:function(res){
                                         console.log(res);     
-                                        var res = JSON.parse(res);                                        
+                                        var res = JSON.parse(res); 
+                                        var jsonres = res;        
                                         if(res.code==200){
-                                             layer.msg(res.msg,{time:2000,icon:6});
-                                             setTimeout(function(){
-                                                   window.location.replace(res.result.url);
-                                             },2000)
+                                             if(fieldContentIndex!=1){
+                                                    function updateArtContent(index,id){
+                                                            $.ajax({
+                                                                 url:'/index/updateArtContent',
+                                                                 type:'get',
+                                                                 data:{id:id,content:fieldContentArr[index]},
+                                                                 success:function(res){
+                                                                        console.log(res);  
+                                                                        if(index<fieldContentIndex-1){
+                                                                            var updateTimeout = setTimeout(function(){
+                                                                                updateArtContent(++index,id);
+                                                                                clearTimeout(updateTimeout);
+                                                                            },1000)
+                                                                        }else{
+                                                                             layer.close(layerLoad); 
+                                                                             layer.msg(jsonres.msg,{time:2000,icon:6});
+                                                                             return false;
+                                                                             setTimeout(function(){
+                                                                                   window.location.replace(jsonres.result.url);
+                                                                             },2000)
+                                                                        }                                  
+                                                                 },
+                                                                 error:function(){
+                                                                        layer.close(layerLoad); 
+                                                                 }
+                                                            })
+                                                    }
+                                                    updateArtContent(1,res.result.id);
+                                             }else{
+                                                 layer.close(layerLoad); 
+                                                 layer.msg(res.msg,{time:2000,icon:6});
+                                                 return false;
+                                                 setTimeout(function(){
+                                                       window.location.replace(res.result.url);
+                                                 },2000)
+                                             }
                                              return false;
                                         }
+                                        layer.close(layerLoad); 
                                         layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
                                                                                                  
                                  },
                                  error:function(){
-                                  
+                                        layer.close(layerLoad); 
                                  }
                             })
                             return false;

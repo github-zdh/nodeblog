@@ -259,6 +259,13 @@ exports.nickname = (req, res, next) => {
 
 };
 
+// 个人文章分类
+exports.artClas = (req, res, next) => {
+           __webPageInfo__.webAdmin.user_nav[3].check=true;//选中我的帖子
+
+          res.render(config.__web_v__+'/artClas',{webPageInfo:__webPageInfo__});
+
+};
 
 
 // module.exports = index;

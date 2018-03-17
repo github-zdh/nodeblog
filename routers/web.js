@@ -9,7 +9,7 @@ var com = require(__ROOTDIR__+'/config/common');
 //不管是否登录都通过这个控件
 function publicControl(req, res, next){
 			// 模拟已经登录
-            // config.analogLogon(req,res);
+            config.analogLogon(req,res);
 
 	      // 判断低版本
 	      // return res.redirect("/lowVersion");
@@ -71,7 +71,7 @@ function top(req, res, next){
 	                             {title:"我的主页",href:"/user/homepage/",check:false,child:[]}//check = 是否选中
 	                             ,{title:"基本设置",href:"/user/basicSetup",check:false,child:[]}
 	                             ,{title:"我的帖子",href:"/user/posts",check:false,child:[]}
-	                             // ,{title:"我的消息",href:"javascript:void(0)",check:false,child:[]}
+	                             ,{title:"文章分类",href:"/user/artClas",check:false,child:[]}
 	               ]
 	      }
 
@@ -108,6 +108,8 @@ router.get('/socket_room' , publicControl , top , require(config.__web_c__+'/ind
 router.get('/index/searchList' , publicControl , top , require(config.__web_c__+'/index').searchList );
 // 获取搜索数据
 router.get('/index/getSearchList' , publicControl , top , require(config.__web_c__+'/index').getSearchList );
+// 发表文章(分段上传数据 更新数据)
+router.get('/index/updateArtContent' , require(config.__web_c__+'/index').updateArtContent );
 // 发表文章
 router.get('/index/addArticle' , publicControl , isLogin , top , require(config.__web_c__+'/index').addArticle );
 // 发表文章
@@ -159,6 +161,8 @@ router.get('/user/memberDelPosts' , publicControl , top , require(config.__web_c
 router.get('/user/homepage/:id' , publicControl , top , require(config.__web_c__+'/user').homepage );
 // 用户签到
 router.get('/user/sign' , publicControl , top , require(config.__web_c__+'/user').sign );
+// 个人文章分类
+router.get('/user/artClas' , publicControl , isLogin , top , require(config.__web_c__+'/user').artClas );
 
 // 登录/注册/找回密码
 router.get('/login' , publicControl , top , loginTure , require(config.__web_c__+'/login').index );

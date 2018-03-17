@@ -147,6 +147,25 @@ obj.articleDetails=function (req, res, next) {
 
 	  })
 };
+
+// 分段上传数据 更新数据
+obj.updateArtContent = (req,res,next) =>{
+	//  分段上传数据库语句
+	// update z_articles_list a set a.title = (select concat(a.title,'concat')) where id=24;
+	// 
+
+	  const id = req.query.id;
+      const content = req.query.content;	
+
+	  const clas_sql = "update z_articles_list a set a.content = (select concat(a.content,'"+content+"')) where id="+id;
+
+	  sql.runSql(clas_sql,function(err,data){
+		  	  if(err){
+		  	  	    return res.end(base.returnjson(res,100,"更新失败"));
+		  	  }
+		  	  return res.end(base.returnjson(res,200,"更新成功"));
+	  })
+}
 // 显示添加文章页面
 obj.addArticle=function (req, res, next) {
 	  obj.editArticle(req, res, next);
@@ -297,7 +316,7 @@ obj.addArtContent=function (req, res, next) {
 							  	  if(err){
 							  	  	    return res.end(base.returnjson(res,3,"修改失败"));
 							  	  }
-							  	  return res.end(base.returnjson(res,200,"修改成功",{id:data.insertId,url:'/index/articleDetails/'+query.artListId}));
+							  	  return res.end(base.returnjson(res,200,"修改成功",{id:query.artListId,url:'/index/articleDetails/'+query.artListId}));
 						  })
 				  })
 		  }else{
