@@ -1,0 +1,246 @@
+<% include ./include/header.html %>
+<% include ./include/top.html %>
+
+    <div class="layui-container posts" style="margin-top:30px;">
+
+         <div class="layui-row layui-col-space15">
+             <div class="layui-col-md3 layui-show-lg-inline-block layui-show-md-inline-block layui-hide-sm layui-hide-xs"> 
+                  <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md10" style="padding:0;">
+                              <% include ./include/memberLeft.html %>
+                        </div>
+                  </div>
+             </div>
+             <div class="layui-col-md9 add_article whiteBC" style="padding:15px;">
+                        <div class="layui-tab layui-tab-brief" lay-filter="postsTab">
+                              <ul class="layui-tab-title">
+                                    <li class="layui-this">我发的帖</li>
+                              </ul>
+                              <div>每个人最多只能有30个文章分类</div>
+                        </div>
+              </div>
+        </div>  
+    </div>
+
+
+
+<script type="text/html" id="titleTpl">
+      <span z-template="z.timeout({ time:{{d.time}} })"></span>
+</script>
+
+<script type="text/html" id="isValid">
+     {{#  if(d.is_valid==1){ }}有效{{#  }else{ }}<span style="color:red;">无效</span>{{#  } }}
+</script>
+
+<script type="text/html" id="barDemo">
+      {{# if(!d.art_list_id){ }}
+      <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="/index/articleDetails/{{d.id}}">查看</a>
+      <a class="layui-btn layui-btn-xs" lay-event="edit" href="/index/editArticle/{{d.id}}">编辑</a>      
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+      {{# }else{ }}
+      <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="/index/articleDetails/{{d.art_list_id}}">查看</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel">取消收藏</a>
+      {{# } }}
+</script>
+
+
+
+ <script>
+layui.use(['jquery','form','element','laypage','table','layer'], function(){       
+        var $ = layui.jquery
+          ,form = layui.form
+          ,layer = layui.layer
+          ,laypage = layui.laypage
+          ,table = layui.table  
+          ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+         
+         //我发的帖
+        var mypoststable =  table.render({
+                       elem: '#mypoststable'
+                      ,url:'/user/memberGetPosts/?postsType=1'
+                      ,cols: [[ //标题栏
+                            {field: 'title', title: '标题',width:400}
+                            ,{field: 'is_valid', title: '状态',width:60, templet: '#isValid'}
+                            ,{field: 'timeTem', title: '发表时间',width:100, templet: '#titleTpl'}
+                            ,{field: 'template', title: '操作',  toolbar: '#barDemo', align:'center', unresize: true}
+                      ]]
+                      // ,data: [{"id":"1","title":'帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题',"status":"status","time":"2017.1.1"}]
+                      ,skin: 'line' //表格风格
+                      ,even: false
+                      ,size:'lg'
+                      ,page: true //是否显示分页
+                      ,response: {
+                        // {"code":0,"msg":"","count":1000,"data":[]} 默认
+                        // statusName: 'status' //数据状态的字段名称，默认：code
+                        statusCode: 200 //成功的状态码，默认：0
+                        // ,msgName: 'hint' //状态信息的字段名称，默认：msg
+                        // ,countName: 'total' //数据总数的字段名称，默认：count
+                        // ,dataName: 'rows' //数据列表的字段名称，默认：data
+                    } 
+                      ,done: function(res, curr, count){
+                          //如果是异步请求数据方式，res即为你接口返回的信息。
+                          //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                          console.log(res);
+                          
+                          //得到当前页码
+                          console.log(curr); 
+                          
+                          //得到数据总量
+                          console.log(count);
+
+                          z.template({elem:true});
+                    }
+                      //,limits: [5, 7, 10]
+                      ,limit: 15 //每页默认显示的数量
+            //这里以搜索为例
+
+          });
+
+
+         // 收藏帖
+         var collectPosts = table.render({
+                       elem: '#collectPosts'
+                      ,url:'/user/memberGetPosts/?postsType=2'
+                      ,cols: [[ //标题栏
+                            {field: 'title', title: '标题',width:400}
+                            ,{field: 'is_valid', title: '状态',width:60, templet: '#isValid'}
+                            ,{field: 'timeTem', title: '发表时间',width:100, templet: '#titleTpl'}
+                            ,{field: 'template', title: '操作',  toolbar: '#barDemo', align:'center', unresize: true}
+                      ]]
+                      // ,data: [{"id":"1","title":'帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题',"status":"status","time":"2017.1.1"}]
+                      ,skin: 'line' //表格风格
+                      ,even: false
+                      ,size:'lg'
+                      ,page: true //是否显示分页
+                      ,response: {
+                        // {"code":0,"msg":"","count":1000,"data":[]} 默认
+                        // statusName: 'status' //数据状态的字段名称，默认：code
+                        statusCode: 200 //成功的状态码，默认：0
+                        // ,msgName: 'hint' //状态信息的字段名称，默认：msg
+                        // ,countName: 'total' //数据总数的字段名称，默认：count
+                        // ,dataName: 'rows' //数据列表的字段名称，默认：data
+                    } 
+                      ,done: function(res, curr, count){
+                          //如果是异步请求数据方式，res即为你接口返回的信息。
+                          //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                          console.log(res);
+                          
+                          //得到当前页码
+                          console.log(curr); 
+                          
+                          //得到数据总量
+                          console.log(count);
+
+                          z.template({reLoad:true});
+                    }
+                      //,limits: [5, 7, 10]
+                      ,limit: 15 //每页默认显示的数量
+            //这里以搜索为例
+
+     });
+
+    // 监听点击导航切换菜单；主要是为了搜索重载
+    var searchTable = 'postsTable'; // postsTable =>我发的帖 collectPosts=>收藏 
+    element.on('tab(postsTab)',function(elem){
+             var index = elem.index;
+             switch(index){
+                  case 0:
+                       searchTable = 'postsTable';
+                  break;
+                  case 1:
+                       searchTable = 'collectPosts';
+                  break;
+             }
+    })
+
+    //监听搜索操作
+    form.on('submit(search)',function(data){
+          if(searchTable=='postsTable'){
+                //这里以搜索为例
+                mypoststable.reload({
+                      id: mypoststable,
+                      where: { //设定异步数据接口的额外参数，任意设
+                           keyword: data.field.keyword
+                      }
+                      ,page: {
+                           curr: 1 //重新从第 1 页开始
+                      }
+                      ,done: function(res, curr, count){
+                          z.template({reLoad:true});
+                      }
+                });
+          }
+          if(searchTable=='collectPosts'){
+                //这里以搜索为例
+                collectPosts.reload({
+                      id: mypoststable,
+                      where: { //设定异步数据接口的额外参数，任意设
+                           keyword: data.field.keyword
+                      }
+                      ,page: {
+                           curr: 1 //重新从第 1 页开始
+                      }
+                      ,done: function(res, curr, count){
+                          z.template({reLoad:true});
+                      }
+                });
+          }
+          return false;
+    })
+
+
+
+     //监听工具条 (操作)
+    table.on('tool(mypoststable)', function(obj){
+                toolTable(obj,'del','真的删除么?',1);
+    });
+
+//
+     //监听工具条 (操作)
+    table.on('tool(collecttable)', function(obj){
+            toolTable(obj,'cancel','真的取消么?',2);
+    });
+
+   function toolTable(obj,event,tip,type){
+                var data = obj.data;
+
+                if(obj.event === event){//取消
+                        layer.confirm(tip, function(index){
+                              layer.close(index);
+                              var load = layer.load();
+                              $.ajax({
+                                     url:'/user/memberDelPosts',
+                                     data:{
+                                         postsType:type,
+                                         id:data.id
+                                     },
+                                     success:function(res){
+                                           var res = JSON.parse(res);
+                                           console.log(res);
+                                           layer.close(load);
+                                           if(res.code==200){
+                                                  layer.msg(res.msg,{time:2000 ,icon:6});
+                                                  obj.del();
+                                                  return false;
+                                           }
+                                           layer.msg(res.msg,{time:2000, shift: 6 ,icon:5});
+                                     },
+                                     error:function(err){
+                                         layer.close(load);
+                                         layer.msg('请求超时！！！');
+                                     }
+                              })                              
+                        });
+                }
+   }
+
+
+
+
+
+
+
+});
+</script>
+
+<% include ./include/footer.html %>
