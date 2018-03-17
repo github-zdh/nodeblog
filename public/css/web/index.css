@@ -45,7 +45,7 @@
              .header_nav .login_register{float: right;}
              .header_nav .layui-nav{padding:0;}
              .header_nav .nav{margin-left: 15px;}
-             .sheader{margin-bottom: 15px;border-radius: 2px;background-color: #fff;box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);padding:15px 0;}
+             .sheader{margin-bottom: 15px;border-radius: 2px;box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);padding:15px 0;}
              .sheader .layui-icon{font-size: 26px;}
              .small_show_box .layui-side,.small_show_box .small_nav_hide{z-index: 2000;}
              .small_show_box .small_nav_hide{right:0;width:100%;background: rgba(0,0,0,0.35);}
@@ -78,7 +78,7 @@
             .artice_ul .info a{color: #999;}
             .artice_ul .info a:hover,.artice_dl dd a:hover{color:#FF5722;}
 
-            .footer{margin: 50px 0 0;padding: 20px 0 30px;line-height: 30px;text-align: center;color: #737573;border-top: 1px solid #e2e2e2;}
+            .footer{margin: 50px 0 0;padding: 20px 0 30px;line-height: 30px;text-align: center;color: #737573;box-shadow:1px 0 2px 0 rgba(0,0,0,.05);}
             .fly-detail-info{margin-top:10px;}
             .comment_nums{float: right;}
             .comment_nums a{color:#999;font-size:14px;display:inline-block;margin-left: 10px;}
