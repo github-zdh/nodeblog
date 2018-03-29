@@ -471,6 +471,42 @@ exports.closeUser=function(req, res, next) {
 	         
 };
 
+// 关闭管理员权限
+exports.closeAdmin=function(req, res, next) {
+             // console.log(req.query);
+	         let _query = req.body;
+	         let userInfo = req.session[__adminUserInfo__];
+	         if(_query.id==1){
+	                base.returnjson(res,'100','超级管理员不能被封号 ~ ~ ~');
+	                return false;
+	         }
+	         if(userInfo.is_valid!=1){
+		                base.returnjson(res,'300','你的账户已失效');
+		                return false;
+	         }
+
+	         if(userInfo.is_admin!=1){
+	         	   base.returnjson(res,'101','你无权限修改');
+	         	   return false;
+	         }
+	         
+	         var runSql = 'select id,is_admin,is_valid from z_member where id = '+ _query.id; 
+			 sql.runSql(runSql,function(err,data){
+			     	  if(err){
+			     	  	    base.returnjson(res,'001','操作失败');
+			     	  	    return false;
+			     	  }
+			     	  var runUpdateSql = 'update z_member SET is_admin = '+( data[0].is_admin==1 ? 0 : 1 )+' WHERE id = '+ _query.id;
+					  sql.runSql(runUpdateSql,function(err,data){
+					     	  if(err){
+					     	  	   base.returnjson(res,'100','操作失败');
+					     	  	    return false;
+					     	  }
+					     	  base.returnjson(res,'200','操作成功');
+					 });	  
+			});
+	         
+};
 exports.adminList = (req, res, next) => {
  	     var count='select count(id) from z_member where is_admin = 1';
 	     sql.runSql(count,function(err,data){
@@ -493,9 +529,9 @@ exports.ajaxAdminList=function (req, res, next) {
  	     let body = req.body;
 		 let rqs = [];
 		  if(req.body.isloadnum){
-		  	   selsql='select  count(*) from z_member where is_admin = 1';
+		  	   selsql='select  count(*) from z_member';
 		  }else{
-		  	   selsql='select a.*,u.*,r.* from z_member a INNER JOIN z_user_role u on u.user_id = a.id INNER JOIN z_role r on u.role_id = r.id  where a.is_admin = 1 order by a.id limit '+curr+','+limitCount;
+		  	   selsql='select a.*,u.*,r.* from z_member a INNER JOIN z_user_role u on u.user_id = a.id INNER JOIN z_role r on u.role_id = r.id  order by a.id limit '+curr+','+limitCount;
 		  }
 
 		 function appendSql(sql,addsql){
@@ -509,9 +545,10 @@ exports.ajaxAdminList=function (req, res, next) {
 						}
 	            }
 		  }
-           console.log(selsql);
-
-           
+          if(!body.type||body.type=='admin'){
+		 	    const type = ' is_admin = 1 ';
+		 	    selsql = appendSql(selsql,type);	  	  
+		  }
 		  if(body.keyworld){
 		 	    const art_name = ' ( username like "%'+body.keyworld+'%"'+' or phone like "%'+body.keyworld+'%"'+' or email  like "%'+body.keyworld+'%" ) ';
 		 	    selsql = appendSql(selsql,art_name);	  	  
@@ -529,6 +566,8 @@ exports.ajaxAdminList=function (req, res, next) {
 				    selsql = appendSql(selsql,maxDate);
 			   }
 		  }
+          console.log(body.type);
+		  console.log(selsql);
 
 		 if(req.body.isloadnum){
 				  rqs = [
@@ -544,7 +583,6 @@ exports.ajaxAdminList=function (req, res, next) {
 				          {
 							   	sql:selsql,
 							    sCallback:(data,options) => {
-							    	    console.log(data);
 								   	    base.returnjson(res,'200','success',data)
 							    }
 						  }

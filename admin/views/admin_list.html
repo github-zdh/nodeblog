@@ -7,6 +7,16 @@
 		-
 		<input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })" id="datemax" class="input-text Wdate" style="width:120px;">
 		<input type="text" class="input-text" style="width:250px" placeholder="输入用户名称、电话、邮箱" id="ss-keyworld" name="">
+		<div class="formControls skin-minimal ml-15" style="display: inline-block;">
+			<div class="radio-box">
+				<input name="admin" type="radio" value="admin" checked>
+				<label for="admin-1">管理员</label>
+			</div>
+			<div class="radio-box">
+				<input name="admin" type="radio" value="user">
+				<label for="admin-2">全部用户</label>
+			</div>
+		</div>
 		<button type="submit" class="btn btn-success radius" id="ss-btn" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
 	</div>
 
@@ -42,6 +52,11 @@
 <script type="text/javascript" src="/admin/lib/laypage/1.2/laypage.js"></script>
 
 <script>
+$('.skin-minimal input').iCheck({
+	checkboxClass: 'icheckbox-blue',
+	radioClass: 'iradio-blue',
+	increaseArea: '20%'
+});
 function getTimeFn(time){
      const _date = new Date(time*1000);
      return _date.getFullYear()+'/'+(_date.getMonth()+1)+'/'+_date.getDate()+' '+_date.getHours()+':'+_date.getMinutes()+':'+_date.getSeconds()
@@ -60,7 +75,7 @@ function tbodyFn(obj){
 					'<td class="td-status">'+(obj.is_valid==1?'<span class="label label-success radius">有效</span>':'<span class="label radius">失效</span>')+'</td>'+
 					'<td class="f-14 td-manage">'+
 						((obj.id!=1)?
-						(obj.is_valid==1?
+						(obj.is_admin==1?
 						'<a style="text-decoration:none" onClick="article_stop(this,'+obj.id+')" href="javascript:;" title="停用">'+
 					    	'<i class="Hui-iconfont">&#xe631;</i>'+
 						'</a>':
@@ -81,14 +96,15 @@ var ss = {
 	,art_name:''
 	,minDate:''
 	,maxDate:''
+	,type:'admin'
 	,count : '<%= __adminPageInfo__.user_count %>'
 }
 $('#ss-btn').click(function(){ 
     ss.minDate = $('#datemin').val();
     ss.maxDate = $('#datemax').val(); 
     ss.keyworld = $('#ss-keyworld').val(); 
+    ss.type =  $('input[name="admin"]:checked')[0].value; 
     ss.isloadnum = true;
-    
     laypageFn()
 })
 function laypageFn(clas_id,art_name,minDate,maxDate){
@@ -118,6 +134,9 @@ function laypageFn(clas_id,art_name,minDate,maxDate){
 				     	 }
 				     	 if(ss.isloadnum){
 				     	 	    data.isloadnum = ss.isloadnum;//重新算数量
+				     	 }
+				     	 if(ss.type){
+				     	 	    data.type = ss.type;//查询类型、默认是管理员
 				     	 }
 				     	 console.log(data);
 				         $.ajax({
@@ -167,7 +186,7 @@ function article_edit(title,url,id,w,h){
 function article_stop(obj,id){
 	layer.confirm('确认要停用吗？',function(index){
 		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="article_start(this,'+id+')" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe6e1;</i></a>');
-		$(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">失效</span>');
+		$(obj).parents("tr").find(".td-admin").html('<span class="label label-defaunt radius">否</span>');
 		$(obj).remove();
 		paste(false,id)
 		
@@ -177,14 +196,14 @@ function article_stop(obj,id){
 function article_start(obj,id){
 	layer.confirm('确认要启用吗？',function(index){
 		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="article_stop(this,'+id+')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>');
-		$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">有效</span>');
+		$(obj).parents("tr").find(".td-admin").html('<span class="label label-success radius">是</span>');
 		$(obj).remove();
 		paste(true,id)
 	});
 }
 function paste(isPaste,id){
      $.ajax({
-     	  url:'/admin/user/closeUser',
+     	  url:'/admin/user/closeAdmin',
      	  type:'POST',
      	  data:{isPaste:isPaste,id:id},
      	  dataType:'JSON',
@@ -206,6 +225,11 @@ function paste(isPaste,id){
      	  	   layui.layer.closeAll();
      	  }
      })
+}
+
+/*管理员-增加*/
+function admin_add(title,url,w,h){
+	layer_show(title,url,w,h);
 }
 
 </script>

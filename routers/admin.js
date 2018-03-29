@@ -88,6 +88,9 @@ router.get('/user/changRole', publicControl , isLogin , require(config.__admin_c
 // 管理员列表
 router.get('/admin/list', publicControl , isLogin , require(config.__admin_c__+'/user').adminList );
 router.post('/user/ajaxAdminList', publicControl , isLogin , require(config.__admin_c__+'/user').ajaxAdminList );
+// 关闭管理员权限
+router.post('/user/closeAdmin', publicControl , isLogin , require(config.__admin_c__+'/user').closeAdmin );
+
 // 添加角色
 router.get('/user/addRole', publicControl , isLogin , require(config.__admin_c__+'/user').addRole );
 // 删除角色
