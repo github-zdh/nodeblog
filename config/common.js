@@ -21,7 +21,15 @@ exports.timestamp=()=>{
 exports.LocaleDate=()=>{
       return new Date(new Date().toLocaleDateString()).getTime()/1000;//获取当天0点时间戳  
 }
-
+// 时间戳转成时间
+// num = 3
+exports.getTime = (timestamp,num) => {
+     const _date = new Date(timestamp*1000);
+     if(num==3){
+     	  return _date.getFullYear()+'/'+(_date.getMonth()+1)+'/'+_date.getDate();
+     }
+     return _date.getFullYear()+'/'+(_date.getMonth()+1)+'/'+_date.getDate()+' '+_date.getHours()+':'+_date.getMinutes()+':'+_date.getSeconds();
+}
 
 // 数组去重
 exports.unique=function(arr){

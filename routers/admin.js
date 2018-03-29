@@ -5,6 +5,26 @@ var com = require(__ROOTDIR__+'/config/common');
 var sql = require(__ROOTDIR__+'/config/mysql');
 var base = require(__ROOTDIR__+'/config/base');
 
+// 公共控件 
+//不管是否登录都通过这个控件
+function publicControl(req, res, next){
+			// 模拟已经登录
+            config.adminAnalogLogon(req,res);
+
+	      // 判断低版本
+	      // return res.redirect("/lowVersion");
+
+
+		  // 网址路径 例如：http://127.0.0.1:1337/
+		  __host__ = global.__host__?__host__:'http://'+req.headers.host;
+		  __webPageInfo__ = __webPageInfo__?__webPageInfo__:{} ;
+		  __webPageInfo__.host = global.__host__?__host__:'http://'+req.headers.host;
+		  __webPageInfo__.sign=req.session.sign;//是否签到
+		  __webPageInfo__.userInfo=req.session[__webUserInfo__];//用户信息
+
+		  next();
+}
+
 // 判断是否登录中间件
 function isLogin(req, res, next){
 		  // // 检查 session 中的 isVisit 字段
@@ -31,42 +51,56 @@ function isLogin(req, res, next){
 // 读取权限
 function admin_permission(req, res, next){
       base.permission(req, res, next ,__adminUserInfo__);
+      base.leftmenu(req, res, next);
 }
 
 // 首页
-router.get('/', isLogin , admin_permission, require(config.__admin_c__+'/index').index);
+router.get('/', publicControl ,  isLogin , admin_permission, require(config.__admin_c__+'/index').index);
 // 首页
-router.get('/index',isLogin ,admin_permission, require(config.__admin_c__+'/index').index );
+router.get('/index', publicControl , isLogin ,admin_permission, require(config.__admin_c__+'/index').index );
+router.get('/index.html', publicControl , isLogin ,admin_permission, require(config.__admin_c__+'/index').index );
+
 // 登录
-router.get('/login' , require(config.__admin_c__+'/login').login );
+router.get('/login' , publicControl ,  require(config.__admin_c__+'/login').login );
 //退出登录
-router.get('/logout' , require(config.__admin_c__+'/login').logout );
-//浏览器
-router.get('/brower',isLogin , require(config.__admin_c__+'/login').brower );
+router.get('/logout' , publicControl ,  require(config.__admin_c__+'/login').logout );
 // 提交登录
-router.post('/login', require(config.__admin_c__+'/login').postLogin );
+router.post('/login', publicControl ,  require(config.__admin_c__+'/login').postLogin );
 
 // 用户管理
-router.get('/user/index',isLogin ,admin_permission, require(config.__admin_c__+'/user').index );
+// router.get('/user/index', publicControl , isLogin ,admin_permission, require(config.__admin_c__+'/user').index );
 // 用户列表
-router.get('/user/list',isLogin , require(config.__admin_c__+'/user').list );
+router.get('/user/list', publicControl , isLogin , require(config.__admin_c__+'/user').list );
+router.post('/user/ajaxList', publicControl , isLogin , require(config.__admin_c__+'/user').ajaxList );
+// 查看用户详情
+router.get('/user/user_details', publicControl , isLogin , require(config.__admin_c__+'/user').user_details );
 // 封号
-router.get('/user/closeUser',isLogin , require(config.__admin_c__+'/user').closeUser );
+router.post('/user/closeUser', publicControl , isLogin , require(config.__admin_c__+'/user').closeUser );
 
 // 权限管理 authority
-router.get('/user/authority/:user_id',isLogin ,admin_permission, require(config.__admin_c__+'/user').authority );
+router.get('/user/authority/:user_id', publicControl , isLogin ,admin_permission, require(config.__admin_c__+'/user').authority );
 // 角色管理 role
-router.get('/user/role/:user_id',isLogin ,admin_permission, require(config.__admin_c__+'/user').role );
+router.get('/user/role/:user_id', publicControl , isLogin ,admin_permission, require(config.__admin_c__+'/user').role );
 // 角色管理 role
-router.get('/user/roleList',isLogin , require(config.__admin_c__+'/user').roleList );
+router.get('/user/roleList', publicControl , isLogin , require(config.__admin_c__+'/user').roleList );
 // 角色管理 role
-router.get('/user/changRole',isLogin , require(config.__admin_c__+'/user').changRole );
+router.get('/user/changRole', publicControl , isLogin , require(config.__admin_c__+'/user').changRole );
+// 管理员列表
+router.get('/admin/list', publicControl , isLogin , require(config.__admin_c__+'/user').adminList );
+router.post('/user/ajaxAdminList', publicControl , isLogin , require(config.__admin_c__+'/user').ajaxAdminList );
 // 添加角色
-router.get('/user/addRole',isLogin , require(config.__admin_c__+'/user').addRole );
+router.get('/user/addRole', publicControl , isLogin , require(config.__admin_c__+'/user').addRole );
 // 删除角色
-router.get('/user/delRole',isLogin , require(config.__admin_c__+'/user').delRole );
+router.get('/user/delRole', publicControl , isLogin , require(config.__admin_c__+'/user').delRole );
 
 // 文章管理
-router.get('/articles/index', require(config.__admin_c__+'/articles').index );
+router.get('/articles/list', publicControl ,  require(config.__admin_c__+'/articles').list );
+// ajax 加载文章列表数据
+router.post('/articles/lists', publicControl ,  require(config.__admin_c__+'/articles').lists );
+// 管理员封贴
+router.post('/articles/paste', publicControl , isLogin ,  require(config.__admin_c__+'/articles').paste );
+
+
+router.get('/welcome.html', publicControl , isLogin ,admin_permission, require(config.__admin_c__+'/index').welcome );
 
 module.exports = router;

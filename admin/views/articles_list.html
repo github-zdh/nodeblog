@@ -1,0 +1,230 @@
+﻿<% include ../templates/head.html %>
+
+<nav class="breadcrumb">
+	<i class="Hui-iconfont">&#xe67f;</i> 
+	  首页
+	<span class="c-gray en">&gt;</span>
+	  文章/帖子管理
+	<span class="c-gray en">&gt;</span>
+	   文章/帖子列表
+	<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
+	   <i class="Hui-iconfont">&#xe68f;</i>
+	</a>
+</nav>
+<div class="page-container">
+	<div class="text-l">
+	 <span class="select-box inline">
+		<select id="ss-clas" class="select">
+			<option value="0">全部分类</option>
+			<%= __adminPageInfo__ %>
+			<% for(var i=0;i<__adminPageInfo__.clas.length;i++){ %>
+			<option value="<%= __adminPageInfo__.clas[i].id %>"><%= __adminPageInfo__.clas[i].clas_name %></option>
+			<% } %>
+		</select>
+		</span> 日期范围：
+		<input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}' })" id="logmin" class="input-text Wdate" style="width:120px;">
+		-
+		<input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d' })" id="logmax" class="input-text Wdate" style="width:120px;">
+		<input type="text" name="" id="ss-title" placeholder=" 文章/帖子名称" style="width:250px" class="input-text">
+		<button name="" id="ss-btn" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜文章/帖子</button>
+	</div>
+
+	<div class="mt-30">
+		<table class="table table-border table-bordered table-bg table-hover table-sort table-responsive">
+			<thead>
+				<tr class="text-c">
+					<th width="80">ID</th>
+					<th>标题</th>
+					<th width="80">分类</th>
+					<th width="80">用户</th>
+					<th width="120">更新时间</th>
+					<th width="75">举报次数</th>
+					<th width="60">状态</th>
+					<th width="120">操作</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+		<div id="demo7" class="mt-30 text-r"></div>
+	</div>
+</div>
+
+
+
+<!--_footer 作为公共模版分离出去-->
+<% include ../templates/footer.html %>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/admin/lib/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="/admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script>
+function getTimeFn(time){
+     const _date = new Date(time*1000);
+     return _date.getFullYear()+'/'+(_date.getMonth()+1)+'/'+_date.getDate()+' '+_date.getHours()+':'+_date.getMinutes()+':'+_date.getSeconds()
+}
+function tbodyFn(obj){
+	return '<tr class="text-c">'+
+					'<td>'+obj.id+'</td>'+
+					'<td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'/index/articleDetails/'+obj.id+'\',\'10001\')" title="查看">'+obj.title+'</u></td>'+
+					'<td>行业动态</td>'+
+					'<td>'+obj.username+'</td>'+
+					'<td>'+ getTimeFn(obj.update_time) +'</td>'+
+					'<td>'+obj.report_num+'</td>'+
+					'<td class="td-status">'+(obj.is_valid==1?'<span class="label label-success radius">有效</span>':'<span class="label radius">失效</span>')+'</td>'+
+					'<td class="f-14 td-manage">'+
+						(obj.is_valid==1?
+						'<a style="text-decoration:none" onClick="article_stop(this,'+obj.id+')" href="javascript:;" title="下架">'+
+					    	'<i class="Hui-iconfont">&#xe6de;</i>'+
+						'</a>':
+						'<a style="text-decoration:none" onClick="article_start(this,'+obj.id+')" href="javascript:;" title="发布"><i class="Hui-iconfont">&#xe603;</i></a>')+
+						// '<a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑">'+
+						//     '<i class="Hui-iconfont">&#xe6df;</i>'+
+						// '</a>'+
+						// '<a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除">'+
+						//     '<i class="Hui-iconfont">&#xe6e2;</i>'+
+						// '</a>'+
+					'</td>'+
+			'</tr>'
+}
+
+const _tbody = $('#tbody');
+var ss = {
+	 clas_id:''
+	,art_name:''
+	,minDate:''
+	,maxDate:''
+	,count : '<%= __adminPageInfo__.art_count %>'
+}
+$('#ss-btn').click(function(){
+    ss.clas_id = $('#ss-clas').val(); 
+    ss.minDate = $('#logmin').val();
+    ss.maxDate = $('#logmax').val(); 
+    ss.art_name = $('#ss-title').val(); 
+    ss.isloadnum = true;
+    
+    laypageFn()
+})
+function laypageFn(clas_id,art_name,minDate,maxDate){
+	     layui.laypage.render({
+			     elem: 'demo7'
+			    ,count: ss.count
+			    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+			    ,jump: function(obj){
+			    	console.log(obj);
+			         //首次不执行
+				     if(!obj||!obj.index){
+				     	  return false;
+				     }
+				     if(obj.index==1){
+				     	 laypageFn();
+				     }else{
+				     	 var loading = layui.layer.load(1);
+				     	 var data = {curr:obj.curr,limit:obj.limit};
+				     	 if(ss.clas_id!=''&&ss.clas_id!=0){
+				     	 	    data.clas_id = ss.clas_id;//分类id
+				     	 }
+				     	 if(ss.art_name!=''){
+				     	 	    data.art_name = ss.art_name;//搜索名称
+				     	 }
+				     	 if(ss.minDate!=''){
+				     	 	    data.minDate = ss.minDate;//最小时间
+				     	 }
+				     	 if(ss.maxDate!=''){
+				     	 	    data.maxDate = ss.maxDate;//最大时间
+				     	 }
+				     	 if(ss.isloadnum){
+				     	 	    data.isloadnum = ss.isloadnum;//重新算数量
+				     	 }
+				     	 console.log(data);
+				         $.ajax({
+				         	  url:'/admin/articles/lists',
+				         	  type:'POST',
+				         	  data:data,
+				         	  dataType:'JSON',
+				         	  success:function(data){
+				         	  	   console.log(data);
+				         	  	   if(data.code=='200'){
+									       if(ss.isloadnum){
+									       	    ss.isloadnum=false;
+									       	    ss.count = data.result;
+									       	    laypageFn();
+									       }
+				         	  	   	       _tbody.html(' ');
+				         	  	   	       for(var i =0;i<data.result.length;i++){
+				         	  	   	       	     _tbody.append(tbodyFn(data.result[i]))
+				         	  	   	       }
+						         	  	   layui.layer.msg('加载成功');
+						         	  	   layui.layer.close(loading);
+				         	  	   }
+				         	  },
+				         	  error:function(err){
+				         	  	   console.log(err);
+				         	  	   layui.layer.msg('加载失败');
+				         	  	   layui.layer.close(loading);
+				         	  }
+				         })
+				     } 
+			    }
+		});
+}
+laypageFn();
+
+var index = '';
+/*资讯-编辑*/
+function article_edit(title,url,id,w,h){
+		 index = layui.layer.open({
+			type: 2,
+			title: title,
+			content: url
+		});
+		layui.layer.full(index);
+}
+/*资讯-下架*/
+function article_stop(obj,id){
+	layer.confirm('确认要封贴吗？',function(index){
+		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="article_start(this,'+id+')" href="javascript:;" title="发布"><i class="Hui-iconfont">&#xe603;</i></a>');
+		$(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">失效</span>');
+		$(obj).remove();
+		paste(false,id)
+		
+	});
+}
+/*资讯-发布*/
+function article_start(obj,id){
+	layer.confirm('确认要解封吗？',function(index){
+		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="article_stop(this,'+id+')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a>');
+		$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">有效</span>');
+		$(obj).remove();
+		paste(true,id)
+	});
+}
+function paste(isPaste,id){
+     $.ajax({
+     	  url:'/admin/articles/paste',
+     	  type:'POST',
+     	  data:{isPaste:isPaste,id:id},
+     	  dataType:'JSON',
+     	  success:function(data){
+     	  	   console.log(data);
+     	  	   if(data.code=='200'){
+				       if(isPaste){
+				       	    layui.layer.msg('已解封!',{icon: 6,time:1000});
+				       }else{
+				       	    layui.layer.msg('已封贴!',{icon: 5,time:1000});
+				       }				       
+     	  	   }
+     	  },
+     	  error:function(err){
+     	  	   console.log(err);
+     	  	   layui.layer.msg('请求超时');
+     	  	   layui.layer.closeAll();
+     	  }
+     })
+}
+
+</script>
+
+</body>
+</html>

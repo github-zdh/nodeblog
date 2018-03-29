@@ -515,47 +515,90 @@ obj.report=(req,res) => {
 	             return base.returnjson(res,100,"请提交信息");  
 	      }
 	      let query = req.query;
-	      let userInfo = req.session[__webUserInfo__];          
+	      let userInfo = req.session[__webUserInfo__];  
 
-          let getReportCount = 'SELECT * from z_report where art_list_id ='+query.art_id+' and user_id = '+userInfo.id;//查询自己是否举报过、如果举报过；就不插入数据库
-          sql.runSql(getReportCount,(err,data) => {
-	          	  if(err){
-	                   return res.end(base.returnjson(res,100,"查询失败"));
-	          	  }
-	          	  if(data.length!=0){//已经举报过
-                         return res.end(base.returnjson(res,200,"你已经举报过了"));
-	          	  }
-		          let getReportCount = 'SELECT count(*),b.report_num from z_report a,z_articles_list b where a.art_list_id ='+query.art_id+' and b.id ='+query.art_id;
-		          sql.runSql(getReportCount,(err,data) => {
-			          	  if(err){
-			                   return res.end(base.returnjson(res,100,"查询失败"));
-			          	  }
-			          	  let count = data[0]['count(*)'];
-			          	  let reportData = data[0];
-	                          // 举报
-				          let addReport = 'insert into z_report (user_id,art_list_id,content,time) values ('+userInfo.id+','+query.art_id+',"'+query.content+'",'+com.timestamp()+')';
-				          sql.runSql(addReport,(err,data) => {
-					          	  if(err){
-					                   return res.end(base.returnjson(res,100,"查询失败"));
-					          	  }
-					          	  // console.log(count);
-					          	  // 如果举报 3(默认 report_num) 次封贴
-					          	  if(reportData['count(*)']+1 >= reportData.report_num){
-								          let update_num = 'update z_articles_list set is_valid = 0 where id ='+query.art_id;
-								          // console.log(update_num);
-								          sql.runSql(update_num,(err,data) => {
-								          	  if(err){
-								                   return res.end(base.returnjson(res,100,"查询失败"));
-								          	  }						          	  
-								          	  return res.end(base.returnjson(res,200,"举报成功"));
-								          })
+		  const rqs = [
+
+		          {
+					   	sql:'SELECT * from z_report where art_list_id ='+query.art_id+' and user_id = '+userInfo.id,
+					    sCallback:(data,options) => {
+				          	  if(data.length!=0){//已经举报过
+			                         return res.end(base.returnjson(res,200,"你已经举报过了"));
+				          	  }
+					    }
+				  }
+				  ,{
+					   	sql:'SELECT count(*),b.report_num from z_report a,z_articles_list b where a.art_list_id ='+query.art_id+' and b.id ='+query.art_id,
+					    sCallback:(data,options) => {
+				          	  let count = data[0]['count(*)'];
+				          	  let reportData = data[0];
+					    }
+				  }
+				  ,{
+					   	sql:'insert into z_report (user_id,art_list_id,content,time) values ('+userInfo.id+','+query.art_id+',"'+query.content+'",'+com.timestamp()+')',
+					    sCallback:(data,options) => {
+					    	       console.log(options.sql_data);
+					          	  if(options.sql_data[1][0]['count(*)']+1 >= 3){
+								          let update_num = 'update z_articles_list set is_valid = 0 , report_num = 3 where id = '+query.art_id;
 					          	  }else{
-					          	  	      return res.end(base.returnjson(res,200,"举报成功"));
+								         let update_num = 'update z_articles_list set report_num = '+(options.sql_data[1][0]['count(*)']+1)+' where id = '+query.art_id;
 					          	  }
+					          	  sql.runSql(update_num,(err,data) => {
+						          	  if(err){
+						                   return res.end(base.returnjson(res,100,"查询失败"));
+						          	  }						          	  
+						          	  return res.end(base.returnjson(res,200,"举报成功"));
+						          })
+					    }
+				  }
+	      ];
+		  sql.querysql({
+				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+				   eCallback:(err,options)=>{
+				   	    return base.returnjson(res,100,"查询失败");
+				   	    options.end();
+				   }
+		   })
 
-				          })
-		          })
-          })
+          // let getReportCount = 'SELECT * from z_report where art_list_id ='+query.art_id+' and user_id = '+userInfo.id;//查询自己是否举报过、如果举报过；就不插入数据库
+          // sql.runSql(getReportCount,(err,data) => {
+	         //  	  if(err){
+	         //           return res.end(base.returnjson(res,100,"查询失败"));
+	         //  	  }
+	         //  	  if(data.length!=0){//已经举报过
+          //                return res.end(base.returnjson(res,200,"你已经举报过了"));
+	         //  	  }
+		        //   let getReportCount = 'SELECT count(*),b.report_num from z_report a,z_articles_list b where a.art_list_id ='+query.art_id+' and b.id ='+query.art_id;
+		        //   sql.runSql(getReportCount,(err,data) => {
+			       //    	  if(err){
+			       //             return res.end(base.returnjson(res,100,"查询失败"));
+			       //    	  }
+			       //    	  let count = data[0]['count(*)'];
+			       //    	  let reportData = data[0];
+	         //                  // 举报
+				      //     let addReport = 'insert into z_report (user_id,art_list_id,content,time) values ('+userInfo.id+','+query.art_id+',"'+query.content+'",'+com.timestamp()+')';
+				      //     sql.runSql(addReport,(err,data) => {
+					     //      	  if(err){
+					     //               return res.end(base.returnjson(res,100,"查询失败"));
+					     //      	  }
+					     //      	  // console.log(count);
+					     //      	  // 如果举报 3(默认 report_num) 次封贴
+					     //      	  if(reportData['count(*)']+1 >= reportData.report_num){
+								  //         let update_num = 'update z_articles_list set is_valid = 0 where id ='+query.art_id;
+								  //         // console.log(update_num);
+								  //         sql.runSql(update_num,(err,data) => {
+								  //         	  if(err){
+								  //                  return res.end(base.returnjson(res,100,"查询失败"));
+								  //         	  }						          	  
+								  //         	  return res.end(base.returnjson(res,200,"举报成功"));
+								  //         })
+					     //      	  }else{
+					     //      	  	      return res.end(base.returnjson(res,200,"举报成功"));
+					     //      	  }
+
+				      //     })
+		        //   })
+          // })
 }
 
 // 公告

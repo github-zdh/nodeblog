@@ -1,102 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>示例登陆页</title>
-    <style>
-        #win10-login {
-            background: url('../images/admin/1.gif') no-repeat fixed;
-            width: 100%;
-            height: 100%;
-            background-size: 100% 100%;
-            position: fixed;
-            z-index: -1;
-            top: 0;
-            left: 0;
-        }
-
-        #win10-login-box {
-                width: 300px;
-                position: fixed;
-                top:50%;
-                left: 50%;
-                margin-left: -150px;
-                transform:translate(0,-60%);
-                -webkit-transform:translate(0,-60%);
-                -moz-transform:translate(0,-60%);
-                -ms-transform:translate(0,-60%);
-                -o-transform:translate(0,-60%);
-        }
-
-        .win10-login-box-square {
-            width: 105px;
-            margin: 0 auto;
-            border-radius: 50%;
-            background-color: darkgray;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .win10-login-box-square::after {
-            content: "";
-            display: block;
-            padding-bottom: 100%;
-        }
-
-        .win10-login-box-square .content {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        input {
-            width: 90%;
-            display: block;
-            border: 0;
-            margin: 0 auto;
-            line-height: 36px;
-            font-size: 13px;
-            padding: 0 1em;
-            border-radius: 5px;
-            margin-bottom: 11px;
-        }
-
-        .login{
-            width: 91%;
-            color: #999;
-        }
-        input[type='submit']{
-             width: 100%;
-             background: rgba(0,0,255,0.65);
-             color:#fff;
-        }
-        .code input{width: 30%; float: left;}
-        .code img{width: 30%; float: left;margin-left: 5%;height: 36px;}
-        .code input[type='submit']{width: 20%; float: right;background: rgba(0,0,255,0.65);color:#fff;cursor: pointer;}
-    </style>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link href="static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css" />
+<link href="static/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css" />
+<link href="static/h-ui.admin/css/style.css" rel="stylesheet" type="text/css" />
+<link href="lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>后台登录</title>
+<meta name="keywords" content="ZDH,zdh,node,blog">
+<meta name="description" content="ZDH,zdh">
 </head>
 <body>
-<div id="win10-login">
-    <div style="height: 10%;min-height: 120px"></div>
-    <div id="win10-login-box">
-        <div class="win10-login-box-square">
-            <img src="../images/admin/1.gif" class="content"/>
+<input type="hidden" id="TenantId" name="TenantId" value="" />
+<div class="header"></div>
+<div class="loginWraper">
+  <div id="loginform" class="loginBox">
+    <form class="form form-horizontal" method="post" id="form" action="/admin/login"  enctype="multipart/form-data">
+      <div class="row cl">
+        <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+        <div class="formControls col-xs-8">
+          <input id="username" name="username" type="text" placeholder="账户" class="input-text size-L">
         </div>
-        <p style="font-size: 24px;color: white;text-align: center">你好！请登录</p>
-        <form target="_self"  method="post"  action="/admin/login"  enctype="multipart/form-data">
-            <!--用户名-->
-            <input type="text" placeholder="请输入用户名" name="username" class="login">
-            <!--密码-->
-            <input type="password" placeholder="请输入密码" name="password" class="login">
-            <!--登陆按钮-->
-            <div class="code">
-                  <input type="text" placeholder="请输入验证码" class="inputCode">
-                  <img src="./img/wallpapers/login.jpg">
-                  <input type="submit"  value="登录" class="login"/>
-                  <br style="clear: both;" />
-            </div>
-        </form>
-    </div>
+      </div>
+      <div class="row cl">
+        <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+        <div class="formControls col-xs-8">
+          <input id="password" name="password" type="password" placeholder="密码" class="input-text size-L">
+        </div>
+      </div>
+      <div class="row cl">
+        <div class="formControls col-xs-8 col-xs-offset-3">
+          <input class="input-text size-L" type="text" placeholder="验证码" onblur="if(this.value==''){this.value='验证码:'}" onclick="if(this.value=='验证码:'){this.value='';}" value="验证码:" style="width:150px;" id="code">
+          <img src="static/h-ui.admin/images/logo.png" style="width: 100px;height: 41px;" id="imgcode"> <a id="kanbuq" href="javascript:;">看不清，换一张</a> </div>
+      </div>
+<!--       <div class="row cl">
+        <div class="formControls col-xs-8 col-xs-offset-3">
+          <label for="online">
+            <input type="checkbox" name="online" id="online" value="">
+            使我保持登录状态</label>
+        </div>
+      </div> -->
+      <div class="row cl" style="margin-top: 50px;">
+        <div class="formControls col-xs-8 col-xs-offset-3">
+          <input name="" type="submit" id="submit" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;" style="width:175px;margin-right: 10px;">
+          <input name="" type="reset" class="btn btn-default radius size-L" value="&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;消&nbsp;" style="width:175px">
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
+<div class="footer">Copyright zdh by nodeblog 1.0.0</div>
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+
 </body>
 </html>

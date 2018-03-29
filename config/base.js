@@ -59,7 +59,6 @@ base.login=function(req, res, next,userInfo){
 				 	error:formError,
 				 	success:formSeccess
 		 })
-
 	     function formError(){
 	    	  _this.errorMsg(req,res,'账号密码提交失败！'); 
 	     }
@@ -94,7 +93,7 @@ base.login=function(req, res, next,userInfo){
 	     }
 }
 
-// 用户权限 permission
+// 后台用户权限 permission
 base.permission=function(req,res,next,userInfo){
          var originalUrl=req.originalUrl.split('/');//检测路径
          var _this=this;
@@ -108,11 +107,11 @@ base.permission=function(req,res,next,userInfo){
          
          if(userInfo==__adminUserInfo__){//后台用户 角色 权限 查询
 
-			     var role_id='select role_id from z_admin_user_role where user_id='+req.session[userInfo].id;
+			     var role_id='select role_id from z_user_role where register = 1 and user_id='+req.session[userInfo].id;
 			     // var per_id='select per_id from z_admin_role_permissions where role_id=';
-			     var per_id_in='select per_id from z_admin_role_permissions where role_id in (';
+			     var per_id_in='select per_id from z_role_permissions where  register = 1 and role_id in (';
 			     // var z_per='select * from z_admin_permissions where id=';
-			     var z_per_in='select * from z_admin_permissions where id in (';
+			     var z_per_in='select * from z_permissions where  register = 1 and id in (';
 		 }
 
 		 if(userInfo==__webUserInfo__){//前台用户 角色 权限 查询
@@ -127,6 +126,9 @@ base.permission=function(req,res,next,userInfo){
 	     req.session[userInfo].permission=[];
 
 	     sql.runSql(role_id,function(err,data){//查询一个用户有多少种角色；拥有多少权限
+                 if(err){
+                 	 return  base.errorMsg(req,res,'查询失败');
+                 }
                  role_arr=data[0].role_id;
                  role_arr_fn(data);
 	     })
@@ -136,8 +138,8 @@ base.permission=function(req,res,next,userInfo){
 					     	    if(err){
 					     	    	    return  base.errorMsg(req,res,'查询失败');
 					     	    }
-			                    // console.log('per_id_in-------------------'+JSON.stringify(data));
-			                    // console.log('per_id_in-------------------end');
+					     	    
+
 			                    for(var i=0;i<data.length;i++){
 			                    	   if(per_arr==''){
 			                    	   	      per_arr=data[i].per_id;
@@ -150,77 +152,17 @@ base.permission=function(req,res,next,userInfo){
 			                    per_arr=per_arr.join(',');
 			                    per_arr_fn();
 				     })
-              /*
-			       if(role_arr.indexOf(',')!=-1){//多重角色
-		                 	  role_arr=role_arr.split(',');
-		                 	  role_arr=com.unique(role_arr);
-			       }else{//单角色
-		                    role_arr=[data[0].role_id]
-			       } 
-                   if(role_arr.length>1){//多重角色
-	                   	     console.log('多重角色')
-	                   	     for(var i=0;i<role_arr.length;i++){
-								     sql.runSql(per_id+role_arr[i],function(err,data,obj){//检测权限
-							                   if(per_arr==''){
-	                                                  per_arr=data[0].per_id;
-							                   }else{
-							                   	      per_arr=per_arr+','+data[0].per_id;
-							                   }
-							                   if(obj.i==obj.length-1){
-	                                                per_arr_fn();
-							                   }
-								     },{i:i,length:role_arr.length})
-	                   	     }
-                   }else{//单角色
-						     console.log('单角色')
-						     sql.runSql(per_id+role_arr[0],function(err,data){//检测权限
-					                   per_arr=data[0].per_id;
-	                                   per_arr_fn();
-						     })
-                   }
-                */
    	     }  
    	     function per_arr_fn(){//检测权限
                 sql.runSql(z_per_in+per_arr+')',function(err,data){//检测权限
-		                    // console.log('z_per_in-------------------'+JSON.stringify(data));
-		                    // console.log('z_per_in-------------------end');
+		                    if(err){
+					     	    	    return  base.errorMsg(req,res,'查询失败');
+					     	}
 		                    for(var i=0;i<data.length;i++){
 		                    	   req.session[userInfo].permission.push(data[i]);
 		                    }
 		                    originalUrl_fn();
 			     })
-
-                /*
-                 
-		       	 if(per_arr.indexOf(',')!=-1){//检测一个用户是否有多重权限
-		       	     	 per_arr=per_arr.split(',');
-		       	     	 per_arr=com.unique(per_arr);
-		       	 }else{//检测一个用户是否有单权限
-                         per_arr=[per_arr]
-		       	 }
-
-           	     if(per_arr.length>1){//检测一个用户是否有多重权限
-		       	     	 console.log('多重权限');
-		           	     for(var s=0;s<per_arr.length;s++){
-							     sql.runSql(z_per+per_arr[s],function(err,data,obj){
-						                admin_per.push(data[0]);
-						                if(obj.s==obj.length-1){
-		                                         req.session[userInfo].permission=admin_per;
-		                                         originalUrl_fn()
-		                                         // next();
-						                 }
-							     },{s:s,length:per_arr.length})
-		           	     }
-           	     }else{//检测一个用户是否有单权限
-                         console.log('单权限');
-					     sql.runSql(z_per+per_arr[0],function(err,data,obj){
-                                 req.session[userInfo].permission.push(data[0]);
-                                 originalUrl_fn()
-                                 // next();
-					     })
-           	     }
-
-           	     */
    	     }  
 
    	     // 检测权限(路径)
@@ -242,8 +184,34 @@ base.permission=function(req,res,next,userInfo){
 	   	     	   	    	  return false;
 	   	     	   	    }
    	     	   }
+   	     	   base.leftmenu(req,res,userInfo);
    	     	   next();
    	     }
+}
+
+// 处理后台用户左菜单列表
+base.leftmenu = (req,res,userInfo) => {
+     let reqAdminUserInfo=req.session[userInfo];     
+     if(!reqAdminUserInfo||!reqAdminUserInfo.permission){
+          return false;
+     }
+     if(reqAdminUserInfo&&reqAdminUserInfo.leftmenu){
+     	  return false;
+     }
+
+     let leftmenu = {};
+     for(var i=0;i<reqAdminUserInfo.permission.length;i++){
+            if(reqAdminUserInfo.permission[i].grade==1){
+                 leftmenu[reqAdminUserInfo.permission[i].id] = reqAdminUserInfo.permission[i];
+                 leftmenu[reqAdminUserInfo.permission[i].id].children=[];
+            }
+     }
+     for(var i=0;i<reqAdminUserInfo.permission.length;i++){
+            if(reqAdminUserInfo.permission[i].p_id!=0){
+                 leftmenu[reqAdminUserInfo.permission[i].p_id].children.push(reqAdminUserInfo.permission[i]);
+            }
+     }
+     req.session[userInfo].leftmenu = leftmenu;
 }
 
 // 后台用户菜单列表
@@ -302,11 +270,10 @@ base.sendMail=function(req,res,params){
 		    };
 		    mailTransport.sendMail(options, function(err, msg){
 			        if(err){
-			            console.log(err);
 			            res.end(base.returnjson(res,100,"发送失败!"));
 			        }
 			        else {
-			            console.log(msg);
+			        	
 			            res.end(base.returnjson(res,200,"请去邮箱查看验证码！\n如果没接收到；请查看邮箱垃圾箱中有没有,并且添加修改为不是垃圾邮件"));
 			        }
 		    });

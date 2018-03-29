@@ -8,68 +8,138 @@ var com = require(__ROOTDIR__+'/config/common');
 var base = require(__ROOTDIR__+'/config/base');
 
 
-exports.index=function (req, res, next) {
-         // var list=base.list(req,res,2);
- 	     // console.log(req.query.page);
- 	     var sqlRum='select * from z_member order by id limit 0,10';
+// exports.index=function (req, res, next) {
+//          // var list=base.list(req,res,2);
+//  	     // console.log(req.query.page);
+//  	     var sqlRum='select * from z_member order by id limit 0,10';
+//  	     var count='select count(id) from z_member';
+// 	     sql.runSql(sqlRum,function(err,data){
+// 		     	  if(err){
+// 		     	  	    base.errorMsg(req,res,'查询用户失败');
+// 		     	  	    return false;
+// 		     	  }
+// 		     	  // console.log(data);
+// 		     	  // console.log('--------------------------------------')
+// 		     	  var sql_data=data;
+// 				  sql.runSql(count,function(err,data){
+// 							     	  if(err){
+// 							     	  	    base.errorMsg(req,res,'查询用户失败');
+// 							     	  	    return false;
+// 							     	  }
+// 							     	  // console.log(JSON.stringify(data));
+// 							     	 res.render(config.__admin_v__+'/user',{list:[{ url: '/admin/user/list', title: '用户列表' }],data:sql_data,count:data});      	  
+// 					});
+		     	    	  
+// 	     });
+
+// };
+
+
+exports.list=function (req, res, next) {
  	     var count='select count(id) from z_member';
-	     sql.runSql(sqlRum,function(err,data){
+	     sql.runSql(count,function(err,data){
 		     	  if(err){
 		     	  	    base.errorMsg(req,res,'查询用户失败');
 		     	  	    return false;
 		     	  }
-		     	  // console.log(data);
-		     	  // console.log('--------------------------------------')
-		     	  var sql_data=data;
-				  sql.runSql(count,function(err,data){
-							     	  if(err){
-							     	  	    base.errorMsg(req,res,'查询用户失败');
-							     	  	    return false;
-							     	  }
-							     	  // console.log(JSON.stringify(data));
-							     	 res.render(config.__admin_v__+'/user',{list:[{ url: '/admin/user/list', title: '用户列表' }],data:sql_data,count:data});      	  
-					});
-		     	    	  
-	     });
-
-};
-
-
-exports.list=function (req, res, next) {
- 	     var limitCount=req.query.limit||10;
- 	     var page=(req.query.page-1)*limitCount;
- 	     var sqlRum='select id,username,sex,phone,email,is_admin,is_valid from z_member order by id limit '+page+','+limitCount;
- 	     var count='select count(*) from z_member';
- 	     var returnData = {
-			 	     	 "code":0,
-				 	     "msg":"success",
-				 	     "count":0,
-				 	     "data":[]
-			 	     }
-	     sql.runSql(sqlRum,function(err,data){
-		     	  if(err){
-		     	  	    base.errorMsg(req,res,'查询失败');
-		     	  	    return false;
-		     	  }
-		     	  returnData.data=data;
-				  sql.runSql(count,function(err,data){
-							     	  if(err){
-							     	  	    base.errorMsg(req,res,'查询用户失败');
-							     	  	    return false;
-							     	  }
-							     	  returnData.code=200;
-							     	  returnData.count=data[0]["count(*)"];
-                                       // {"code":0,"msg":"","count":1000,"data":[]}
-							     	  return res.end(JSON.stringify(returnData));      	  
-					});
-		     	  
+		     	  __adminPageInfo__.user_count = data[0]['count(id)'];
+			      res.render(config.__admin_v__+'/user_list',{__adminPageInfo__:__adminPageInfo__});		     	    	  
 	     });
          
 };
 
-exports.bojinnext=function (req, res, next) {
+exports.ajaxList=function (req, res, next) {
+
+ 	     var limitCount=req.body.limit||10;
+ 	     var curr=(req.body.curr-1)*limitCount;
+ 	     var selsql='';
+ 	     let body = req.body;
+		 let rqs = [];
+		  if(req.body.isloadnum){
+		  	   selsql='select  count(*) from z_member';
+		  }else{
+		  	   selsql='select * from z_member order by id limit '+curr+','+limitCount;
+		  }
+
+		 function appendSql(sql,addsql){
+	            if(sql.indexOf('where')!=-1){
+	            	    return sql.split(' where ')[0]+' where '+addsql+' and '+sql.split(' where ')[1];
+	            }else{
+						if(req.body.isloadnum){
+							   return sql.split(' order ')[0]+' where '+addsql;
+						}else{
+							   return sql.split(' order ')[0]+' where '+addsql+' order '+sql.split(' order ')[1];
+						}
+	            }
+		  }
+
+		  if(body.keyworld){
+		 	    const art_name = ' ( username like "%'+body.keyworld+'%"'+' or phone like "%'+body.keyworld+'%"'+' or email  like "%'+body.keyworld+'%" ) ';
+		 	    selsql = appendSql(selsql,art_name);	  	  
+		  }
+		  if(body.minDate&&body.maxDate){
+		 	    const minmaxDate = ' addtime between '+parseInt(new Date(body.minDate+' 23:59:59').getTime()/1000)+' and '+parseInt(new Date(body.maxDate+' 23:59:59').getTime()/1000);
+		 	    selsql = appendSql(selsql,minmaxDate);
+		  }else{
+				if(body.minDate){
+				    const minDate = ' addtime between '+parseInt(new Date(body.minDate+' 23:59:59').getTime()/1000)+' and '+parseInt(new Date().getTime()/1000);
+				    selsql = appendSql(selsql,minDate);	  	  
+				}
+				if(body.maxDate){
+				    const maxDate = ' addtime < '+parseInt(new Date(body.maxDate+' 23:59:59').getTime()/1000);
+				    selsql = appendSql(selsql,maxDate);
+			   }
+		  }
+		 if(req.body.isloadnum){
+				  rqs = [
+				          {
+							   	sql:selsql,
+							    sCallback:(data,options) => {
+								   	    base.returnjson(res,'200','success',data[0]['count(*)'])
+							    }
+						  }
+			      ];
+	     }else{
+				  rqs = [
+				          {
+							   	sql:selsql,
+							    sCallback:(data,options) => {
+								   	    base.returnjson(res,'200','success',data)
+							    }
+						  }
+			      ];
+	     }
+		 sql.querysql({
+				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+				   eCallback:(err,options)=>{
+				   	    return base.returnjson(res,'100','查询失败');
+				   	    options.end();
+				   }
+		   })	     
+         
+};
+
+exports.user_details=function (req, res, next) {
          // console.log(config.__admin_v__+'/bojin');
-         res.render(config.__admin_v__+'/bojinnext'); 
+		  let rqs = [
+		          {
+					   	sql:'select * from z_member where id='+req.query.id,
+					    sCallback:(data,options) => {
+
+					     	  __adminPageInfo__ = data[0];
+					     	  if(__adminPageInfo__&&__adminPageInfo__.addtime){
+					     	  	   __adminPageInfo__.add_time = com.getTime(__adminPageInfo__.addtime);
+					     	  }
+						      res.render(config.__admin_v__+'/user_details',{__adminPageInfo__:__adminPageInfo__});		
+					    }
+				  }
+	      ];
+		 sql.querysql({
+				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+				   eCallback:(err,options)=>{
+				   	    base.errorMsg(req,res,'查询失败');
+				   }
+		   })	 
 };
 
 
@@ -194,6 +264,7 @@ exports.changRole=function (req, res, next) {
          
 };
 
+
 /*
  *  @params aut_list[{
  *                      id:'',
@@ -223,14 +294,14 @@ exports.authority=function (req, res, next) {
              var aut_list = []; //显示在前台的数据 [{}]
              var aut_data=[];
              
-		     var role_id='select role_id from z_admin_user_role where user_id='+req.session[__adminUserInfo__].id;
+		     var role_id='select role_id from z_user_role where  register = 1 and user_id='+req.session[__adminUserInfo__].id;
 		     // var per_id='select per_id from z_admin_role_permissions where role_id=';
-		     var per_id_in='select per_id from z_admin_role_permissions where role_id in (';
+		     var per_id_in='select per_id from z_role_permissions where  register = 1 and role_id in (';
 		     // var z_per='select * from z_admin_permissions where id=';
-		     var z_per_in='select * from z_admin_permissions where id in (';
+		     var z_per_in='select * from z_permissions where  register = 1 and id in (';
 
 	         flow_control[0]=function(){
-		             var runSql = 'select * from z_admin_permissions'; 
+		             var runSql = 'select * from z_permissions'; 
 					 sql.runSql(runSql,function(err,data){
 					     	  if(err){
 					     	  	   return base.errorMsg(req,res,'查询失败');
@@ -362,53 +433,129 @@ exports.authority=function (req, res, next) {
 
 };
 
+
 // 封号
 exports.closeUser=function(req, res, next) {
              // console.log(req.query);
-	         var userInfo = req.session[__adminUserInfo__];
-	         var is_permission=false;//是否有修改权限 ()
-	         var rData={"code":200,"msg":"操作成功"};
-	         if(req.query.id==1){
-	                res.end(JSON.stringify({"code":100,"msg":"超级管理员不能被封号 ~ ~ ~"}));
+	         let _query = req.body;
+	         let userInfo = req.session[__adminUserInfo__];
+	         if(_query.id==1){
+	                base.returnjson(res,'100','超级管理员不能被封号 ~ ~ ~');
 	                return false;
 	         }
-	         if(userInfo.is_admin!=1||userInfo.is_valid!=1){
-		                rData={"code":300,"msg":"你不是管理员/你的账户已失效"};
-		                res.end(JSON.stringify(rData));
+	         if(userInfo.is_valid!=1){
+		                base.returnjson(res,'300','你的账户已失效');
 		                return false;
 	         }
 
-	         for(var i=0;i<userInfo.permission.length;i++){
-	         	  var userMCV = '/'+userInfo.permission[i].module+'/'+userInfo.permission[i].controller+'/'+userInfo.permission[i].view;
-	         	  if(userMCV=='/admin/user/authority'){
-	         	  	     is_permission=true;
-	         	  	     break;
-	         	  }
-	         }
-	         if(!is_permission){
-	         	   rData={"code":100,"msg":"你无权限修改"};
-	         	   res.end(JSON.stringify(rData));
+	         if(userInfo.is_admin!=1){
+	         	   base.returnjson(res,'101','你无权限修改');
 	         	   return false;
 	         }
 	         
-	         var runSql = 'select id,is_admin,is_valid from z_member where id = '+ req.query.id; 
+	         var runSql = 'select id,is_admin,is_valid from z_member where id = '+ _query.id; 
 			 sql.runSql(runSql,function(err,data){
 			     	  if(err){
-			     	  	    res.end(JSON.stringify({"code":100,"msg":"操作失败"}));
+			     	  	    base.returnjson(res,'001','操作失败');
 			     	  	    return false;
 			     	  }
-			     	  if(data[0].is_admin==1 && userInfo.id != 1){
-			     	  	    res.end(JSON.stringify({"code":100,"msg":"管理员不能被封号；如需要请联系超级管理员"}));
-			     	  	    return false;
-			     	  }
-			     	  var runUpdateSql = 'update z_member SET is_valid = '+( data[0].is_valid==1 ? 0 : 1 )+' WHERE id = '+ req.query.id;
+			     	  var runUpdateSql = 'update z_member SET is_valid = '+( data[0].is_valid==1 ? 0 : 1 )+' WHERE id = '+ _query.id;
 					  sql.runSql(runUpdateSql,function(err,data){
 					     	  if(err){
-					     	  	   res.end(JSON.stringify({"code":100,"msg":"操作失败"}));
+					     	  	   base.returnjson(res,'100','操作失败');
 					     	  	    return false;
 					     	  }
-					     	  res.end(JSON.stringify(rData))    	  
+					     	  base.returnjson(res,'200','操作成功');
 					 });	  
 			});
 	         
+};
+
+exports.adminList = (req, res, next) => {
+ 	     var count='select count(id) from z_member where is_admin = 1';
+	     sql.runSql(count,function(err,data){
+		     	  if(err){
+		     	  	    base.errorMsg(req,res,'查询用户失败');
+		     	  	    return false;
+		     	  }
+		     	  __adminPageInfo__.user_count = data[0]['count(id)'];
+			      res.render(config.__admin_v__+'/admin_list',{__adminPageInfo__:__adminPageInfo__});		     	    	  
+	     });
+         
+};
+
+
+exports.ajaxAdminList=function (req, res, next) {
+
+ 	     var limitCount=req.body.limit||10;
+ 	     var curr=(req.body.curr-1)*limitCount;
+ 	     var selsql='';
+ 	     let body = req.body;
+		 let rqs = [];
+		  if(req.body.isloadnum){
+		  	   selsql='select  count(*) from z_member where is_admin = 1';
+		  }else{
+		  	   selsql='select a.*,u.*,r.* from z_member a INNER JOIN z_user_role u on u.user_id = a.id INNER JOIN z_role r on u.role_id = r.id  where a.is_admin = 1 order by a.id limit '+curr+','+limitCount;
+		  }
+
+		 function appendSql(sql,addsql){
+	            if(sql.indexOf('where')!=-1){
+	            	    return sql.split(' where ')[0]+' where '+addsql+' and '+sql.split(' where ')[1];
+	            }else{
+						if(req.body.isloadnum){
+							   return sql.split(' order ')[0]+' where '+addsql;
+						}else{
+							   return sql.split(' order ')[0]+' where '+addsql+' order '+sql.split(' order ')[1];
+						}
+	            }
+		  }
+           console.log(selsql);
+
+           
+		  if(body.keyworld){
+		 	    const art_name = ' ( username like "%'+body.keyworld+'%"'+' or phone like "%'+body.keyworld+'%"'+' or email  like "%'+body.keyworld+'%" ) ';
+		 	    selsql = appendSql(selsql,art_name);	  	  
+		  }
+		  if(body.minDate&&body.maxDate){
+		 	    const minmaxDate = ' addtime between '+parseInt(new Date(body.minDate+' 23:59:59').getTime()/1000)+' and '+parseInt(new Date(body.maxDate+' 23:59:59').getTime()/1000);
+		 	    selsql = appendSql(selsql,minmaxDate);
+		  }else{
+				if(body.minDate){
+				    const minDate = ' addtime between '+parseInt(new Date(body.minDate+' 23:59:59').getTime()/1000)+' and '+parseInt(new Date().getTime()/1000);
+				    selsql = appendSql(selsql,minDate);	  	  
+				}
+				if(body.maxDate){
+				    const maxDate = ' addtime < '+parseInt(new Date(body.maxDate+' 23:59:59').getTime()/1000);
+				    selsql = appendSql(selsql,maxDate);
+			   }
+		  }
+
+		 if(req.body.isloadnum){
+				  rqs = [
+				          {
+							   	sql:selsql,
+							    sCallback:(data,options) => {
+								   	    base.returnjson(res,'200','success',data[0]['count(*)'])
+							    }
+						  }
+			      ];
+	     }else{
+				  rqs = [
+				          {
+							   	sql:selsql,
+							    sCallback:(data,options) => {
+							    	    console.log(data);
+								   	    base.returnjson(res,'200','success',data)
+							    }
+						  }
+			      ];
+	     }
+		 sql.querysql({
+				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+				   eCallback:(err,options)=>{
+				   	    return base.returnjson(res,'100','查询失败');
+				   	    options.end();
+				   }
+		   })	     
+         
 };

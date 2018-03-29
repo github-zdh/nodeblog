@@ -11,10 +11,8 @@ var base = require(__ROOTDIR__+'/config/base');
 
 
 exports.index=function (req, res, next) {
-         var list=base.list(req,res,1);
-         console.log(list);
-         res.render(config.__admin_v__+'/',{list:list}); 
-
+         console.log(req.session[__adminUserInfo__]);
+         res.render(config.__admin_v__+'/',{__adminUserInfo__:req.session[__adminUserInfo__]}); 
 };
 
 exports.news=function (req, res, next) {
@@ -32,6 +30,12 @@ exports.product=function(req, res, next) {
       res.render(config.__admin_v__+'/index');
 
 };
+exports.welcome=function (req, res, next) {
+         var list=base.list(req,res,1);
+         console.log(list);
+         res.render(config.__admin_v__+'/welcome',{list:list}); 
+};
+
 
 
 // module.exports = index;

@@ -16,6 +16,7 @@ exports.login=function (req, res, next) {
 };
 
 exports.postLogin=function (req, res, next) {
+	console.log('postLogin');
       base.login(req, res, next,__adminUserInfo__);
 };
 
