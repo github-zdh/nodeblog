@@ -17,7 +17,7 @@ sqlobj.runSql=function(sql,callback,callbackParams){
 		  	    }
 		  	    connection.release();//释放链接
 		  })
-	})
+	})    
 }
 
 /*
@@ -168,38 +168,57 @@ sqlobj.querysql = (params) =>{
 		  	  }
 
 	      	  if(obj.beforeSql){
-	      	   	     obj = obj.beforeSql(obj,options);
+	      	   	     let objBeforeSql = obj.beforeSql(obj,options);
+	      	   	     if(objBeforeSql!=undefined&&Object.prototype.toString.call(objBeforeSql)==="[object Object]"){
+	      	   	     	   obj = objBeforeSql;
+	      	   	     }
 	      	  }
 	      	  if(obj.skip){
 	      	  	    options.sql_data[options.index]=[];
 	      	  	    options.index++;
 	      	  	    options.end(options);
 	      	  	    return false;
+	      	  }	      	  
+	      	  if(Object.prototype.toString.call(obj.sql)=="[object Function]"){
+	      	  	   obj.sql = obj.sql()
 	      	  }
 		  	  options.connection.query(obj.sql,(err,data) => {
+		  	  	      options.sql_data[options.index] = [];
 		  	  	      if(err){
 		  	  	      	   options.isNextSql = obj.isNext;
 		  	  	      	   if(obj.eCallback){
-		  	  	      	   	     options.err = '数据库查询失败，请检查查询语句是否正确=> '+obj.sql;
-		  	  	      	   	     obj.eCallback(err,options);
+		  	  	      	   	      options.err = '数据库查询失败，请检查查询语句是否正确=> '+obj.sql;
+				      	   	      let objsCallback = obj.eCallback(err,options);
+				      	   	      if(objsCallback!=undefined&&Object.prototype.toString.call(objsCallback)==="[object Object]"){
+				      	   	     	   options.end(objsCallback);
+				      	   	      }else{
+				      	   	      	   options.end();
+				      	   	      }
 		  	  	      	   }else if(options.params.eCallback){
-		  	  	      	   	     options.err = '数据库查询失败，请检查查询语句是否正确=> '+obj.sql;
-		  	  	      	   	     options.params.eCallback(err,options);
+		  	  	      	   	      options.err = '数据库查询失败，请检查查询语句是否正确=> '+obj.sql;
+				      	   	      let objsCallback = options.params.eCallback(err,options);
+				      	   	      if(objsCallback!=undefined&&Object.prototype.toString.call(objsCallback)==="[object Object]"){
+				      	   	     	   options.end(objsCallback);
+				      	   	      }else{
+				      	   	      	   options.end();
+				      	   	      }
 		  	  	      	   }
 		  	  	      }else{
+		  	  	      	   options.sql_data[options.index]=data;
 		  	  	      	   if(obj.sCallback){
-		  	  	      	   	      options.sql_data[options.index]=data;
-		  	  	      	   	      obj.sCallback(data,options);
+				      	   	      let objsCallback = obj.sCallback(data,options);
+				      	   	      if(objsCallback!=undefined&&Object.prototype.toString.call(objsCallback)==="[object Object]"){
+				      	   	     	   options.end(objsCallback);
+				      	   	      }else{
+				      	   	      	   options.end();
+				      	   	      }
 		  	  	      	   }
 		  	  	      }	  	  	    
 		  	  })
       }
       options.end = (endOptions) =>{//endOptions用于修改内部参数options 或者 (sql/添加/新增/修改/移除)
-              if(endOptions!=undefined){
-                     options = endOptions;
-              }else{
-              	     options = options;
-              }
+
+              options = endOptions?endOptions:options;
 
               if(options.index < options.params.sql.length){
                      if(options.isNextSql){
@@ -210,14 +229,12 @@ sqlobj.querysql = (params) =>{
                      	 	  options.params.endFunction(options);
                      	 }else{
                      	 	  if(options.release){
-                     	 	  	console.log('options.release----if')
                      	 	  	   options.release();
                      	 	  }
                      	 }
                      }
               }else{
 	         	 	  if(options.release){
-	         	 	  	console.log('options.release----if')
 	         	 	  	   options.release();
 	         	 	  }
               }

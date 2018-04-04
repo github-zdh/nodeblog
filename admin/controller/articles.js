@@ -15,8 +15,7 @@ Function.prototype.list=function (req, res, next) {
 	          {
 				   	sql:'select COUNT(*) from z_articles_list',
 				    sCallback:(data,options) => {				    	
-				    	    __adminPageInfo__.art_count = data[0]['COUNT(*)'];
-				    	    options.end();					   	    
+				    	    __adminPageInfo__.art_count = data[0]['COUNT(*)'];				   	    
 				    }
 			  }
 			  ,{
@@ -31,7 +30,6 @@ Function.prototype.list=function (req, res, next) {
 			   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 			   eCallback:(err,options)=>{
 			   	    return base.errorMsg(req,res,'查询失败');
-			   	    options.end();
 			   }
 	   })
         
@@ -93,7 +91,7 @@ Function.prototype.lists=function (req, res, next) {
 			   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 			   eCallback:(err,options)=>{
 			   	    return base.returnjson(res,'200','查询失败');
-			   	    options.end();
+			   	    
 			   }
 	   })
         
@@ -122,7 +120,7 @@ Function.prototype.paste=function (req, res, next) {
 			   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 			   eCallback:(err,options)=>{
 			   	    base.returnjson(res,'100','查询失败')
-			   	    options.end();
+			   	    
 			   }
 	   })
         

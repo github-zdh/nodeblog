@@ -60,7 +60,7 @@ exports.roleList=function (req, res, next) {
 				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 				   eCallback:(err,options)=>{
 				   	    return base.returnjson(res,'100','查询失败');
-				   	    options.end();
+				   	    
 				   }
 		   })	     
          
@@ -79,19 +79,13 @@ exports.add=function (req, res, next){
 							   	sql:'select * from z_role where id='+query.id,
 							    sCallback:(data,options) => {
 								   	      __adminPageInfo__.role = data[0];
-								   	      options.end();	
 							    }
-
-
 						  }
 						  ,{
 							   	sql:'select per_id from z_role_permissions where role_id='+query.id,
 							    sCallback:(data,options) => {
 								   	      __adminPageInfo__.role_per = data;
-								   	      options.end();	
 							    }
-
-
 						  }
 						  ,{
 							   	sql:'SELECT	p.* FROM z_permissions AS p LEFT JOIN z_role_permissions AS rp ON p.id = rp.per_id LEFT JOIN z_role AS r ON rp.role_id = r.id where r.register = 1 and r.id = '+query.id,
@@ -106,7 +100,6 @@ exports.add=function (req, res, next){
 						   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 						   eCallback:(err,options)=>{
 						   	    return base.returnjson(res,'100','查询失败');
-						   	    options.end();
 						   }
 				   })	  
          }else{
@@ -129,20 +122,19 @@ exports.ajaxAdd=function (req, res, next){
 							   	      if(data.length!=0&&data[0]['id']&&data[0]['id']!=body.id){
 							   	      	   base.returnjson(res,'100','该角色已存在,请重命名');
 							   	      	   return false;
-							   	      }
-							   	      options.end();	
+							   	      }							   	      	
 						    }
 					    }
 					    ,{
 						   	sql:'update z_role set name="'+body.roleName+'",description="'+body.description+'" where id='+body.id,
 						    sCallback:(data,options) => {
-							   	      options.end();	
+							   	      	
 						    }
 					    }
 					    ,{
 							   	sql:'select * from z_role_permissions where role_id='+body.id,
 							    sCallback:(data,options) => {
-								   	     options.end();	
+								   	     	
 							    }
 							    
 						  }
@@ -151,7 +143,7 @@ exports.ajaxAdd=function (req, res, next){
 								   	      if(options.add.length==0){
 								   	      	    return base.returnjson(res,'200','添加成功');
 								   	      }
-								   	      options.end();
+								   	      
 							    }
 							    ,beforeSql:function(obj,options){
 
@@ -224,19 +216,19 @@ exports.ajaxAdd=function (req, res, next){
 							   	      	   base.returnjson(res,'100','该角色已存在,请重命名');
 							   	      	   return false;
 							   	      }
-							   	      options.end();	
+							   	      	
 						    }
 					    }
 					    ,{
 						   	sql:'insert into z_role (name,description,register) VALUES  ("'+body.roleName+'","'+body.description+'",1)',
 						    sCallback:(data,options) => {
-							   	      options.end();	
+							   	      	
 						    }
 					    }
 					    ,{
 							    sCallback:(data,options) => {
 								   	      return base.returnjson(res,'200','添加成功');
-								   	      options.end();	
+								   	      	
 							    }
 							    ,beforeSql:function(obj,options){
 							    	let insertId = parseInt(options.sql_data[options.index].insertId);
@@ -271,7 +263,7 @@ exports.ajaxAdd=function (req, res, next){
 				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 				   eCallback:(err,options)=>{
 				   	    base.returnjson(res,'202','添加失败');
-				   	    options.end();
+				   	    
 				   }
 		   })	
 };

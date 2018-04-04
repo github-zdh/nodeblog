@@ -85,7 +85,7 @@ exports.ajaxList=function (req, res, next) {
 				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 				   eCallback:(err,options)=>{
 				   	    return base.returnjson(res,'100','查询失败');
-				   	    options.end();
+				   	    
 				   }
 		   })	     
          
@@ -568,7 +568,7 @@ exports.ajaxAdminList=function (req, res, next) {
 				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 				   eCallback:(err,options)=>{
 				   	    return base.returnjson(res,'100','查询失败');
-				   	    options.end();
+				   	    
 				   }
 		   })	     
          
@@ -612,7 +612,7 @@ exports.userRoleAdd = (req,res,next) => {
 				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
 				   eCallback:(err,options)=>{
 				   	    return base.returnjson(res,'100','查询失败');
-				   	    options.end();
+				   	    
 				   }
 		   })	
 }

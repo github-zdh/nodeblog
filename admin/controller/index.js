@@ -11,7 +11,6 @@ var base = require(__ROOTDIR__+'/config/base');
 
 
 exports.index=function (req, res, next) {
-
 	     // console.log(req.session[__adminUserInfo__]);
          res.render(config.__admin_v__+'/',{__adminUserInfo__:req.session[__adminUserInfo__]}); 
 };
