@@ -507,12 +507,11 @@ exports.ajaxAdminList=function (req, res, next) {
  	     var selsql='';
  	     let body = req.body;
 		 let rqs = [];
-		  if(req.body.isloadnum){
+		 if(req.body.isloadnum){
 		  	   selsql='select  count(*) from z_member';
-		  }else{
-		  	   selsql='select a.*,u.*,r.* from z_member a INNER JOIN z_user_role u on u.user_id = a.id INNER JOIN z_role r on u.role_id = r.id  order by a.id limit '+curr+','+limitCount;
-		  }
-
+		 }else{
+		  	   selsql='select a.*,u.*,r.* from z_member a LEFT JOIN z_user_role u on u.user_id = a.id LEFT JOIN z_role r on u.role_id = r.id  order by a.id limit '+curr+','+limitCount;
+		 }
 		 function appendSql(sql,addsql){
 	            if(sql.indexOf('where')!=-1){
 	            	    return sql.split(' where ')[0]+' where '+addsql+' and '+sql.split(' where ')[1];
