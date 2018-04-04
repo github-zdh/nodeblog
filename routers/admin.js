@@ -9,7 +9,7 @@ var base = require(__ROOTDIR__+'/config/base');
 //不管是否登录都通过这个控件
 function publicControl(req, res, next){
 			// 模拟已经登录
-            config.adminAnalogLogon(req,res);
+            // config.adminAnalogLogon(req,res);
 
 	      // 判断低版本
 	      // return res.redirect("/lowVersion");
