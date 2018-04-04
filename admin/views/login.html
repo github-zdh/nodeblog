@@ -10,10 +10,10 @@
 <script type="text/javascript" src="lib/html5shiv.js"></script>
 <script type="text/javascript" src="lib/respond.min.js"></script>
 <![endif]-->
-<link href="static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css" />
-<link href="static/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css" />
-<link href="static/h-ui.admin/css/style.css" rel="stylesheet" type="text/css" />
-<link href="lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="/admin/static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css" />
+<link href="/admin/static/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css" />
+<link href="/admin/static/h-ui.admin/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/admin/lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css" />
 <!--[if IE 6]>
 <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
 <script>DD_belatedPNG.fix('*');</script>
@@ -45,6 +45,7 @@
           <input class="input-text size-L" type="text" placeholder="验证码" onblur="if(this.value==''){this.value='验证码:'}" onclick="if(this.value=='验证码:'){this.value='';}" value="验证码:" style="width:200px;" id="adminCode" name="adminCode">
           <!-- <img src="static/h-ui.admin/images/logo.png" style="width: 100px;height: 41px;" id="imgcode"> -->
           <div id="v_container" style="width: 150px;height: 41px;display: inline-block;vertical-align: top;"></div>
+          <!-- <span class="btn btn-primary radius  size-L" id="copyText" data-copy="">复制</span> -->
          </div>
       </div>
 <!--       <div class="row cl">
@@ -56,7 +57,7 @@
       </div> -->
       <div class="row cl" style="margin-top: 50px;">
         <div class="formControls col-xs-8 col-xs-offset-3">
-          <input name="" type="submit" id="submit" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;" style="width:175px;margin-right: 10px;">
+          <input name="" type="submit" id="submit" class="btn btn-primary radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;" style="width:175px;margin-right: 10px;">
           <input name="" type="reset" class="btn btn-default radius size-L" value="&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;消&nbsp;" style="width:175px">
         </div>
       </div>
@@ -64,8 +65,10 @@
   </div>
 </div>
 <div class="footer">Copyright zdh by nodeblog 1.0.0</div>
-<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
-<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/admin/lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="/admin/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/admin/js/jQuery.extend.js"></script>
+
 <script>
 !(function(window, document) {
     var size = 6;//设置验证码长度
@@ -230,6 +233,9 @@ if(window.frameElement){
 // console.log(window.parent.frameElement.outerHTML);
 // console.log(window.parent.self)
 $(function(){
+     // $('#copyText').click(function(){
+     //      $.copyText($('#copyText').attr('data-copy'));
+     // });
      function verifyCodeFn(){
              $.ajax({
                 url:'/admin/getAdminCode',
@@ -237,6 +243,7 @@ $(function(){
                 dataType:'JSON',
                 success:function(data){
                      new GVerify({id:"v_container",code:data.msg})
+                     // $('#copyText').attr('data-copy',data.msg)
                 },
                 error:function(err){
                      console.log(err);

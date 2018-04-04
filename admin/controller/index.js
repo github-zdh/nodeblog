@@ -11,8 +11,27 @@ var base = require(__ROOTDIR__+'/config/base');
 
 
 exports.index=function (req, res, next) {
-	     // console.log(req.session[__adminUserInfo__]);
-         res.render(config.__admin_v__+'/',{__adminUserInfo__:req.session[__adminUserInfo__]}); 
+		  let rqs = [
+		          {
+					   	sql:'select * from z_role where register=1 and id=(select role_id from z_user_role where register=1 and user_id='+req.session[__adminUserInfo__].id+')',
+					    sCallback:(data,options) => {
+				   	            req.session[__adminUserInfo__].role='管理员';
+						   	    if(data.length>0){
+						   	    	req.session[__adminUserInfo__].role=data[0].name;
+						   	    }	
+						   	    // console.log(__adminUserInfo__);					   	    
+						   	    res.render(config.__admin_v__+'/',{__adminUserInfo__:req.session[__adminUserInfo__]}); 	
+					    }
+				  }
+	     ];
+		 sql.querysql({
+				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+				   eCallback:(err,options)=>{
+				   	    req.session[__adminUserInfo__].role='管理员';
+				   	    res.render(config.__admin_v__+'/',{__adminUserInfo__:req.session[__adminUserInfo__]}); 				   	    
+				   }
+		   })	
+
 };
 
 exports.news=function (req, res, next) {

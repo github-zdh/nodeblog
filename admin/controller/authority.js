@@ -43,8 +43,7 @@ exports.add=function (req, res, next) {
 					   	    	  if(data[i].module==_body.module&&data[i].controller==_body.controller&&data[i].view==_body.view){
                                          base.returnjson(res,'100','模块已存在');	
 					   	    	  }
-					   	    }
-					   	    options.end(options);        
+					   	    }    
 				    }
 			  }
 			  ,{

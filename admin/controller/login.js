@@ -44,17 +44,17 @@ Function.prototype.postLogin=function (req, res, next) {
 			     	  if(com.md5(fields.password)===data[0].password){
 						     if(userInfo==__webUserInfo__){//前台登录
                                    req.session[userInfo]=data[0];
-                                   res.redirect('/index'); 
+                                   return res.redirect('/index'); 
 						     }
 						     if(userInfo==__adminUserInfo__){//后台登录
 						     	   if(data[0].is_admin!=1){
-						     	   	    return  base.errorMsg(req,res,'你还是后台管理员；请联系管理员!');
+						     	   	    return base.errorMsg(req,res,'你还是后台管理员；请联系管理员!');
 						     	   }
 						     	   if(data[0].is_valid!=1){
 						     	   	    return  base.errorMsg(req,res,'你账号已失效；请联系管理员!');
 						     	   }
 						     	   req.session[userInfo]=data[0];
-						     	   res.redirect('/admin/index'); 
+						     	   return res.redirect('/admin/index'); 
 						     }			     	  	      
 			     	  }else{
 			     	  	    // 密码错误
@@ -67,7 +67,7 @@ Function.prototype.postLogin=function (req, res, next) {
 
 Function.prototype.logout=function (req, res, next) {
 	    delete req.session.adminUserInfo;
-	    res.redirect('/admin/login'); 
+	    return res.redirect('/admin/login'); 
 };
 
 

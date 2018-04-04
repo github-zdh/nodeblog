@@ -18,6 +18,7 @@ exports.index=function (req, res, next) {
 		     	  	    return false;
 		     	  }
 		     	  __adminPageInfo__.user_count = data[0]['count(id)'];
+		     	  __adminPageInfo__.user_id = req.session[__adminUserInfo__].id;
 			      res.render(config.__admin_v__+'/admin-role',{__adminPageInfo__:__adminPageInfo__});		     	    	  
 	     });
          
