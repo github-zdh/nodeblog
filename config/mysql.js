@@ -166,6 +166,16 @@ sqlobj.querysql = (params) =>{
 		  	  	   options.pool(options.query);
 		  	  	   return false;
 		  	  }
+
+	      	  if(obj.beforeSql){
+	      	   	     obj = obj.beforeSql(obj,options);
+	      	  }
+	      	  if(obj.skip){
+	      	  	    options.sql_data[options.index]=[];
+	      	  	    options.index++;
+	      	  	    options.end(options);
+	      	  	    return false;
+	      	  }
 		  	  options.connection.query(obj.sql,(err,data) => {
 		  	  	      if(err){
 		  	  	      	   options.isNextSql = obj.isNext;
@@ -178,8 +188,8 @@ sqlobj.querysql = (params) =>{
 		  	  	      	   }
 		  	  	      }else{
 		  	  	      	   if(obj.sCallback){
-		  	  	      	   	      obj.sCallback(data,options);
 		  	  	      	   	      options.sql_data[options.index]=data;
+		  	  	      	   	      obj.sCallback(data,options);
 		  	  	      	   }
 		  	  	      }	  	  	    
 		  	  })
@@ -190,6 +200,7 @@ sqlobj.querysql = (params) =>{
               }else{
               	     options = options;
               }
+
               if(options.index < options.params.sql.length){
                      if(options.isNextSql){
 	                     options.query(options.params.sql[options.index]);
@@ -199,12 +210,14 @@ sqlobj.querysql = (params) =>{
                      	 	  options.params.endFunction(options);
                      	 }else{
                      	 	  if(options.release){
+                     	 	  	console.log('options.release----if')
                      	 	  	   options.release();
                      	 	  }
                      	 }
                      }
               }else{
 	         	 	  if(options.release){
+	         	 	  	console.log('options.release----if')
 	         	 	  	   options.release();
 	         	 	  }
               }

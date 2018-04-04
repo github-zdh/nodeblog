@@ -1,0 +1,247 @@
+﻿<% include ../templates/head.html %>
+<link rel="stylesheet" href="/admin/lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 权限管理 <span class="c-gray en">&gt;</span> 添加权限 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+
+<div class="page-container">
+	<div class="row">
+		<section class=' col-xs-5 col-sm-5 '><ul id="treeDemo" class="ztree"></ul></section>
+		<section class=" col-xs-7 col-sm-7">
+
+                <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>添加权限</nav>
+                <div class="formControls skin-minimal pd-10 mt-10">
+					<div class="radio-box">
+						<label>
+							<input name="register" type="radio" value="1" checked>
+							后台
+						</label>
+					</div>
+					<div class="radio-box">
+						<label>
+							<input name="register" type="radio" value="2">
+							前台
+						</label>
+					</div>
+				</div>
+				<div class="formControls skin-minimal pd-10 mt-10">
+					<div class="radio-box">
+						<label>
+							<input name="category" type="radio" value="1" checked>
+							一级分类
+						</label>
+					</div>
+					<div class="radio-box">
+						<label>
+							<input name="category" type="radio" value="2">
+							二级分类
+						</label>
+					</div>
+					<div class="radio-box">
+						<label>
+							<input name="category" type="radio" value="0">
+							操作
+						</label>
+					</div>
+				</div>
+				<div class="row cl mt-20">
+					<label class="form-label col-xs-4 col-sm-2 text-r">
+						描述/菜单：</label>
+					<div class="formControls col-xs-6 col-sm-6">
+						<input type="text" class="input-text" value="" placeholder="" id="descript" name="descript">
+					</div>
+				</div>
+				<div class="row cl mt-20">
+					<label class="form-label col-xs-4 col-sm-2 text-r">
+						module：</label>
+					<div class="formControls col-xs-6 col-sm-6">
+						<input type="text" class="input-text" value="admin" placeholder="" id="module" name="module" placeholder="module">
+					</div>
+				</div>
+				<div class="row cl mt-20">
+					<label class="form-label col-xs-4 col-sm-2 text-r">
+						controller：</label>
+					<div class="formControls col-xs-6 col-sm-6">
+						<input type="text" class="input-text" value="" placeholder="" id="controller" name="controller" placeholder="controller">
+					</div>
+				</div>
+				<div class="row cl mt-20">
+					<label class="form-label col-xs-4 col-sm-2 text-r">
+						view：</label>
+					<div class="formControls col-xs-6 col-sm-6">
+						<input type="text" class="input-text" value="" placeholder="" id="view" name="view" placeholder="view">
+					</div>
+				</div>
+				<div class="row cl mt-20" style="display: none;">
+					<label class="form-label col-xs-4 col-sm-2 text-r">
+						grade：</label>
+					<div class="formControls col-xs-6 col-sm-6">
+						<input type="text" class="input-text" value="" placeholder="" id="grade" name="grade" placeholder="grade">
+					</div>
+				</div>
+				<div class="row cl mt-20" style="display: none;">
+					<label class="form-label col-xs-4 col-sm-2 text-r">
+						p_id：</label>
+					<div class="formControls col-xs-6 col-sm-6">
+						<input type="text" class="input-text" value="" placeholder="" id="p_id" name="p_id" placeholder="p_id">
+					</div>
+				</div>
+
+                <div class="mt-20 "><button class="btn btn-success radius" style="width: 300px;" name="" id="authority_add">新增</button></div>
+		</section>
+
+	</div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<% include ../templates/footer.html %>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/admin/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+var setting = {
+	view: {
+		dblClickExpand: false,
+		showLine: false,
+		selectedMulti: false
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "p_id",
+			rootPId: ""
+		},
+		key: {
+			name: "_name"
+		}
+	},
+	check:{
+		chkboxType : { "Y" : "ps", "N" : "ps" },
+		autoCheckTrigger : false,
+		chkStyle : "checkbox",
+		enable : true,
+		nocheckInherit : false,
+		chkDisabledInherit : false,
+		radioType : "level"
+	},
+	callback: {
+		beforeClick: function(treeId, treeNode) {
+			var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			if (zTree&&treeNode.isParent) {
+				zTree.expandNode(treeNode);
+				return false;
+			} else {
+				// demoIframe.attr("src",treeNode.parentTId + ".html");
+				return true;
+			}
+		}
+	},
+	async: {
+		enable: true,
+		url: "/admin/authority/list",
+		autoParam: ["id", "name"]
+	}
+};
+
+
+var code;
+		
+function showCode(str) {
+	if (!code) code = $("#code");
+	code.empty();
+	code.append("<li><input type='text'>"+str+"</li>");
+}
+
+
+	
+$(document).ready(function(){
+     $.ajax({
+     	  url:'/admin/authority/list',
+     	  type:'POST',
+     	  dataType:'JSON',
+     	  success:function(data){
+     	  	   console.log(data);
+     	  	   // debugger;
+     	  	   if(data.code=='200'){
+     	  	   	        for(var i=0;i<data.result.length;i++){
+     	  	   	        	  data.result[i]['_name'] = data.result[i].descript +' ('+data.result[i].id+')'+' ('+data.result[i].module+'/'+data.result[i].controller+'/'+data.result[i].view+')';
+     	  	   	        }
+						var t = $("#treeDemo");
+						t = $.fn.zTree.init(t, setting, data.result);
+						demoIframe = $("#testIframe");
+						//demoIframe.on("load", loadReady);
+						var zTree = $.fn.zTree.getZTreeObj("tree");
+     	  	   }
+     	  	   layui.layer.msg(data.msg);
+     	  },
+     	  error:function(err){
+     	  	   console.log(err);
+     	  	   layui.layer.msg('加载失败');
+     	  	   layui.layer.close(loading);
+     	  }
+     })
+
+});
+</script>
+<!-- 添加权限 -->
+<script>
+$('.skin-minimal input').iCheck({
+	checkboxClass: 'icheckbox-blue',
+	radioClass: 'iradio-blue',
+	increaseArea: '20%'
+});
+
+
+$('.skin-minimal input').on('ifChecked', function(event){ //ifCreated 事件应该在插件初始化之前绑定 
+       var inputValue = $('input[name="category"]:checked')[0].value ;
+       var adminWeb = $('input[name="register"]:checked')[0].value ;
+       if(inputValue==1){
+			$('#grade').parents('.row')[0].style.display='none';
+			$('#p_id').parents('.row')[0].style.display='none';
+       }else{
+			$('#grade').parents('.row')[0].style.display='block';
+			$('#p_id').parents('.row')[0].style.display='block';
+       }
+       if(inputValue==0){
+			$('#grade').val(0);
+       }else{
+			$('#grade').val(' ');
+       }
+       if(adminWeb=='1'){
+            $('#module').val('admin');
+       }else{
+       	    $('#module').val('');
+       }
+}); 
+
+
+$('#authority_add').click(function(){
+     var data = {
+	     	 register:$('input[name="register"]:checked')[0].value
+	     	 ,category:$('input[name="category"]:checked')[0].value
+	     	 ,descript:$('#descript').val()
+	     	 ,module:$('#module').val()
+	     	 ,controller:$('#controller').val()
+	     	 ,view:$('#view').val()
+	     	 ,grade:$('#grade').val()
+	     	 ,p_id:$('#p_id').val()
+     };
+     $.ajax({
+     	  url:'/admin/authority/add',
+     	  data:data,
+     	  type:'POST',
+     	  dataType:'JSON',
+     	  success:function(data){
+     	  	   layui.layer.msg(data.msg);
+     	  },
+     	  error:function(err){
+     	  	   console.log(err);
+     	  	   layui.layer.msg('加载失败');
+     	  	   layui.layer.close(loading);
+     	  }
+     })
+})
+
+</script>
+</body>
+</html>

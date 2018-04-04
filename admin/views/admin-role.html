@@ -1,0 +1,213 @@
+﻿<% include ../templates/head.html %>
+
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 角色管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+		
+		<div class="cl pd-5 bg-1 bk-gray"> <span class="l"><a class="btn btn-primary radius" href="javascript:;" onclick="admin_role_add('添加角色','/admin/role/add','800')"><i class="Hui-iconfont">&#xe600;</i> 添加角色</a> </span></div>
+
+
+		<table class="table table-border table-bordered table-bg table-hover table-sort table-responsive mt-30">
+			<thead>
+				<tr class="text-c">
+					<th width="60">ID</th>
+					<th width="150">角色名</th>
+					<th>用户列表</th>
+					<th width="100">描述</th>
+					<th width="150">操作</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+		<div id="demo7" class="mt-30 text-r"></div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<% include ../templates/footer.html %>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+/*管理员-角色-添加*/
+function admin_role_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-角色-编辑*/
+function admin_role_edit(title,url,id,w,h){
+	layer_show(title,url+'?id='+id,w,h);
+}
+/*管理员-角色-删除*/
+function admin_role_del(obj,id){
+	layer.confirm('角色删除须谨慎，确认要删除吗？',function(index){
+		$.ajax({
+			type: 'POST',
+			data:{id:id},
+			url: '/admin/role/del',
+			dataType: 'json',
+			success: function(data){
+				if(data.code==200){
+					laypageFn();						
+				}
+				layer.msg(data.msg,{icon:1,time:1000});
+			},
+			error:function(data) {
+				console.log(data.msg);
+			},
+		});		
+	});
+}
+</script>
+<script>
+function getTimeFn(time){
+     const _date = new Date(time*1000);
+     return _date.getFullYear()+'/'+(_date.getMonth()+1)+'/'+_date.getDate()+' '+_date.getHours()+':'+_date.getMinutes()+':'+_date.getSeconds()
+}
+function tbodyFn(obj){
+	return '<tr class="text-c">'+
+					'<td>'+obj.id+'</td>'+
+					'<td class="text-l">'+obj.name+'</td>'+
+					'<td>'+obj.description+'</td>'+
+					'<td>'+obj.description+'</td>'+
+					'<td class="f-14 td-manage">'+
+						'<a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'/admin/role/add\','+obj.id+')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>'+
+						((obj.id!=1)?('<a title="删除" href="javascript:;" onclick="admin_role_del(this,'+obj.id+')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>'):'')+
+					'</td>'+
+			'</tr>'
+}
+
+const _tbody = $('#tbody');
+var ss = {
+	 clas_id:''
+	,art_name:''
+	,minDate:''
+	,maxDate:''
+	,count : '<%= __adminPageInfo__.user_count %>'
+}
+$('#ss-btn').click(function(){ 
+    ss.minDate = $('#datemin').val();
+    ss.maxDate = $('#datemax').val(); 
+    ss.keyworld = $('#ss-keyworld').val(); 
+    ss.isloadnum = true;
+    
+    laypageFn()
+})
+function laypageFn(clas_id,art_name,minDate,maxDate){
+	     layui.laypage.render({
+			     elem: 'demo7'
+			    ,count: ss.count
+			    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+			    ,jump: function(obj){
+			    	console.log(obj);
+			         //首次不执行
+				     if(!obj||!obj.index){
+				     	  return false;
+				     }
+				     if(obj.index==1){
+				     	 laypageFn();
+				     }else{
+				     	 var loading = layui.layer.load(1);
+				     	 var data = {curr:obj.curr,limit:obj.limit};
+				     	 if(ss.keyworld!=''){
+				     	 	    data.keyworld = ss.keyworld;//搜索名称
+				     	 }
+				     	 if(ss.minDate!=''){
+				     	 	    data.minDate = ss.minDate;//最小时间
+				     	 }
+				     	 if(ss.maxDate!=''){
+				     	 	    data.maxDate = ss.maxDate;//最大时间
+				     	 }
+				     	 if(ss.isloadnum){
+				     	 	    data.isloadnum = ss.isloadnum;//重新算数量
+				     	 }
+				     	 console.log(data);
+				         $.ajax({
+				         	  url:'/admin/role/roleList',
+				         	  type:'POST',
+				         	  data:data,
+				         	  dataType:'JSON',
+				         	  success:function(data){
+				         	  	   console.log(data);
+				         	  	   if(data.code=='200'){
+									       if(ss.isloadnum){
+									       	    ss.isloadnum=false;
+									       	    ss.count = data.result;
+									       	    laypageFn();
+									       }
+				         	  	   	       _tbody.html(' ');
+				         	  	   	       for(var i =0;i<data.result.length;i++){
+				         	  	   	       	     _tbody.append(tbodyFn(data.result[i]))
+				         	  	   	       }
+				         	  	   }
+				         	  	   layui.layer.msg(data.msg);
+				         	  	   layui.layer.close(loading);
+				         	  },
+				         	  error:function(err){
+				         	  	   console.log(err);
+				         	  	   layui.layer.msg('加载失败');
+				         	  	   layui.layer.close(loading);
+				         	  }
+				         })
+				     } 
+			    }
+		});
+}
+laypageFn();
+
+var index = '';
+/*资讯-编辑*/
+function article_edit(title,url,id,w,h){
+		 index = layui.layer.open({
+			type: 2,
+			title: title,
+			content: url+'?id='+id
+		});
+		layui.layer.full(index);
+}
+/*资讯-下架*/
+function article_stop(obj,id){
+	layer.confirm('确认要停用吗？',function(index){
+		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="article_start(this,'+id+')" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe6e1;</i></a>');
+		$(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">失效</span>');
+		$(obj).remove();
+		paste(false,id)
+		
+	});
+}
+/*资讯-发布*/
+function article_start(obj,id){
+	layer.confirm('确认要启用吗？',function(index){
+		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="article_stop(this,'+id+')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>');
+		$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">有效</span>');
+		$(obj).remove();
+		paste(true,id)
+	});
+}
+function paste(isPaste,id){
+     $.ajax({
+     	  url:'/admin/user/closeUser',
+     	  type:'POST',
+     	  data:{isPaste:isPaste,id:id},
+     	  dataType:'JSON',
+     	  success:function(data){
+     	  	   console.log(data);
+     	  	   if(data.code=='200'){
+				       if(isPaste){
+				       	    layui.layer.msg('已启用!',{icon: 6,time:1000});
+				       }else{
+				       	    layui.layer.msg('已停用!',{icon: 5,time:1000});
+				       }		
+				       return false;		       
+     	  	   }
+     	  	   layui.layer.msg(data.msg,{icon: 5,time:1000});
+     	  },
+     	  error:function(err){
+     	  	   console.log(err);
+     	  	   layui.layer.msg('请求超时');
+     	  	   layui.layer.closeAll();
+     	  }
+     })
+}
+
+</script>
+</body>
+</html>

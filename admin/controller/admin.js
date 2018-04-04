@@ -441,7 +441,7 @@ exports.closeUser=function(req, res, next) {
 };
 
 // 关闭管理员权限
-exports.closeAdmin=function(req, res, next) {
+exports.isAdmin=function(req, res, next) {
              // console.log(req.query);
 	         let _query = req.body;
 	         let userInfo = req.session[__adminUserInfo__];
@@ -476,6 +476,7 @@ exports.closeAdmin=function(req, res, next) {
 			});
 	         
 };
+
 exports.adminList = (req, res, next) => {
  	     var count='select count(id) from z_member where is_admin = 1';
 	     sql.runSql(count,function(err,data){
@@ -484,7 +485,16 @@ exports.adminList = (req, res, next) => {
 		     	  	    return false;
 		     	  }
 		     	  __adminPageInfo__.user_count = data[0]['count(id)'];
-			      res.render(config.__admin_v__+'/admin_list',{__adminPageInfo__:__adminPageInfo__});		     	    	  
+		     	  let z_role = 'select * from z_role';
+			      sql.runSql(z_role,function(err,data){
+				     	  if(err){
+				     	  	    base.errorMsg(req,res,'查询用户失败');
+				     	  	    return false;
+				     	  }
+				     	  __adminPageInfo__.role = data;
+					      res.render(config.__admin_v__+'/admin_list',{__adminPageInfo__:__adminPageInfo__});	     	    	  
+			     });
+			      	     	    	  
 	     });
          
 };
@@ -537,8 +547,8 @@ exports.ajaxAdminList=function (req, res, next) {
 		  }
 		 if(req.body.isloadnum){
 				  rqs = [
-				          {
-							   	sql:selsql,
+				          {      
+							   	sql:selsql,     
 							    sCallback:(data,options) => {
 								   	    base.returnjson(res,'200','success',data[0]['count(*)'])
 							    }
@@ -563,3 +573,46 @@ exports.ajaxAdminList=function (req, res, next) {
 		   })	     
          
 };
+
+exports.adminRoleList = (req,res,next) => {
+
+}
+
+// 添加修改用户角色
+exports.userRoleAdd = (req,res,next) => {
+ 	     
+ 	     let body = req.body;
+		 let rqs = [
+				          {      
+							   	sql:'select * from z_user_role where user_id = '+body.id,     
+							    sCallback:(data,options) => {
+								   	    options.end(options);   
+							    }
+						  }
+						  ,{         
+							    sCallback:(data,options) => {
+								   	    base.returnjson(res,'200','修改成功')
+							    }
+							    ,beforeSql:(obj,options) => {
+							    	  let data = options.sql_data[options.index];
+							    	  // return base.returnjson(res,'200','修改成功');
+							    	  if(data.length==0){
+							    	  	  obj.sql = 'insert into z_user_role (user_id,role_id,register) values ('+body.id+','+body.role_id+',1)'
+							    	  }else{
+							    	  	  obj.sql = 'update z_user_role set user_id='+body.id+',role_id='+body.role_id+' where id='+data[0].id
+							    	  }
+							    	  	// obj.sql = 'insert into z_user_role (user_id,role_id,register) values ('+body.id+','+body.role_id+',1)';
+							    	   //  obj.sql = 'update z_user_role set user_id='+body.id+',role_id='+body.role_id+' where id='+data[0].id
+							    	  return obj;
+							    }
+						  }
+			      ];
+	    
+		 sql.querysql({
+				   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+				   eCallback:(err,options)=>{
+				   	    return base.returnjson(res,'100','查询失败');
+				   	    options.end();
+				   }
+		   })	
+}

@@ -53,19 +53,30 @@ var setting = {
 			rootPId: ""
 		}
 	},
+	check:{
+		chkboxType : { "Y" : "ps", "N" : "ps" },
+		autoCheckTrigger : false,
+		chkStyle : "checkbox",
+		enable : true,
+		nocheckInherit : false,
+		chkDisabledInherit : false,
+		radioType : "level"
+	},
 	callback: {
 		beforeClick: function(treeId, treeNode) {
-			var zTree = $.fn.zTree.getZTreeObj("tree");
-			if (treeNode.isParent) {
+			var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			if (zTree&&treeNode.isParent) {
 				zTree.expandNode(treeNode);
 				return false;
 			} else {
-				demoIframe.attr("src",treeNode.file + ".html");
+				// demoIframe.attr("src",treeNode.parentTId + ".html");
 				return true;
 			}
 		}
 	}
 };
+
+setting.check.chkboxType = { "Y" : "ps", "N" : "ps" };
 
 var zNodes =[
 	{ id:1, pId:0, name:"一级分类", open:true},
@@ -85,7 +96,7 @@ var code;
 function showCode(str) {
 	if (!code) code = $("#code");
 	code.empty();
-	code.append("<li>"+str+"</li>");
+	code.append("<li><input type='text'>"+str+"</li>");
 }
 		
 $(document).ready(function(){

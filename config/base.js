@@ -23,6 +23,11 @@ base.returnjson=function(res,code,msg,result){
 	  res.end(JSON.stringify({"code":code,"msg":msg,"result":result}));
 }
 
+// 去空格
+base.trim=function(str){
+	  return str.replace(/^(\s|\u00A0)+/,'').replace(/(\s|\u00A0)+$/,''); 
+}
+
 
 // 获取表单数据
 // @params    obj=>{
@@ -48,54 +53,9 @@ base.getFormData=function(obj){
 		 }); 
 }
 
-// 用户登录
-base.login=function(req, res, next,userInfo){
-         var _this=this;
-		 if(req.method.toLowerCase()!=='post'){
-		    	res.render(config.__admin_v__+'/login');  
-		 }
-		 _this.getFormData({
-				 	req:req,
-				 	error:formError,
-				 	success:formSeccess
-		 })
-	     function formError(){
-	    	  _this.errorMsg(req,res,'账号密码提交失败！'); 
-	     }
-	     function formSeccess(fields){
-	     	     var sqlRum='select * from z_member where username="'+fields.username+'"';
-			     sql.runSql(sqlRum,function(err,data){
-			     	  if(data.length===0){
-	                         // 没有该用户
-			     	  	    return _this.errorMsg(req,res,'账号密码错误');
-			     	  }
-			     	  if(com.md5(fields.password)===data[0].password){
-						     if(userInfo==__webUserInfo__){//前台登录
-                                   req.session[userInfo]=data[0];
-                                   res.redirect('/index'); 
-						     }
-						     if(userInfo==__adminUserInfo__){//后台登录
-						     	   if(data[0].is_admin!=1){
-						     	   	    return  _this.errorMsg(req,res,'你还是后台管理员；请联系管理员!');
-						     	   }
-						     	   if(data[0].is_valid!=1){
-						     	   	    return  _this.errorMsg(req,res,'你账号已失效；请联系管理员!');
-						     	   }
-						     	   req.session[userInfo]=data[0];
-						     	   res.redirect('/admin/index'); 
-						     }			     	  	      
-			     	  }else{
-			     	  	    // 密码错误
-			     	  	    _this.errorMsg(req,res,'账号密码错误')
-			     	  }
-			     });
-			     // res.render(config.__web_v__+'/index');  
-	     }
-}
-
 // 后台用户权限 permission
 base.permission=function(req,res,next,userInfo){
-         var originalUrl=req.originalUrl.split('/');//检测路径
+         var originalUrl=(req._parsedOriginalUrl.pathname||'/admin'+(req._parsedUrl.pathname||req.route.path)).split('/');//检测路径
          var _this=this;
 		  //         baseUrl: '/admin',
 		  // originalUrl: '/admin/index',
@@ -104,89 +64,59 @@ base.permission=function(req,res,next,userInfo){
 	     	   originalUrl_fn();
 	     	   return false;
 	     }
-         
-         if(userInfo==__adminUserInfo__){//后台用户 角色 权限 查询
+		req.session[userInfo].permission = [];
 
-			     var role_id='select role_id from z_user_role where register = 1 and user_id='+req.session[userInfo].id;
-			     // var per_id='select per_id from z_admin_role_permissions where role_id=';
-			     var per_id_in='select per_id from z_role_permissions where  register = 1 and role_id in (';
-			     // var z_per='select * from z_admin_permissions where id=';
-			     var z_per_in='select * from z_permissions where  register = 1 and id in (';
-		 }
-
-		 if(userInfo==__webUserInfo__){//前台用户 角色 权限 查询
-			     // var role_id='select role_id from z_admin_user_role where user_id='+req.session[userInfo].id;
-			     // var per_id='select per_id from z_admin_role_permissions where role_id=';
-			     // var z_per='select * from z_admin_permissions where id=';
-		 }
-
-	     var role_arr='';
-	     var per_arr='';
-	     var admin_per=[];
-	     req.session[userInfo].permission=[];
-
-	     sql.runSql(role_id,function(err,data){//查询一个用户有多少种角色；拥有多少权限
-                 if(err){
-                 	 return  base.errorMsg(req,res,'查询失败');
-                 }
-                 role_arr=data[0].role_id;
-                 role_arr_fn(data);
-	     })
-
-   	     function role_arr_fn(data){//检测角色
-		            sql.runSql(per_id_in+role_arr+')',function(err,data){//检测权限
-					     	    if(err){
-					     	    	    return  base.errorMsg(req,res,'查询失败');
-					     	    }
-					     	    
-
-			                    for(var i=0;i<data.length;i++){
-			                    	   if(per_arr==''){
-			                    	   	      per_arr=data[i].per_id;
-			                    	   }else{
-                                              per_arr=per_arr+','+data[i].per_id;
-			                    	   }
-			                    }
-			                    per_arr=per_arr.split(',');
-			                    per_arr=com.unique(per_arr);
-			                    per_arr=per_arr.join(',');
-			                    per_arr_fn();
-				     })
-   	     }  
-   	     function per_arr_fn(){//检测权限
-                sql.runSql(z_per_in+per_arr+')',function(err,data){//检测权限
-		                    if(err){
-					     	    	    return  base.errorMsg(req,res,'查询失败');
-					     	}
-		                    for(var i=0;i<data.length;i++){
-		                    	   req.session[userInfo].permission.push(data[i]);
-		                    }
-		                    originalUrl_fn();
-			     })
-   	     }  
-
-   	     // 检测权限(路径)
-   	     function originalUrl_fn(){
-   	     	   // console.log(originalUrl);
-   	     	   if(originalUrl.length>3){  
-	   	     	        var originalUrl_mcv = '/'+originalUrl[1]+'/'+originalUrl[2]+'/'+originalUrl[3];
-	   	     	        // var per_mcv='';
-	   	     	        var _per = req.session[userInfo].permission ;
-	   	     	        var through=false;//是否通过权限验证 	  	   	    
-	   	     	   	    for(var i=0;i<_per.length;i++){
-	                            // per_mcv = '/'+_per[i].module+'/'+_per[i].controller+'/'+_per[i].view;
-	   	     	   	            if(('/'+_per[i].module+'/'+_per[i].controller+'/'+_per[i].view) == originalUrl_mcv){
-	                            	    through=true; 
-	                            }
-	   	     	   	    }
-	   	     	   	    if(!through){
-	   	     	   	    	  _this.errorMsg(req,res,'无权限访问!');
-	   	     	   	    	  return false;
-	   	     	   	    }
-   	     	   }
-   	     	   base.leftmenu(req,res,userInfo);
-   	     	   next();
-   	     }
+		let persql = 'SELECT p.*,r.name,r.description FROM z_permissions AS p LEFT JOIN z_role_permissions AS rp ON p.id = rp.per_id LEFT JOIN z_role AS r ON rp.role_id = r.id where p.register = 1 and r.register = 1 and r.id = (select role_id from z_user_role where register = 1 and user_id='+req.session[userInfo].id+')';
+		let rqs = [
+		      {
+				   	sql:persql,
+				    sCallback:(data,options) => {	
+					   	      for(var i =0;i<data.length;i++){
+					   	      	    data[i].router = '/'+data[i].module+'/'+data[i].controller+'/'+data[i].view;
+					   	      	    req.session[userInfo].permission.push(data[i]);
+					   	      }			
+					   	      originalUrl_fn();	
+				    }
+			  }
+		];
+		sql.querysql({
+			   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+			   eCallback:(err,options)=>{
+			   	    return  base.errorMsg(req,res,'查询失败');
+			   	    options.end();
+			   }
+		})	
+		// 检测权限(路径)
+		function originalUrl_fn(){
+			   var originalUrl_mcv = '';
+			   if(originalUrl.length>3){  
+		 	        originalUrl_mcv = '/'+originalUrl[1]+'/'+originalUrl[2]+'/'+originalUrl[3];
+		 	        // var per_mcv='';
+		 	        var _per = req.session[userInfo].permission ;
+		 	        var through=false;//是否通过权限验证 	  	   	    
+		 	   	    for(var i=0;i<_per.length;i++){
+		                // per_mcv = '/'+_per[i].module+'/'+_per[i].controller+'/'+_per[i].view;
+		 	   	        if( _per[i].router == originalUrl_mcv){
+		                	    through=true; 
+		                }
+		 	   	    }
+		 	   	    if(!through){
+				 	   	    for(var i=0;i<_per.length;i++){
+				 	   	        if( _per[i].router == originalUrl_mcv){
+				                	    through=true; 
+				                }
+				 	   	    }
+		 	   	    	  if(req.method.toUpperCase()=='POST'){
+		 	   	    	  	   base.returnjson(res,'000','无权限访问!');
+		 	   	    	  	   return false;
+		 	   	    	  }
+		 	   	    	  _this.errorMsg(req,res,'无权限访问!');
+		 	   	    	  return false;
+		 	   	    }
+			   }
+			   base.leftmenu(req,res,userInfo);
+			   next();
+		}
 }
 
 // 处理后台用户左菜单列表
@@ -207,7 +137,7 @@ base.leftmenu = (req,res,userInfo) => {
             }
      }
      for(var i=0;i<reqAdminUserInfo.permission.length;i++){
-            if(reqAdminUserInfo.permission[i].p_id!=0){
+            if(reqAdminUserInfo.permission[i].p_id!=0&&reqAdminUserInfo.permission[i].grade!=0){
                  leftmenu[reqAdminUserInfo.permission[i].p_id].children.push(reqAdminUserInfo.permission[i]);
             }
      }
@@ -226,12 +156,12 @@ base.list=function(req,res,type){
                             if(type==1){
 		                            list.push({
 		                                  url:'/'+permission[i].controller+'/'+permission[i].view,
-		                                  title:permission[i].describe
+		                                  title:permission[i].descript
 		                            })
                             }else{
 		                            list.push({
 		                                  url:'/'+permission[i].view,
-		                                  title:permission[i].describe
+		                                  title:permission[i].descript
 		                            })
                             }
                       }

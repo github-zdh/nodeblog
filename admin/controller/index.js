@@ -11,28 +11,23 @@ var base = require(__ROOTDIR__+'/config/base');
 
 
 exports.index=function (req, res, next) {
-         console.log(req.session[__adminUserInfo__]);
+
+	     // console.log(req.session[__adminUserInfo__]);
          res.render(config.__admin_v__+'/',{__adminUserInfo__:req.session[__adminUserInfo__]}); 
 };
 
 exports.news=function (req, res, next) {
-      console.log('index-news-------------'+req.originalUrl); 
       res.render(config.__admin_v__+'/index');
 };
 
 exports.product=function(req, res, next) {
       var urlArr=req.originalUrl.split('/');
       var originalUrl=req.originalUrl.split('/')[1]+'-'+req.originalUrl.split('/')[2];
-      console.log('product_1-'+req.params.product_1+'---'+'product_2-'+req.params.product_2+'---'+'product_3-'+req.params.product_3);
-      console.log('index-product-req.originalUrl-urlArr-------------'+urlArr); 
-      console.log('index-product-req.originalUrl-------------'+originalUrl); 
-      console.log('index-product-req.url-------------'+req.url); 
       res.render(config.__admin_v__+'/index');
 
 };
 exports.welcome=function (req, res, next) {
          var list=base.list(req,res,1);
-         console.log(list);
          res.render(config.__admin_v__+'/welcome',{list:list}); 
 };
 

@@ -7,11 +7,9 @@ var config = require(__ROOTDIR__+'/config/config');
 var com = require(__ROOTDIR__+'/config/common');
 
 exports.news=function(req,res,next){
-     console.log('news-------------'+__dirname);  
      res.render(config.__web_v__+'/news',{title:JSON.stringify(req.session)});
 }
-exports.newsId=function(req,res,next){
-     console.log('newsId-------------'+__dirname);  
+exports.newsId=function(req,res,next){ 
      res.render(config.__web_v__+'/news',{title:req.params.id});
 }
 

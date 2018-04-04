@@ -1,6 +1,7 @@
 ﻿<% include ../templates/head.html %>
 
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户中心 <span class="c-gray en">&gt;</span> 用户管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户中心 <span class="c-gray en">&gt;</span> 用户管理 <a class="r" href="javascript:location.replace(location.href);" title="刷新" ><button class="layui-btn layui-btn-sm"><i class="layui-icon">ဂ</i></button></a></nav>
+
 <div class="page-container">
 	<div class="text-l"> 日期范围：
 		<input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin" class="input-text Wdate" style="width:120px;">
@@ -9,15 +10,19 @@
 		<input type="text" class="input-text" style="width:250px" placeholder="输入用户名称、电话、邮箱" id="ss-keyworld" name="">
 		<div class="formControls skin-minimal ml-15" style="display: inline-block;">
 			<div class="radio-box">
-				<input name="admin" type="radio" value="admin" checked>
-				<label for="admin-1">管理员</label>
+				<label>
+					<input name="admin" type="radio" value="admin" checked>
+					管理员
+				</label>
 			</div>
 			<div class="radio-box">
-				<input name="admin" type="radio" value="user">
-				<label for="admin-2">全部用户</label>
+				<label>
+					<input name="admin" type="radio" value="user">
+					全部用户
+				</label>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-success radius" id="ss-btn" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
+		<button type="submit" class="layui-btn radius" id="ss-btn" name="">搜用户</button>
 	</div>
 
 		<table class="table table-border table-bordered table-bg table-hover table-sort table-responsive mt-30">
@@ -42,6 +47,28 @@
 
 	</div>
 </div>
+<style>
+body .layer_open_form{position: fixed;left: 1000%;z-index: 99999999;}
+</style>
+<div class="layer_open_form">
+	<div id="open_form">
+		<form class="layui-form layui-form-pane" id="form-admin-user-role-add" style="padding: 30px;">
+			  <div class="layui-form-item">
+			    <label class="layui-form-label">选择框</label>
+			    <div class="layui-input-block">
+			      <select name="role" lay-verify="required">
+			        <option value="0"></option>
+			        <% for(var i=0;i<__adminPageInfo__.role.length;i++){ %>
+			        <option value="<%= __adminPageInfo__.role[i].id %>"><%= __adminPageInfo__.role[i].name %></option>
+			        <% } %>
+			      </select>
+			    </div>
+			  </div>
+			  <button type="submit" id="open_form_submit" class="layui-btn radius" id="ss-btn" name="">提交</button>
+		</form>
+	</div>
+</div>
+<!-- <%= JSON.stringify(__adminPageInfo__) %> -->
 <!--_footer 作为公共模版分离出去-->
 <% include ../templates/footer.html %>
  <!--/_footer 作为公共模版分离出去-->
@@ -49,7 +76,12 @@
 <!--请在下方写此页面业务相关的脚本-->
 <script type="text/javascript" src="/admin/lib/My97DatePicker/4.8/WdatePicker.js"></script> 
 <script type="text/javascript" src="/admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
-<script type="text/javascript" src="/admin/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/admin/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/admin/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/admin/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+
+
+
 
 <script>
 $('.skin-minimal input').iCheck({
@@ -80,9 +112,13 @@ function tbodyFn(obj){
 					    	'<i class="Hui-iconfont">&#xe631;</i>'+
 						'</a>':
 						'<a style="text-decoration:none" onClick="article_start(this,'+obj.id+')" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe6e1;</i></a>'):'')+
+						((obj.id!=1)?('<a style="text-decoration:none" class="ml-5" onClick="open_form('+obj.id+')" href="javascript:;" title="修改角色">'+
+						    '<i class="Hui-iconfont">&#xe603;</i>'+
+						'</a>'):'')+
 						'<a style="text-decoration:none" class="ml-5" onClick="article_edit(\'查看\',\'/admin/user/user_details\','+obj.id+')" href="javascript:;" title="查看" data-obj=\''+JSON.stringify(obj)+'\'>'+
 						    '<i class="Hui-iconfont">&#xe6df;</i>'+
 						'</a>'+
+						
 						// '<a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除">'+
 						//     '<i class="Hui-iconfont">&#xe6e2;</i>'+
 						// '</a>'+
@@ -140,7 +176,7 @@ function laypageFn(clas_id,art_name,minDate,maxDate){
 				     	 }
 				     	 console.log(data);
 				         $.ajax({
-				         	  url:'/admin/user/ajaxAdminList',
+				         	  url:'/admin/admin/ajaxAdminList',
 				         	  type:'POST',
 				         	  data:data,
 				         	  dataType:'JSON',
@@ -203,7 +239,7 @@ function article_start(obj,id){
 }
 function paste(isPaste,id){
      $.ajax({
-     	  url:'/admin/user/closeAdmin',
+     	  url:'/admin/admin/isAdmin',
      	  type:'POST',
      	  data:{isPaste:isPaste,id:id},
      	  dataType:'JSON',
@@ -232,8 +268,67 @@ function admin_add(title,url,w,h){
 	layer_show(title,url,w,h);
 }
 
-</script>
+var open_form_layer = '';
+function open_form(id){
+	$('#form-admin-user-role-add').attr('data-id',id);
+	open_form_layer = layui.layer.open({
+		  type: 1 //Page层类型
+		  ,area: ['500px', '500px']
+		  ,title: '选择用户角色'
+		  ,shade: 0.6 //遮罩透明度
+		  ,maxmin: true //允许全屏最小化
+		  ,anim: 1 //0-6的动画形式，-1不开启
+		  ,content: $('#open_form')
+		  ,closeBtn:function(){
+		  	   // $('#open_form').hide();
+		  }
+	}); 
+}
 
+$(function(){
+	$("#form-admin-user-role-add").validate({
+		rules:{
+			role:{
+				required:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+            if($('select[name="role"]').val()==0){
+                layui.layer.msg('请选择用户角色')
+            	return false;
+            }
+			var data = {
+				role_id:$('select[name="role"]').val(),
+				id:$('#form-admin-user-role-add').attr('data-id')
+			};
+
+			console.log(data)
+
+			$.ajax({
+				type: 'POST',
+				data:data,
+				url: '/admin/admin/userRoleAdd',
+				dataType: 'json',
+				success: function(data){
+					layui.layer.close(open_form_layer);
+					var icon = 1;
+					if(data.code=='000'){
+						  icon = 2;
+					}
+					layui.layer.msg(data.msg,{icon:icon,anim: 6,time:1500});
+				},
+				error:function(data) {
+					console.log(data.msg);
+				},
+			});	
+			return false;
+		}
+	});
+});
+</script>
 
 </body>
 </html>

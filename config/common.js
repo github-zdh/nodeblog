@@ -56,7 +56,7 @@ exports.randomSN=function(arr){
 
 /*
 ** randomFlag-是否任意长度 min-任意长度最小位[固定位数] max-任意长度最大位
-*  生成3-32位随机串：randomWord(true, 3, 32)
+*  生成3-32位随机串：randomFlag(true, 3, 32)
 */
 // 随机字符串数字（确定个数）
 exports.randomFlag=function(randomFlag, min, max){
