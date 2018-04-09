@@ -71,34 +71,26 @@ sqlobj.runSql=function(sql,callback,callbackParams){
 			   {
 				   	sql:'select * from z_member',
 				    sCallback:(res,options,obj) => {
-				   	    console.log('---------------->sql.z_member');
-				   	    console.log(res);
 				   	    options.end();
 				    }
 				},
 			   {
 				   	sql:'select * from z_articles_list',
 				    sCallback:(res,options,obj) => {
-				   	    console.log('---------------->sql.z_articles_list');
-				   	    console.log(res);
                         options.end();
 				    }
 				},
 				{
 				   	sql:'select * from z_articles_clas',
 				    sCallback:(res,options,obj) => {
-				   	    console.log('---------------->sql.z_articles_clas');
-				   	    console.log(res);
 				   	    options.end();
 				    }
 				}
 		   ],//如果这里eCallback没有传的话调默认eCallback
 		   eCallback:function(err,options){//(可选)
-		   	    console.log('---------------->sql.eCallback');
 		   	    options.end();
 		   },
 		   epollsql:function(err){//(可选)
-		   	    console.log('---------------->epollsql');
 		   },
 		   res:res,//(可选)
 		   req:req,//(可选)
@@ -246,6 +238,123 @@ sqlobj.querysql = (params) =>{
       }
       
 }
+
+/*
+     sqlobj.mysql
+     demo : 
+        new sql.runMysql(()=>{
+       	    return base.errorMsg(req,res,'查询失败');
+        })
+       .then(()=>{
+       	    return 'select  a.*,b.clas_name,c.username,c.user_img from z_articles_list a inner join z_articles_clas b on a.art_clas_id=b.id inner join z_member c on a.user_id=c.id where a.isTop = 1 and a.is_valid=1 order by time limit 0,6';
+        },
+       	(data,_this)=>{
+       		__webPageInfo__.isTop = data;
+       	},
+       	(err,_this)=>{
+	        console.log(err);
+       	})
+       .then('select count(id) from z_articles_list',
+       	(data)=>{
+       		__webPageInfo__.articles_num = data[0]['count(id)'];
+       		res.render(config.__web_v__+'/index',{webPageInfo:__webPageInfo__});
+       	})
+       .end();
+ */ 
+
+class runMysql {
+      constructor(eCallback){
+			this.i=0;//执行then的次数
+			this.index=0;//执行sql查询的次数
+			this.data={};//sql查询 返回的数据
+			this.pool_i=1;//数据库连接次数
+			this.sqlpool=false;//数据库连接成功
+			this.code=200;//数据库连接次数 400 (Bad Request  请求出现语法错误。) 500 (Internal Server Error  服务器遇到了意料不到的情况，不能完成客户的请求)
+			this.errmsg='';//错误信息
+			this.pending = {};//待处理数据
+			this.ishandle = false;//是否处理数据
+			this.init(eCallback);			
+      }
+      init(eCallback){
+			 var _this = this;
+			 // if(Object.prototype.toString.call(eCallback)==="[object Function]"){
+			 if(common.typeof(eCallback,'function')){
+					runMysql.prototype.eCallback = eCallback
+			 }	 
+			 pool.getConnection((err,connection)=>{
+			       _this.connection=connection;
+			       if(err){
+			           	 _this.sqlpool=false;
+			           	 if(_this.pool_i>=10){//如果连接失败 最多重连10次 
+			           	 	  _this.connection.release();//释放链接
+			           	 	  _this.code = 500;
+			           	 	  _this.errmsg = '数据库连接失败';
+			           	 	  if(common.typeof(_this.eCallback,'function')){
+			                         _this.eCallback(err,_this);
+			           	 	  }
+			           	 	  return false;
+			           	 }
+			            _this.pool_i++;
+			            _this.init();
+			       }else{		
+		       	        _this.sqlpool=true; 
+			       	    if(_this.ishandle&&_this.sqlpool){
+			       	     	   _this.query(); 
+			       	    }			       	   
+			       }
+			  })
+      }
+      then(sql,sCallback,eCallback){
+	      	  this.pending[this.i] = {
+                   sql:sql,
+                   sCallback:sCallback,
+                   eCallback:eCallback
+	      	  }
+	      	  this.i++;
+	      	  return this;
+      }
+      query(){
+	      	  var _this = this;
+	      	  if(this.index==this.i){
+	      	  	   this.connection.release();//释放链接
+	      	  	   return false;
+	      	  }
+	      	  if(common.typeof(_this.pending[_this.index].sql,'function')){
+	      	   	     _this.pending[_this.index].sql = _this.pending[_this.index].sql();
+	      	  }
+		  	  _this.connection.query(_this.pending[_this.index].sql,(err,data) => {
+		  	  	      if(err){
+  	  	      	   	       _this.errmsg = '数据库查询失败，请检查查询语句是否正确=> '+_this.pending[_this.index].sql;
+  	  	      	   	       _this.code = 400;
+  	  	      	   	       _this.data[_this.index]=[];
+  	  	      	   	       // if(Object.prototype.toString.call(_this.thenArguments.eCallback)==="[object Function]"){
+  	  	      	   	       if(common.typeof(_this.pending[_this.index].eCallback,'function')){
+  	  	      	   	       	    _this.pending[_this.index].eCallback(err,_this);
+  	  	      	   	       }else if(common.typeof(_this.eCallback,'function')){  	  	      	   	       	
+  	  	      	   	       	     _this.eCallback(err,_this);
+  	  	      	   	       }  	  	
+  	  	      	   	       _this.connection.release();      	   
+		  	  	      }else{
+		  	  	      	   _this.data[_this.index]=data;
+  	  	      	   	       // if(Object.prototype.toString.call(_this.thenArguments.sCallback)==="[object Function]"){
+  	  	      	   	       if(common.typeof(_this.pending[_this.index].sCallback,'function')){
+  	  	      	   	       	    _this.pending[_this.index].sCallback(data,_this);
+  	  	      	   	       }
+		  	  	      }	 
+		  	  	      _this.index++; 	
+		  	  	      _this.query();  	    
+		  	 })
+      }
+      end(){
+      	   // this.connection.release();//释放链接
+            this.ishandle = true;	       	   
+	   	    if(this.ishandle&&this.sqlpool){
+	   	     	   this.query(); 
+	   	    }	
+      }
+}
+
+sqlobj.runMysql = runMysql;
 
 
 

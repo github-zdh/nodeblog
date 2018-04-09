@@ -11,6 +11,16 @@ exports.md5=function(val){
 	    var md5pwd = md5.digest('hex');
 	    return md5pwd;
 }
+// 数据类型
+exports.typeof=function(obj,type){
+	    let typeArrar = ['object','array','string','number','function','undefined','null'];
+	    if(Object.prototype.toString.call(type)==="[object String]"&&typeArrar.indexOf(type.toLowerCase())!=-1){
+             return Object.prototype.toString.call(obj).split(' ')[1].split("]")[0].toUpperCase()===type.toUpperCase();
+	    }else{
+	    	 return Object.prototype.toString.call(obj).split(' ')[1].split("]")[0].toLowerCase();
+	    }
+}
+
 
 //当前时间戳
 exports.timestamp=()=>{

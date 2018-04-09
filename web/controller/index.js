@@ -12,35 +12,47 @@ var base = require(__ROOTDIR__+'/config/base');
 var obj = {};
 
 obj.index=function (req, res, next) {
+     
+       // 置顶
+       new sql.runMysql(()=>{
+       	    return base.errorMsg(req,res,'查询失败');
+        })
+       .then(()=>{
+       	    return 'select  a.*,b.clas_name,c.username,c.user_img from z_articles_list a inner join z_articles_clas b on a.art_clas_id=b.id inner join z_member c on a.user_id=c.id where a.isTop = 1 and a.is_valid=1 order by time limit 0,6';
+        },
+       	(data)=>{
+       		__webPageInfo__.isTop = data;
+       	})
+       .then('select count(id) from z_articles_list',
+       	(data)=>{
+       		__webPageInfo__.articles_num = data[0]['count(id)'];
+       		res.render(config.__web_v__+'/index',{webPageInfo:__webPageInfo__});
+       	})
+       .end();
 
 	   // 置顶
-	   // var getAllart = 'select * from z_articles_list where isTop = 1 order by time limit 0,5';
-	   // var getAllart = 'select  a.*,b.clas_name from z_articles_list a inner  join z_articles_clas b  on a.art_clas_id=b.id  where isTop = 1 order by time limit 0,5';
-	  
-	  let rqs = [];	  
-      rqs[0]= {
-				   	sql:'select  a.*,b.clas_name,c.username,c.user_img from z_articles_list a inner join z_articles_clas b on a.art_clas_id=b.id join z_member c on a.user_id=c.id where a.isTop = 1 and a.is_valid=1 order by time limit 0,6',
-				    sCallback:(data,options) => {
-					   	    __webPageInfo__.isTop = data;
-					   	    options.end(options);
-				    }
-			  }
-      rqs[1]= {
-				   	sql:'select count(id) from z_articles_list',
-				    sCallback:(data,options) => {
-					  	    __webPageInfo__.articles_num = data[0]['count(id)'];
-					  	    res.render(config.__web_v__+'/index',{webPageInfo:__webPageInfo__}); 
-	                        options.end();
-				    }
-			 }
 
-	  sql.querysql({
-			   sql:rqs,//如果这里eCallback没有传的话调默认eCallback
-			   eCallback:(err,options)=>{
-			   	    return base.errorMsg(req,res,'查询失败');
-			   	    options.end();
-			   }
-	   })
+	  // let rqs = [];	  
+   //    rqs[0]= {
+			// 	   	sql:'select  a.*,b.clas_name,c.username,c.user_img from z_articles_list a inner join z_articles_clas b on a.art_clas_id=b.id inner join z_member c on a.user_id=c.id where a.isTop = 1 and a.is_valid=1 order by time limit 0,6',
+			// 	    sCallback:(data,options) => {
+			// 		   	    __webPageInfo__.isTop = data;
+			// 	    }
+			//   }
+   //    rqs[1]= {
+			// 	   	sql:'select count(id) from z_articles_list',
+			// 	    sCallback:(data,options) => {
+			// 		  	    __webPageInfo__.articles_num = data[0]['count(id)'];
+			// 		  	    res.render(config.__web_v__+'/index',{webPageInfo:__webPageInfo__}); 
+			// 	    }
+			//  }
+
+	  // sql.querysql({
+			//    sql:rqs,//如果这里eCallback没有传的话调默认eCallback
+			//    eCallback:(err,options)=>{
+			//    	    return base.errorMsg(req,res,'查询失败');
+			//    }
+	  //  })
       
 };
 
