@@ -82,7 +82,7 @@
 
             </div>  
     </div>
-                                                            <div data-ueEdit="<%- webPageInfo.editArt.content %>"></div>
+   <div id="ueEditContent" style="display:none;"><%- webPageInfo.editArt.content %></div>
 
 
 
@@ -252,8 +252,7 @@
                             return false;
                     })
           });
-         console.log('<%= webPageInfo.editArt.content %>');
-         var ueSetContent = '<%- webPageInfo.editArt.content %>';//待写入编辑器的内容
+         var ueSetContent = document.getElementById('ueEditContent').innerHTML;//待写入编辑器的内容
          var ueInterval = setInterval(function(){
                 try {
                      ue.setContent(ueSetContent);
