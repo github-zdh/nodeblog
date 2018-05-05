@@ -1,5 +1,5 @@
-             html {    background-color: #F2F2F2;}
-             body{padding-top:61px;background-image: url('../../images/web/background_wood.jpg');}
+             html {background-image: url('../../images/web/background_wood.jpg');}
+             body{padding-top:61px;}
              .logo{font-size:36px;color: #fff;
                     background-image: -webkit-linear-gradient(45deg,#393d49,#ffffff);
                     -webkit-background-clip: text;
