@@ -48,17 +48,6 @@
                           <div class="artice_t15"></div>
                           <% } %>
                           <div class="artice_content %>">
-                                <!-- <div class="breadcrumb">
-                                      <span class="layui-breadcrumb" lay-separator="|">
-                                          <a href="">娱乐</a>
-                                          <a href="">八卦</a>
-                                          <a href="">体育</a>
-                                          <a href="">搞笑</a>
-                                          <a href="">视频</a>
-                                          <a href="">游戏</a>
-                                          <a href="">综艺</a>        
-                                      </span>
-                                </div> -->
                                 <div class="breadcrumb">
                                       <h3 style="color: #666;">文章列表</h3>
                                 </div>
@@ -99,7 +88,6 @@
                                         limit:obj.limit
                                    },
                                    success:function(data){
-                                         console.log(data);
                                          var data = JSON.parse(data);
                                          if(data.code==200){
                                                 function articeItem(obj){
