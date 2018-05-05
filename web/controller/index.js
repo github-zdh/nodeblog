@@ -16,7 +16,7 @@ obj.index=function (req, res, next) {
        // 置顶
        new sql.runMysql(()=>{
        	    return base.errorMsg(req,res,'查询失败');
-        })
+        } )
        .then(()=>{
        	    return 'select  a.*,b.clas_name,c.username,c.user_img from z_articles_list a inner join z_articles_clas b on a.art_clas_id=b.id inner join z_member c on a.user_id=c.id where a.isTop = 1 and a.is_valid=1 order by time limit 0,6';
         },

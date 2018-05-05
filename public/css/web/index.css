@@ -38,7 +38,12 @@
             .footer{margin: 50px 0 0;padding: 20px 0 30px;line-height: 30px;text-align: center;color: #737573;border-top: 1px solid #e2e2e2;}*/
              html {    background-color: #F2F2F2;}
              body{padding-top:61px;background-image: url('../../images/web/background_wood.jpg');}
-             .logo{font-size:36px;text-shadow: 10px 10px 3px #fff;color: #fff;transform: skew(0deg,168deg);-webkit-transform: skew(0deg,168deg);-moz-transform: skew(0deg,168deg);-ms-transform: skew(0deg,168deg);-o-transform: skew(0deg,168deg);}
+             .logo{font-size:36px;color: #fff;
+                    background-image: -webkit-linear-gradient(45deg,#393d49,#ffffff);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    -webkit-animation: hue 60s infinite linear;
+             }
              .header_nav{height: 60px;position: fixed;top:0;left: 0;width: 100%;z-index: 1003;}
              .header_nav .logo{height: 60px;line-height: 60px;vertical-align: top;}
              .header_nav .logo img{width: 82px;height: 31px;}

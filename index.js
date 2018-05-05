@@ -46,7 +46,8 @@ var web=require('./routers/web');
 var socket=require('./routers/app');
 //后台入口
 var admin=require('./routers/admin');
-
+//微信app入口
+var WeChat=require('./routers/WeChat');
 
 var app=express();
 
@@ -89,6 +90,7 @@ app.use(session({
 
 app.use('/', web);
 app.use('/app', socket);
+app.use('/admin', admin);
 app.use('/admin', admin);
 
 // catch 404 and forward to error handler
