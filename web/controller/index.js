@@ -311,8 +311,8 @@ obj.addArtContent=function (req, res, next) {
 		                     " update_time = " +  com.timestamp()+","+
 		                     " content = " +  "'"+query.content+"',"+
 		                     " img = " + "'"+ query.img+"',"+
-		                     " description = " + (("`"+(query.description.indexOf("'")>-1?query.description.replace(/\'/g,"\'"):query.description)+"`").replace(/`/g,"'")) +
-				             " where id = "+ query.artListId ;
+		                     " description = " + "'" + query.description +"',"+
+				     " where id = "+ query.artListId ;
 
 				  sql.runSql(getArtUserId,function(err,data){
 					  	  // console.log(data);
