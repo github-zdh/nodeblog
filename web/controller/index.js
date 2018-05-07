@@ -309,7 +309,7 @@ obj.addArtContent=function (req, res, next) {
 		                     " source_link = " +  "'"+query.source_link+"',"+
 		                     " source = " +  "'"+query.source+"',"+
 		                     " update_time = " +  com.timestamp()+","+
-		                     " content = " + base.toString(query.content) +"',"+
+		                     " content = " +  "'"+query.content+"',"+ 
 		                     " img = " + "'"+ query.img+"',"+
 		                     " description = " + base.toString(query.description) + 
 				     " where id = "+ query.artListId ;
@@ -322,7 +322,7 @@ obj.addArtContent=function (req, res, next) {
 						  if(data[0].user_id != userInfo.id){
 						  	    return res.end(base.returnjson(res,2,"你不能修改别人的文章！"));
 						  }
-						  console.log(editArt);
+// 						  console.log(editArt);
 						  sql.runSql(editArt,function(err,data){
 							  	  // console.log(data);
 							  	  if(err){
