@@ -141,8 +141,6 @@
                              //有待完成(IE不支持)；还有不能上传太多文本
                             // 把富文本编辑器的赋值到content中
                             // data.field.content=layedit.getContent(layeditIndex);
-                            //fieldContent=>如果文本过大切割提交
-                            var fieldContent = '',fieldContentIndex=0;fieldContentArr = [];
                             fieldContent = data.field.content = UE.getEditor('editor').getContent();
                             delete data.field.editorValue;
                             let src = z.getId('uploadImg').src;
@@ -166,17 +164,6 @@
                             if(!UE.getEditor('editor').hasContents()){
                                  layer.msg('请编辑上传文章/帖子',{time:2000, shift: 6 ,icon:5});
                                  return false;
-                            }
-                            // if(data.field.content.length>35000){
-                            //      layer.msg('上传文本过大；请重新编辑！',{time:2000, shift: 6 ,icon:5});
-                            //      return false;
-                            // }
-                            fieldContentIndex = Math.ceil(data.field.content.length/15000);
-                            if(fieldContentIndex!=1){
-                                    for(var i=0;i<fieldContentIndex;i++){
-                                          fieldContentArr.push(fieldContent.substr(i*15000,(i+1)*15000));
-                                    }
-                                    data.field.content = fieldContentArr[0];
                             }
                             if(data.field.description==''){
                                    data.field.description = data.field.content.substr(0,100)+'...';
@@ -202,43 +189,13 @@
                                         console.log(res);     
                                         var res = JSON.parse(res); 
                                         var jsonres = res;        
-                                        if(res.code==200){
-                                             if(fieldContentIndex!=1){
-                                                    function updateArtContent(index,id){
-                                                            $.ajax({
-                                                                 url:'/index/updateArtContent',
-                                                                 type:'get',
-                                                                 data:{id:id,content:fieldContentArr[index]},
-                                                                 success:function(res){
-                                                                        console.log(res);  
-                                                                        if(index<fieldContentIndex-1){
-                                                                            var updateTimeout = setTimeout(function(){
-                                                                                updateArtContent(++index,id);
-                                                                                clearTimeout(updateTimeout);
-                                                                            },1000)
-                                                                        }else{
-                                                                             layer.close(layerLoad); 
-                                                                             layer.msg(jsonres.msg,{time:2000,icon:6});
-                                                                             return false;
-                                                                             setTimeout(function(){
-                                                                                   window.location.replace(jsonres.result.url);
-                                                                             },2000)
-                                                                        }                                  
-                                                                 },
-                                                                 error:function(){
-                                                                        layer.close(layerLoad); 
-                                                                 }
-                                                            })
-                                                    }
-                                                    updateArtContent(1,res.result.id);
-                                             }else{
-                                                 layer.close(layerLoad); 
-                                                 layer.msg(res.msg,{time:2000,icon:6});
-                                                 return false;
-                                                 setTimeout(function(){
-                                                       window.location.replace(res.result.url);
-                                                 },2000)
-                                             }
+                                        if(res.code==200){                                            
+                                             layer.close(layerLoad); 
+                                             layer.msg(res.msg,{time:2000,icon:6});
+                                             return false;
+                                             setTimeout(function(){
+                                                   window.location.replace(res.result.url);
+                                             },2000)
                                              return false;
                                         }
                                         layer.close(layerLoad); 
