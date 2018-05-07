@@ -165,14 +165,11 @@
                                  layer.msg('请编辑上传文章/帖子',{time:2000, shift: 6 ,icon:5});
                                  return false;
                             }
-                            if(data.field.description==''){
-                                   data.field.description = data.field.content.substr(0,100)+'...';
-                             }else{
-                                   if(data.field.description.length>100){
-                                        data.field.description = data.field.description.substr(0,100)+'...';
-                                   }
-                             }                                    
-                            
+
+                            if(data.field.description.length>100){
+                                  data.field.description = data.field.description.substr(0,100)+'...';
+                            }
+
                             
                             data.field.artType='add';
                             if('<%= webPageInfo.editArt.art_clas_id %>'!='0'){
