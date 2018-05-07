@@ -17,7 +17,9 @@ base.errorMsg=function(req,res,msg){
 	   var url = '/errorMsg/'+msg;
 	   res.redirect(302, url);  
 }
-
+base.toString = function(string){
+   return (("`" + string +"`").indexOf("'")>-1?("`" + string +"`").replace(/\'/g,"\\'").replace(/`/g,"'"):("'" +string +"'"));
+}
 // 返回json字符串格式
 base.returnjson=function(res,code,msg,result){
 	  res.end(JSON.stringify({"code":code,"msg":msg,"result":result}));
