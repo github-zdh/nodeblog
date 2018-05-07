@@ -121,7 +121,7 @@ obj.getArtList=function (req, res, next) {
 	  }else{//如果 没有；则查全部
 	  	    var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where a.is_valid = 1 order by time DESC limit '+page+','+limitCount;
 	  }
-      // console.log(getArtList_sql);
+      console.log(getArtList_sql);
 
 	  sql.runSql(getArtList_sql,function(err,data){ 
 		  	  if(err){
