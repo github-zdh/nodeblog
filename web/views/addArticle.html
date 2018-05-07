@@ -255,7 +255,6 @@
          setCont();
          function setCont(){
              var ueSetContent = document.getElementById('ueEditContent');//待写入编辑器的内容
-             console.log(ueSetContent);
              var ueInterval = setTimeout(function(){
                  if(!ueSetContent || !ueSetContent.innerHTML || ueSetContent.innerHTML==''){
                      setCont();
@@ -267,7 +266,7 @@
                     } catch(e){
                          console.log('等待编辑器创建!');
                     }
-             },500);
+             },300);
          }
 
       </script>
