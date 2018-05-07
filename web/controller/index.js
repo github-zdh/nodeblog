@@ -311,14 +311,9 @@ obj.addArtContent=function (req, res, next) {
 		                     " update_time = " +  com.timestamp()+","+
 		                     " content = " +  "'"+query.content+"',"+
 		                     " img = " + "'"+ query.img+"',"+
-		                     " description = " +  "`"+query.description.indexOf("'")>-1?query.description.replace(/\'/g,"\'"):query.description+"`".replace(/`/g,"'")+
+		                     " description = " + (("`"+(query.description.indexOf("'")>-1?query.description.replace(/\'/g,"\'"):query.description)+"`").replace(/`/g,"'")) +
 				             " where id = "+ query.artListId ;
-console.log('---------------------------------------');
-console.log("`"+123+"`");
-console.log("`"+(query.description.indexOf("'")>-1?query.description.replace(/\'/g,"\'"):query.description)+"`");
-console.log('---------------------------------------');
-console.log("'`"+query.description.indexOf("'")>-1?query.description.replace(/\'/g,"\'"):query.description+"'`".replace(/\'`/g,"'"));
-console.log('---------------------------------------');
+
 				  sql.runSql(getArtUserId,function(err,data){
 					  	  // console.log(data);
 					  	  if(err){
