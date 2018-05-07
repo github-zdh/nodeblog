@@ -83,12 +83,12 @@ obj.getSearchList=function (req, res, next) {
 	  
 	  if(query.uid){//如果传用户ID；就查那个用户发布的文章/帖子
 	  	    if(req.session[__webUserInfo__]&&query.id==req.session[__webUserInfo__].id){//如果这个用户是当前登录的用户则查全部；
-	  	    	   var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where concat(a.title,a.content) like "%'+keyword+'%" and a.user_id = '+query.uid+' order by time limit '+page+','+limitCount;
+	  	    	   var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where concat(a.title,a.content) like "%'+keyword+'%" and a.user_id = '+query.uid+' order by time DESC limit '+page+','+limitCount;
 	  	    }else{//如果这个用户不是当前登录的用户则查 有效的文章/帖子
-	  	    	   var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where concat(a.title,a.content) like "%'+keyword+'%" and a.is_valid = 1 and a.user_id = '+query.uid+' order by time limit '+page+','+limitCount;
+	  	    	   var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where concat(a.title,a.content) like "%'+keyword+'%" and a.is_valid = 1 and a.user_id = '+query.uid+' order by time DESC limit '+page+','+limitCount;
 	  	    }
 	  }else{//如果 没有；则查全部
-	  	    var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where concat(a.title,a.content) like "%'+keyword+'%" and a.is_valid = 1 order by time limit '+page+','+limitCount;
+	  	    var getArtList_sql = 'select  a.*,b.user_img,b.username,c.clas_name from z_articles_list a inner join z_member b on a.user_id=b.id inner join z_articles_clas c on a.art_clas_id=c.id where concat(a.title,a.content) like "%'+keyword+'%" and a.is_valid = 1 order by time DESC limit '+page+','+limitCount;
 	  }
 	  // console.log(getArtList_sql);
 	  sql.runSql(getArtList_sql,function(err,data){
