@@ -252,16 +252,22 @@
                             return false;
                     })
           });
-         var ueSetContent = document.getElementById('ueEditContent').innerHTML;//待写入编辑器的内容
-         var ueInterval = setInterval(function(){
-                try {
-                     ue.setContent(ueSetContent);
-                     clearInterval(ueInterval);
-                } catch(e){
-
+         setCont();
+         function setCont(){
+             var ueSetContent = document.getElementById('ueEditContent');//待写入编辑器的内容
+             var ueInterval = setInterval(function(){
+                 if(!ueSetContent || !ueSetContent.innerHTML || ueSetContent.innerHTML==''){
+                     setCont();
+                     return false;
+                 }   
+                 try {
+                         ue.setContent(ueSetContent.innerHTML);
+                         clearInterval(ueInterval);
+                    } catch(e){
                          console.log('等待编辑器创建!');
-                }
-         },500);
+                    }
+             },500);
+         }
 
       </script>
 <div id="ueEditContent" style="display:none;"><%- webPageInfo.editArt.content %></div>
