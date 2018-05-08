@@ -189,7 +189,6 @@
                                         if(res.code==200){                                            
                                              layer.close(layerLoad); 
                                              layer.msg(res.msg,{time:2000,icon:6});
-                                             return false;
                                              setTimeout(function(){
                                                    window.location.replace(res.result.url);
                                              },2000)
