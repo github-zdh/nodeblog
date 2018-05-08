@@ -63,6 +63,7 @@ exports.addImg=function (req, res, next) {
 
                 var loadPath = '';
                 var user = req.session[__webUserInfo__];
+	        console.log(user);
 
                 switch(loadType){
                       case 1:
