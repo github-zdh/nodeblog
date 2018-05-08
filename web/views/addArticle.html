@@ -190,7 +190,7 @@
                                              layer.close(layerLoad); 
                                              layer.msg(res.msg,{time:2000,icon:6});
                                              setTimeout(function(){
-                                                   window.location.replace(res.result.url);
+                                                   window.history.back();
                                              },2000)
                                              return false;
                                         }
