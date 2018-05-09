@@ -34,19 +34,29 @@
                                         </div>
                                         <div class="layui-col-md5">
                                                 <div class="layui-form-item">
-                                                      <label class="layui-form-label">来源链接</label>
+                                                      <label class="layui-form-label">是否原创</label>
                                                       <div class="layui-input-block">
-                                                        <input type="text" name="source_link" value="<%= webPageInfo.editArt.source_link %>" autocomplete="off" placeholder="请输入来源链接(选填)" class="layui-input">
+                                                         <input type="checkbox" id="original" name="original" lay-skin="switch" lay-text="ON|OFF" lay-filter="switchTest">
                                                       </div>
                                                 </div>
                                         </div>
-                                        <div class="layui-col-md7">
-                                                <div class="layui-form-item">
-                                                      <label class="layui-form-label">来源</label>
-                                                      <div class="layui-input-block">
-                                                        <input type="text" name="source" value="<%= webPageInfo.editArt.source %>" autocomplete="off" placeholder="请输入来源描述(选填/最多可输入100字)" class="layui-input">
-                                                      </div>
-                                                </div>
+                                        <div id="source">
+                                            <div class="layui-col-md5">
+                                                    <div class="layui-form-item">
+                                                          <label class="layui-form-label">来源链接</label>
+                                                          <div class="layui-input-block">
+                                                            <input type="text" name="source_link" value="<%= webPageInfo.editArt.source_link %>" autocomplete="off" placeholder="请输入来源链接(选填)" class="layui-input">
+                                                          </div>
+                                                    </div>
+                                            </div>
+                                            <div class="layui-col-md7">
+                                                    <div class="layui-form-item">
+                                                          <label class="layui-form-label">来源</label>
+                                                          <div class="layui-input-block">
+                                                            <input type="text" name="source" value="<%= webPageInfo.editArt.source %>" autocomplete="off" placeholder="请输入来源描述(选填/最多可输入100字)" class="layui-input">
+                                                          </div>
+                                                    </div>
+                                            </div>
                                         </div>
                                         <div class="layui-col-md12">
                                                 <div class="layui-form-item">
@@ -100,6 +110,16 @@
                       //console.log(elem)
                       layer.msg(elem.text());
                     });
+                    var sourceDom = document.getElementById('source');
+                    var sourceBool = false;
+                    form.on('switch(switchTest)', function(data){
+                         sourceBool = this.checked;
+                          if(this.checked){
+                              sourceDom.style.display='node';
+                          }else{
+                              sourceDom.style.display='block';
+                          }
+                    });
                     // layedit.set({
                     //         uploadImage: {
                     //             url: 'ajax/addArticleImg' //接口url
@@ -145,6 +165,7 @@
                             delete data.field.editorValue;
                             let src = z.getId('uploadImg').src;
                             data.field.img='';
+                           
                             if(src.indexOf('upload')!==-1){
                                    data.field.img = '/upload'+src.split('upload')[1];
                             }                            
@@ -160,6 +181,13 @@
                                  layer.msg('来源描述最多100字符!',{time:2000, shift: 6 ,icon:5});
                                  return false;
                             }
+                            if(!sourceBool){
+                                    if(data.field.source_link==''||data.field.source==''){
+                                         layer.msg('请填写来源!',{time:2000, shift: 6 ,icon:5});
+                                         return false;
+                                    }
+                            }
+                            
 
                             if(!UE.getEditor('editor').hasContents()){
                                  layer.msg('请编辑上传文章/帖子',{time:2000, shift: 6 ,icon:5});
@@ -172,6 +200,7 @@
 
                             
                             data.field.artType='add';
+                            data.field.sourceBool=sourceBool?1:0;
                             if('<%= webPageInfo.editArt.art_clas_id %>'!='0'){
                                     data.field.artType='edit';
                                     data.field.artListId='<%= webPageInfo.editArt.id %>';
