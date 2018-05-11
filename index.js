@@ -72,7 +72,9 @@ app.set('view engine', 'html');
 // 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+app.use(bodyParser({
+  limit: 50000000  //50m
+}));
 // app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
