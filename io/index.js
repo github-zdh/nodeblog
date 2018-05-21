@@ -4,6 +4,8 @@ const http = require('http');
 var cors = require('koa-cors');
 const static = require('koa-static');
 
+// global._dirname 根目录
+global._dirname = __dirname;
 // 跨域KOA-CORS
 const koaOptions = {
     origin: true,
@@ -20,8 +22,8 @@ const server = http.createServer(koa.callback()).listen(3000);
 console.log('http://localhost:3000/');
 
 var io = require('socket.io')(server);
-// 房间信息
-global.ioRooms = {};
+
+
 // 
 var room = io.of('/room');
 require('./room')(room);
