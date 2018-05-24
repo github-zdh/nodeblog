@@ -3,33 +3,47 @@ var express = require('express');
 var router = express.Router();
 var com = require(__ROOTDIR__+'/config/common');
 
+
+
 // 公共控件 
-// function publicControl(req, res, next){
-// 			// 模拟已经登录
-//             // config.analogLogon(req,res,next);
+//不管是否登录都通过这个控件
+function publicControl(req, res, next){
 
 
-// 		  // 网址路径 例如：http://127.0.0.1:1337/
-// 		  __host__ = global.__host__?__host__:'http://'+req.headers.host;
-// 		  __appPageInfo__ = {} ;
-// 		  __appPageInfo__.host = global.__host__?__host__:'http://'+req.headers.host;
-// 		  __appPageInfo__.sign=req.session.sign;//是否签到
-// 		  __appPageInfo__.is_login = req.session.is_login;//是否登录
-// 		  __appPageInfo__.userInfo=req.session[__appUserInfo__];//用户信息
-// 	      // 判断是否登录
-// 	      if(!req.session[__appUserInfo__]){
-// 	           return res.redirect("/login");
-// 	      }
-// 		  next();
-// }
+		  next();
+}
+
+// 判断是否登录中间件
+function isLogin(req, res, next){
+
+		  // // 检查 session 中的 isVisit 字段
+		  // // 如果存在则增加一次，否则为 session 设置 isVisit 字段，并初始化为 1。
+		  // if(req.session.isVisit) {
+		  //   // req.session.isVisit++;
+		  //   req.session.isVisit='isVisit'
+		  //   req.session.num++;
+		  // } else {
+		  //   req.session.isVisit = 'isVisit';
+		  //   req.session.num = 1;
+		  // }
+		  // console.log(req.session);   
+		  // return;  
+	      // if(!req.session[__webUserInfo__]){
+	      //      return res.redirect("/login");
+	      // }
+		  next();
+}
 
 
-router.get('/'  ,  require(config.__app_c__+'/chat').index);
+router.get('/' , publicControl , top , require(config.__app_c__+'/index').index);
 
-// 聊天列表页面
-router.get('/chat'  ,  require(config.__app_c__+'/chat').index );
+// 首页
+router.get('/index' , publicControl , top , require(config.__app_c__+'/index').index );
 
-// 聊天列表页面
-router.get('/talk'  ,  require(config.__app_c__+'/chat').talk );
+// 登录
+router.get('/login/login' , publicControl , loginTure , require(config.__app_c__+'/login').login );
+// 退出登录
+router.get('/login/logout' , publicControl , require(config.__app_c__+'/login').logout );
+
 
 module.exports = router;

@@ -93,7 +93,6 @@ app.use(session({
 app.use('/', web);
 app.use('/app', socket);
 app.use('/admin', admin);
-app.use('/admin', admin);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

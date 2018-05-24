@@ -17,9 +17,9 @@ exports.index=function (req, res, next) {
 
 // 登录
 exports.login=function (req, res, next) {
-          if(req.query.code!=req.session.loginCode){
-          	     return base.returnjson(res,100,"验证失败;请重新获取验证码");
-          }
+          // if(req.query.code!=req.session.loginCode){
+          // 	     return base.returnjson(res,100,"验证失败;请重新获取验证码");
+          // }
           var email = 'select * from z_member where email="'+req.query.email+'"';
           sql.runSql(email,function(err,data){
 		     	    if(err){
@@ -34,32 +34,18 @@ exports.login=function (req, res, next) {
 		     	    if(data[0].is_valid!=1){
 		     	    	    return base.returnjson(res,100,"用户失效！请联系管理员");
 		     	    }
-		     	    req.session[__webUserInfo__]=data[0];
+		     	    req.session[__appUserInfo__]=data[0];
 		            let LocaleDate = com.LocaleDate();//获取当天0点时间戳   
-		            let getsign = 'select * from z_sign where user_id ='+data[0].id+' order by time desc';
-		            sql.runSql(getsign,function(err,data){
-		                    if(err){
-		                            return base.errorMsg(req,res,'查询失败');
-		                    }
-		                    if(data.length!=0){
-		                          // 判断当天是否签到过                          
-		                          if(LocaleDate==data[0].cur_time){
-		                                req.session.sign=true;
-		                          }
-		                    }
-		                    req.session.is_login=true;
-		                    return base.returnjson(res,200,"success",{"url":"/index"});
-		           })
-		     	    
+		            return base.returnjson(res,200,{result:data[0]});
           })
 };
 
 // 退出登录
 exports.logout=function (req, res, next) {
-          if(!req.session[__webUserInfo__]){
+          if(!req.session[__appUserInfo__]){
 	          return base.returnjson(res,100,"你还没登录");
           }
-  	      delete req.session[__webUserInfo__];
+  	      delete req.session[__appUserInfo__];
           return base.returnjson(res,200,"退出成功");
 };
 
