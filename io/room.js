@@ -41,16 +41,24 @@ const chatMsgToText = (rid,msg) => {
 const room = function(){
     this.init = (room) => {
          room.on('connection', function (socket) {
-              var url = socket.request.headers.referer;
-              // console.log(url);
-              var roomUser = url.split('?room=')[1].split('&uid=');
+              var url = socket.request;
+             // console.log(url);
+             // var roomUser = url.split('?room=')[1].split('&uid=');
               // console.log(roomUser);
-              var roomID = roomUser[0];
-              var uIndex = roomUser[1];
+              var roomID = 1;
+              var uIndex = 1;
               var userInfo = '';
               // 加入房间
-              // socket.on('room join',function(usermsg){})
-              var roomJoin = () => {
+              socket.on('room join',function(obj){roomJoin(obj)});
+              var roomJoin = (obj) => {
+                    console.log(obj);
+                    if(obj&&obj.roomID){
+                        roomID = obj.roomID;
+                    }
+                    if(obj&&obj.roomID){
+                        uIndex = obj.uIndex;
+                    }
+                    // console.log(obj);
                     userInfo = ioUserInfo[uIndex];
                     // console.log(userInfo);
                     // console.log('============')
@@ -65,7 +73,8 @@ const room = function(){
                     // console.log(ioRooms);
                     room.to(roomID).emit('room sys', userInfo['username'] + '加入', ioRooms , ioRooms[roomID]);
               }
-              roomJoin();   
+              
+              //roomJoin();   
               // 发送未读消息
               const unread = () => {
                    return chatRecord[roomID];
@@ -73,17 +82,20 @@ const room = function(){
               socket.emit('room unread',unread());
 
               // 接收发的信息
-              socket.on('room sendMsg',function(sendMsg){
+              socket.on('room sendMsg',function(data,callback){
                     // 给某个房间触发信息
                     var smsg = {
-                            msg:sendMsg,//信息内容
+                            msg:data.sendMsg,//信息内容
                             from:userInfo,// 谁发送
                             status:false,//false=>未读 true =>已读
                             type:'text',//信息类型
                             times:new Date().getTime() //发送时间
                     }
+console.log(roomID);
+console.log(chatRecord);
                     chatRecord[roomID].push(smsg)
                     room.to(roomID).emit('room msg', smsg );
+                    if(callback){callback(data)};
               })
               //断网或者离开当前聊天页面
               socket.on('disconnect',function(){
