@@ -35,10 +35,10 @@ function isLogin(req, res, next){
 }
 
 
-router.get('/' , require(config.__app_c__+'/index').index);
+// router.get('/' , require(config.__app_c__+'/index').index);
 
 // 首页
-router.get('/index' ,  require(config.__app_c__+'/index').index );
+// router.get('/index' ,  require(config.__app_c__+'/index').index );
 
 // 登录
 router.get('/login/login' , require(config.__app_c__+'/login').login );
