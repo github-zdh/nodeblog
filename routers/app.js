@@ -35,15 +35,15 @@ function isLogin(req, res, next){
 }
 
 
-router.get('/' , publicControl , top , require(config.__app_c__+'/index').index);
+router.get('/' , require(config.__app_c__+'/index').index);
 
 // 首页
-router.get('/index' , publicControl , top , require(config.__app_c__+'/index').index );
+router.get('/index' ,  require(config.__app_c__+'/index').index );
 
 // 登录
-router.get('/login/login' , publicControl , loginTure , require(config.__app_c__+'/login').login );
+router.get('/login/login' , require(config.__app_c__+'/login').login );
 // 退出登录
-router.get('/login/logout' , publicControl , require(config.__app_c__+'/login').logout );
+router.get('/login/logout' , require(config.__app_c__+'/login').logout );
 
 
 module.exports = router;
