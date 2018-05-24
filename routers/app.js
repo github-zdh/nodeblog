@@ -41,7 +41,7 @@ function isLogin(req, res, next){
 // router.get('/index' ,  require(config.__app_c__+'/index').index );
 
 // 登录
-router.get('/login/login' , require(config.__app_c__+'/login').login );
+router.post('/login/login' , require(config.__app_c__+'/login').login );
 // 退出登录
 router.get('/login/logout' , require(config.__app_c__+'/login').logout );
 

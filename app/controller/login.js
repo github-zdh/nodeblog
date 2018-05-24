@@ -20,7 +20,7 @@ exports.login=function (req, res, next) {
           // if(req.query.code!=req.session.loginCode){
           // 	     return base.returnjson(res,100,"验证失败;请重新获取验证码");
           // }
-          var email = 'select * from z_member where email="'+req.query.email+'"';
+          var email = 'select * from z_member where email="'+req.body.email+'" and password = "'+com.md5(req.body.password)+'"';
           sql.runSql(email,function(err,data){
 		     	    if(err){
 		     	    	    return base.returnjson(res,100,"查询失败");
@@ -28,15 +28,11 @@ exports.login=function (req, res, next) {
 		     	    if(data.length==0){
 		     	    	    return base.returnjson(res,100,"用户不存在或者密码错误！");
 		     	    }
-		     	    if(com.md5(req.query.password)!=data[0].password){
-		     	    	    return base.returnjson(res,100,"用户不存在或者密码错误！");
-		     	    }
 		     	    if(data[0].is_valid!=1){
 		     	    	    return base.returnjson(res,100,"用户失效！请联系管理员");
 		     	    }
 		     	    req.session[__appUserInfo__]=data[0];
-		            let LocaleDate = com.LocaleDate();//获取当天0点时间戳   
-		            return base.returnjson(res,200,{result:data[0]});
+		            return base.returnjson(res,200,'登录成功',data[0]);
           })
 };
 

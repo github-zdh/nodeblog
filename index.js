@@ -51,6 +51,20 @@ var WeChat=require('./routers/WeChat');
 
 var app=express();
 
+
+
+var allowCrossDomain = function (req, res, next) {
+ // res.header('Access-Control-Allow-Origin', '*');//自定义中间件，设置跨域需要的响应头。
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+  res.header("X-Powered-By",' 3.2.1')
+  res.header("Content-Type", "application/json;charset=utf-8");
+  next();
+};
+
+app.use(allowCrossDomain);//运用跨域的中间件
+
 //设置静态资源
 // app.use(express.static(path.join(__dirname, 'public')));
 // view engine setup -- jade
