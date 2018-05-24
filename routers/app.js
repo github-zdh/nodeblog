@@ -43,7 +43,7 @@ function isLogin(req, res, next){
 // 登录
 router.post('/login/login' , require(config.__app_c__+'/login').login );
 // 退出登录
-router.get('/login/logout' , require(config.__app_c__+'/login').logout );
+router.post('/login/logout' , require(config.__app_c__+'/login').logout );
 
 
 module.exports = router;
