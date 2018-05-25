@@ -30,9 +30,7 @@ exports.friend=function (req, res, next) {
      	    }
      	    console.log(2);
        	})
-       .then(()=>{
-       	    return 'select uids from z_friends where uid ='+ req.body.uid ;
-        },
+       .then('select uids from z_friends where uid ='+ req.body.uid,
        	(data,_this)=>{
      	    console.log(3);
      	    console.log('select uids from z_friends where uid ="'+req.body.uid+'"');
