@@ -11,7 +11,6 @@ var base = require(__ROOTDIR__+'/config/base');
 exports.friend=function (req, res, next) {
        function addFriend(uid,fid){
 		          var email = 'insert into z_friends (uid,uids) values ('+uid+','+fid+')';
-		          console.log(email);
 		          sql.runSql(email,function(err,data){
 				     	    if(err){
 				     	    	    return base.returnjson(res,100,"查询失败");
@@ -30,11 +29,9 @@ exports.friend=function (req, res, next) {
                    addFriend(req.body.uid,req.body.fid);
 		          _this.endHandle = true;
      	    }
-     	    console.log(2);
        	})
        .then('select uids from z_friends where uid ='+ req.body.uid,
        	(data,_this)=>{
-     	     console.log(2);
      	    if(data[0].uids == ''){
 		           addFriend(req.body.uid,req.body.fid);
      	    }else{
@@ -45,7 +42,6 @@ exports.friend=function (req, res, next) {
 	     	     }else{
                       uids.push(strFid);
 			          var email = 'UPDATE z_friends set uids = "'+uids.join(',')+'" where uid = '+req.body.uid;
-			          console.log(email);
 			          sql.runSql(email,function(err,data){
 					     	    if(err){
 					     	    	    return base.returnjson(res,100,"查询失败");
