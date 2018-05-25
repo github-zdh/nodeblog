@@ -9,7 +9,7 @@ var base = require(__ROOTDIR__+'/config/base');
 
 // 查询用户
 exports.user=function (req, res, next) {
-          console.log(req);
+          console.log(req.headers);
           var email = 'select * from z_member where email="'+req.body.email+'"';
           sql.runSql(email,function(err,data){
 		     	    if(err){
@@ -18,7 +18,7 @@ exports.user=function (req, res, next) {
 		     	    if(data.length==0){
 		     	    	    return base.returnjson(res,202,"用户不存在");
 		     	    }
-		     	    data[0]['user_img'] = __host__ + data[0]['user_img'];
+		     	    data[0]['user_img'] = req.headers.host + data[0]['user_img'];
 		     	    delete data[0].password;
 		            return base.returnjson(res,200,'查询成功',data[0]);
           })
