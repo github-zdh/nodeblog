@@ -32,6 +32,7 @@ exports.login=function (req, res, next) {
 		     	    	    return base.returnjson(res,100,"用户失效！请联系管理员");
 		     	    }
 		     	    req.session[__appUserInfo__]=data[0];
+		     	    delete data[0].password;
 		            return base.returnjson(res,200,'登录成功',data[0]);
           })
 };
