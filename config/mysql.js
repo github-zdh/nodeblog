@@ -273,6 +273,7 @@ class runMysql {
 			this.errmsg='';//错误信息
 			this.pending = {};//待处理数据
 			this.ishandle = false;//是否处理数据
+			this.endHandle = false; //是否结束执行其他的操作、释放数据库连接
 			this.init(eCallback);			
       }
       init(eCallback){
@@ -315,12 +316,16 @@ class runMysql {
       }
       query(){
 	      	  var _this = this;
-	      	  if(this.index==this.i){
+	      	  if(this.endHandle){
+	      	  	   this.connection.release();//释放链接
+	      	  	   return false;
+	      	  }
+	      	  if(this.index==this.ie){
 	      	  	   this.connection.release();//释放链接
 	      	  	   return false;
 	      	  }
 	      	  if(common.typeof(_this.pending[_this.index].sql,'function')){
-	      	   	     _this.pending[_this.index].sql = _this.pending[_this.index].sql();
+	      	   	     _this.pending[_this.index].sql = _this.pending[_this.index].sql(_this);
 	      	  }
 		  	  _this.connection.query(_this.pending[_this.index].sql,(err,data) => {
 		  	  	      if(err){
