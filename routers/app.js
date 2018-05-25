@@ -44,6 +44,9 @@ function isLogin(req, res, next){
 router.post('/login/login' , require(config.__app_c__+'/login').login );
 // 退出登录
 router.post('/login/logout' , require(config.__app_c__+'/login').logout );
-
+// 查询用户 / 添加朋友
+router.post('/search/user' , require(config.__app_c__+'/search').user );
+// 添加朋友
+router.post('/add/friend' , require(config.__app_c__+'/add').friend );
 
 module.exports = router;
