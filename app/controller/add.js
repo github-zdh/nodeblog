@@ -17,12 +17,9 @@ exports.friend=function (req, res, next) {
        	    return 'select * from z_friends where uid ="'+req.body.uid+'"';
         },
        	(data,_this)=>{
-     	    console.log(1);
-     	    console.log('select * from z_friends where uid ="'+req.body.uid+'"');
      	    if(data.length==0){
-		          var email = 'insert into z_member (uid,uids) values ('+req.body.uid+','+req.body.fid+')';
-     	    console.log(2);
-     	    console.log(email);
+		          var email = 'insert into z_friends (uid,uids) values ('+req.body.uid+','+req.body.fid+')';
+		          console.log(email);
 		          sql.runSql(email,function(err,data){
 				     	    if(err){
 				     	    	    return base.returnjson(res,100,"查询失败");
@@ -31,6 +28,7 @@ exports.friend=function (req, res, next) {
 		          })
 		          _this.endHandle = true;
      	    }
+     	    console.log(2);
        	})
        .then('select uids from z_friends where uid ="'+req.body.uid+'"',
        	(data,_this)=>{
