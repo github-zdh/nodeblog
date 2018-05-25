@@ -320,10 +320,13 @@ class runMysql {
 	      	  	   this.connection.release();//释放链接
 	      	  	   return false;
 	      	  }
-	      	  if(this.index==this.ie){
+	      	  if(this.index==this.i){
 	      	  	   this.connection.release();//释放链接
 	      	  	   return false;
 	      	  }
+	      	  console.log('-------------');
+	      	  console.log(_this.index);
+	      	  console.log(_this.pending);
 	      	  if(common.typeof(_this.pending[_this.index].sql,'function')){
 	      	   	     _this.pending[_this.index].sql = _this.pending[_this.index].sql(_this);
 	      	  }
