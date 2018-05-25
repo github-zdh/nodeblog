@@ -34,6 +34,7 @@ exports.friend=function (req, res, next) {
        	})
        .then('select uids from z_friends where uid ='+ req.body.uid,
        	(data,_this)=>{
+     	     console.log(2);
      	    if(data[0].uids == ''){
 		           addFriend(req.body.uid,req.body.fid);
      	    }else{
@@ -43,7 +44,14 @@ exports.friend=function (req, res, next) {
 	     	     	  return base.returnjson(res,200,'你已经添加该用户了');
 	     	     }else{
                       uids.push(strFid);
-			          addFriend(req.body.uid,uids.join(','));
+			          var email = 'UPDATE z_friends set uids = "'+uids.join(',')+'" where uid = '+req.body.uid;
+			          console.log(email);
+			          sql.runSql(email,function(err,data){
+					     	    if(err){
+					     	    	    return base.returnjson(res,100,"查询失败");
+					     	    }
+					            return base.returnjson(res,200,'添加成功');
+			          })
 	     	     }
      	    }            
        	})
