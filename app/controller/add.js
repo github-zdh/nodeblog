@@ -24,7 +24,7 @@ exports.friend=function (req, res, next) {
        	    return base.returnjson(res,1002,"查询失败");
         } )
        .then(()=>{
-       	    return 'select * from z_friends where uid ='+ uid +' and fid = '+ fid;
+       	    return 'select * from z_mail where uid ='+ uid +' and fid = '+ fid;
         },
        	(data,_this)=>{
      	    if(data.length==0){
@@ -64,9 +64,9 @@ exports.friendIsPass=function (req, res, next) {
        	(data,_this)=>{
      	    rid = data['insertId'];  
        	})
-       .then((data)=>{//处理z_friends表中数据
+       .then((data)=>{//处理z_mail表中数据
 
-       	    return 'INSERT INTO z_friends (uid,fid,rid) VALUES ('+uid+','+fid+','+rid+') , ('+fid+','+uid+','+rid+')';
+       	    return 'INSERT INTO z_mail (uid,fid,rid) VALUES ('+uid+','+fid+','+rid+') , ('+fid+','+uid+','+rid+')';
         })
        .then(()=>{//处理z_user_room 表中数据
        	    return 'INSERT INTO z_user_room (uid,rid) VALUES ('+uid+','+rid+') , ('+fid+','+rid+')';
