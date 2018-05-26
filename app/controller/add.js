@@ -36,3 +36,43 @@ exports.friend=function (req, res, next) {
        	})
        .end();
 };
+
+// 用户请求添加处理 是否通过 
+exports.friendIsPass=function (req, res, next) {
+       var ispass = req.body.ispass?req.body.ispass:0; // 0 =>不通过 1=>通过
+       ispass = parseInt(ispass);
+       var uid = req.body.uid;
+       var fid = req.body.fid;
+       var afqid = req.body.afqid;// z_add_friend_request =>中的id //添加盆友的处理数据id
+       var rid = ''; 
+
+       new sql.runMysql(()=>{
+       	    return base.returnjson(res,1002,"查询失败");
+        })
+       .then(()=>{
+       	    return 'update z_add_friend_request SET handle=1 , ispass='+ispass+' where id='+afqid;
+        },
+       	(data,_this)=>{
+     	    if(ispass!=1){
+     	    	_this.endHandle = true;
+     	    	return base.returnjson(res,200,"拒绝通过");
+     	    }
+       	})
+       .then(()=>{//创建一个房间
+       	    return 'INSERT INTO z_room (description) VALUES ("个人群")';
+        },
+       	(data,_this)=>{
+     	    rid = data['insertId'];  
+       	})
+       .then((data)=>{//处理z_friends表中数据
+
+       	    return 'INSERT INTO z_friends (uid,fid,rid) VALUES ('+uid+','+fid+','+rid+') , ('+fid+','+uid+','+rid+')';
+        })
+       .then(()=>{//处理z_user_room 表中数据
+       	    return 'INSERT INTO z_user_room (uid,rid) VALUES ('+uid+','+rid+') , ('+fid+','+rid+')';
+        },
+       	(data,_this)=>{
+     	    return base.returnjson(res,200,"添加成功");
+       	})
+       .end();       
+};

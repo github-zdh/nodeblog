@@ -37,3 +37,15 @@ exports.mail=function (req, res, next) {
 		            return base.returnjson(res,200,'查询成功',data);
           })
 };
+
+// 查询新朋友
+exports.newfriend=function (req, res, next) {
+	      var uid = req.body.uid;	       
+          var email = 'SELECT a.*,b.username,b.user_img from z_add_friend_request a LEFT JOIN z_member b on  b.id <> '+uid+' and (b.id = a.uid or b.id = a.fid)  where a.uid ='+uid+' or a.fid ='+ uid;
+          sql.runSql(email,function(err,data){
+		     	    if(err){
+		     	    	    return base.returnjson(res,100,"查询失败");
+		     	    }
+		            return base.returnjson(res,200,'查询成功',data);
+          })
+};
