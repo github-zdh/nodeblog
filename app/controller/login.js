@@ -31,7 +31,9 @@ exports.login=function (req, res, next) {
 		     	    if(data[0].is_valid!=1){
 		     	    	    return base.returnjson(res,100,"用户失效！请联系管理员");
 		     	    }
-		     	    req.session[__appUserInfo__]=data[0];
+		     	    var token = Math.random().toString(36).substr(2);
+		     	    __appUserInfo__.push(token);
+		     	    data[0]['token'] = token;
 		     	    delete data[0].password;
 		            return base.returnjson(res,200,'登录成功',data[0]);
           })
@@ -39,10 +41,12 @@ exports.login=function (req, res, next) {
 
 // 退出登录
 exports.logout=function (req, res, next) {
-          if(!req.session[__appUserInfo__]){
+          var token = req.body.token;
+          var index = __appUserInfo__.indexOf(token);
+          if(index==-1){
 	          return base.returnjson(res,100,"你还没登录");
           }
-  	      delete req.session[__appUserInfo__];
+  	      __appUserInfo__.splice(index,1);
           return base.returnjson(res,200,"退出成功");
 };
 

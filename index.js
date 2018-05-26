@@ -29,8 +29,8 @@ global.__host__ = '';
 global.__adminUserInfo__='adminUserInfo';
 // 前台登录 ===> 用户信息
 global.__webUserInfo__='webUserInfo';
-// app登录 ===> app信息
-global.__appUserInfo__='appUserInfo';
+// app登录 ===> app信息 存 token 如果有token 就是已经登录，没有token就还没登录
+global.__appUserInfo__=[];
 
 // 后台登录 ===> 页面信息
 global.__adminPageInfo__={};
