@@ -12,12 +12,12 @@ exports.friend=function (req, res, next) {
        var uid = req.body.uid;
        var fid = req.body.fid;
        function addFriend(uid,fid){
-		          var email = 'insert into z_friends (uid,fid) values ('+uid+','+fid+')';
+		          var email = 'insert into z_add_friend_request (uid,fid) values ('+uid+','+fid+')';
 		          sql.runSql(email,function(err,data){
 				     	    if(err){
 				     	    	    return base.returnjson(res,100,"查询失败");
 				     	    }
-				            return base.returnjson(res,200,'添加成功');
+				            return base.returnjson(res,200,'请求已发送');
 		          })
        }
        new sql.runMysql(()=>{
