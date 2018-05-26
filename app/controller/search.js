@@ -26,10 +26,7 @@ exports.user=function (req, res, next) {
 // 查询通讯录
 exports.mail=function (req, res, next) {
 	      var uid = req.body.uid;
-	      console.log(req.body);
-	      console.log(req.query);
           var email = 'SELECT a.*,b.username,b.user_img from z_mail a , z_member b where b.id=a.fid and a.uid ='+ uid;
-          console.log(email);
           sql.runSql(email,function(err,data){
 		     	    if(err){
 		     	    	    return base.returnjson(res,100,"查询失败");
