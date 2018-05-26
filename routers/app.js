@@ -48,5 +48,7 @@ router.post('/login/logout' , require(config.__app_c__+'/login').logout );
 router.post('/search/user' , require(config.__app_c__+'/search').user );
 // 添加朋友
 router.post('/add/friend' , require(config.__app_c__+'/add').friend );
+// 查询朋友、通讯录
+router.post('/search/mail' , require(config.__app_c__+'/search').mail );
 
 module.exports = router;

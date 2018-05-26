@@ -22,3 +22,18 @@ exports.user=function (req, res, next) {
 		            return base.returnjson(res,200,'查询成功',data[0]);
           })
 };
+
+// 查询用户
+exports.mail=function (req, res, next) {
+	      var uid = req.body.uid;
+          var email = 'SELECT a.*,b.username,b.user_img from z_friends a , z_member b where b.id=a.fid and a.uid ='+ uid;
+          sql.runSql(email,function(err,data){
+		     	    if(err){
+		     	    	    return base.returnjson(res,100,"查询失败");
+		     	    }
+		     	    if(data.length==0){
+		     	    	    return base.returnjson(res,202,"用户不存在");
+		     	    }
+		            return base.returnjson(res,200,'查询成功',data);
+          })
+};
