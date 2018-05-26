@@ -1,14 +1,19 @@
 var fs = require('fs');
+var sql = require(__ROOTDIR__+'/config/mysql');
+var config = require(__ROOTDIR__+'/config/config');
+var com = require(__ROOTDIR__+'/config/common');
+var base = require(__ROOTDIR__+'/config/base');
 
 // 房间信息
 global.ioRooms = {};
+
 // 用户信息(数据库读取)
-global.ioUserInfo = [{id:0,username:'user_0'},{id:1,username:'user_1'},{id:2,username:'user_2'},{id:3,username:'user_3'}];
+// global.ioUserInfo = [{id:0,username:'user_0'},{id:1,username:'user_1'},{id:2,username:'user_2'},{id:3,username:'user_3'}];
 // 数据库读取/房间信息
-global.rInfo = { 
-  '1': [ { id: 1, username: 'user_1' }, { id: 2, username: 'user_2' } ],
-  '2': [ { id: 3, username: 'user_3' } ] 
-}
+// global.rInfo = { 
+//   '1': [ { id: 1, username: 'user_1' }, { id: 2, username: 'user_2' } ],
+//   '2': [ { id: 3, username: 'user_3' } ] 
+// }
 
 // 缓存房间聊天记录
 global.chatMsg = {
@@ -18,9 +23,9 @@ global.chatMsg = {
               type:'text',//信息类型
               times:12346 //发送时间
           }
+// 缓存房间聊天记录
 global.chatRecord = { 
-  '1': [],
-  '2': [] 
+  '1': [] //1是房间id
 }
 
 //  存储聊天记录到文件中
@@ -45,39 +50,57 @@ const room = function(){
              // console.log(url);
              // var roomUser = url.split('?room=')[1].split('&uid=');
               // console.log(roomUser);
-              var roomID = 1;
-              var uIndex = 1;
+              var rid = 1;
+              var uid = 1;
               var userInfo = '';
+              if(chatRecord[rid]==undefined){
+                  chatRecord[rid] = [];
+              }
+              // 读取用户信息
+              var getUserInfo = function(uid){
+                      var email = 'select * from z_member where id="'+uid+'"';
+                      sql.runSql(email,function(err,data){
+                          if(err){
+                                return base.returnjson(res,100,"查询失败");
+                          }
+                          if(data.length==0){
+                                return base.returnjson(res,202,"用户不存在");
+                          }
+                          delete data[0].password;
+                            return base.returnjson(res,200,'查询成功',data[0]);
+                      })
+              }
               // 加入房间
               socket.on('room join',function(obj){roomJoin(obj)});
               var roomJoin = (obj) => {
                     console.log(obj);
-                    if(obj&&obj.roomID){
-                        roomID = obj.roomID;
+                    if(obj&&obj.rid){
+                        rid = obj.rid;
                     }
-                    if(obj&&obj.roomID){
-                        uIndex = obj.uIndex;
+                    if(obj&&obj.rid){
+                        uid = obj.uid;
                     }
                     // console.log(obj);
-                    userInfo = ioUserInfo[uIndex];
+                    // 获取用户信息
+                    userInfo = getUserInfo(uid);
                     // console.log(userInfo);
                     // console.log('============')
-                    if(!global.ioRooms[roomID]){
-                         global.ioRooms[roomID] = [];
+                    if(!global.ioRooms[rid]){
+                         global.ioRooms[rid] = [];
                     }
-                    if(ioRooms[roomID].indexOf(userInfo)==-1){
-                        ioRooms[roomID].push(userInfo);
-                        socket.join(roomID);
+                    if(ioRooms[rid].indexOf(userInfo)==-1){
+                        ioRooms[rid].push(userInfo);
+                        socket.join(rid);
                     }
                     // console.log('----------------ioRooms---------------------');
                     // console.log(ioRooms);
-                    room.to(roomID).emit('room sys', userInfo['username'] + '加入', ioRooms , ioRooms[roomID]);
+                    room.to(rid).emit('room sys', userInfo['username'] + '加入', ioRooms , ioRooms[rid]);
               }
               
               //roomJoin();   
               // 发送未读消息
               const unread = () => {
-                   return chatRecord[roomID];
+                   return chatRecord[rid];
               }
               socket.emit('room unread',unread());
 
@@ -91,24 +114,22 @@ const room = function(){
                             type:'text',//信息类型
                             times:new Date().getTime() //发送时间
                     }
-console.log(roomID);
-console.log(chatRecord);
-                    chatRecord[roomID].push(smsg)
-                    room.to(roomID).emit('room msg', smsg );
+                    chatRecord[rid].push(smsg)
+                    room.to(rid).emit('room msg', smsg );
                     if(callback){callback(data)};
               })
               //断网或者离开当前聊天页面
               socket.on('disconnect',function(){
                     // console.log('>>>>>>>>>>>>>');
                     // console.log(ioRooms);
-                    // console.log(roomID);
-                    // console.log(ioRooms[roomID]);
+                    // console.log(rid);
+                    // console.log(ioRooms[rid]);
                     // console.log(userInfo)
                     // 移除保存的房间用户信息
-                    var userSplice = ioRooms[roomID].indexOf(userInfo);
-                    ioRooms[roomID].splice(userSplice);
+                    var userSplice = ioRooms[rid].indexOf(userInfo);
+                    ioRooms[rid].splice(userSplice);
                     // 告诉当前房间离开的用户
-                    room.to(roomID).emit('room sys', userInfo['username'] + '离开', ioRooms , ioRooms[roomID]);
+                    room.to(rid).emit('room sys', userInfo['username'] + '离开', ioRooms , ioRooms[rid]);
               })
         });
     }
