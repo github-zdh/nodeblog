@@ -6,6 +6,8 @@ const static = require('koa-static');
 
 // global._dirname 根目录
 global._dirname = __dirname;
+global.__ROOTDIR__ = __dirname+'/../';
+console.log('__ROOTDIR__-----------'+__ROOTDIR__);
 // 跨域KOA-CORS
 const koaOptions = {
     origin: true,

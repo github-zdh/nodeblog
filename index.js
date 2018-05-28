@@ -55,12 +55,12 @@ var app=express();
 
 var allowCrossDomain = function (req, res, next) {
  // res.header('Access-Control-Allow-Origin', '*');//自定义中间件，设置跨域需要的响应头。
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By",' 3.2.1')
-  res.header("Content-Type", "application/json;charset=utf-8");
-  next();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    // res.header("X-Powered-By",' 3.2.1')
+    // res.header("Content-Type", "application/json;charset=utf-8");
+    next();
 };
 
 app.use(allowCrossDomain);//运用跨域的中间件
@@ -86,9 +86,9 @@ app.set('view engine', 'html');
 // 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(bodyParser({
-  limit: 50000000  //50m
-}));
+// app.use(bodyParser({
+//   limit: 50000000  //50m
+// }));
 // app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -135,9 +135,9 @@ app.use(function (err, req, res, next) {
 var server = http.createServer(app);
 
 // socketIo == https://socket.io/
-global.__socketIo__ = require('socket.io').listen(server);
-var _socketIo = require(__ROOTDIR__+'/socketIo/socketIo');
-_socketIo.init()
+// global.__socketIo__ = require('socket.io').listen(server);
+// var _socketIo = require(__ROOTDIR__+'/socketIo/socketIo');
+// _socketIo.init()
 
 /**
  * Listen on provided port, on all network interfaces.

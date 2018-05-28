@@ -4,6 +4,18 @@ var config = require(__ROOTDIR__+'/config/config');
 var com = require(__ROOTDIR__+'/config/common');
 var base = require(__ROOTDIR__+'/config/base');
 
+function asyncAwait(fun){
+     return new Promise(function(resolve,reject){
+         if(fun){
+             fun(resolve,reject)
+             // resolve(res) res=>返回的结果
+             // reject  rej返回报错
+         }else{
+             resolve();
+         }
+     })
+}
+
 // 房间信息
 global.ioRooms = {};
 
@@ -18,7 +30,7 @@ global.ioRooms = {};
 // 缓存房间聊天记录
 global.chatMsg = {
               msg:'',//信息内容
-              from:{uid:1,uname:''},// 谁发送
+              from:{uid:1,uname:'',uimg:''},// 谁发送
               status:false,//false=>未读 true =>已读
               type:'text',//信息类型
               times:12346 //发送时间
@@ -44,7 +56,7 @@ const chatMsgToText = (rid,msg) => {
 }
 
 const room = function(){
-    this.init = (room) => {
+    this.init = async (room) => {
          room.on('connection', function (socket) {
               var url = socket.request;
              // console.log(url);
@@ -57,34 +69,38 @@ const room = function(){
                   chatRecord[rid] = [];
               }
               // 读取用户信息
-              var getUserInfo = function(uid){
+              var getUserInfo = function(resolve,reject,uid){
                       var email = 'select * from z_member where id="'+uid+'"';
                       sql.runSql(email,function(err,data){
                           if(err){
-                                return base.returnjson(res,100,"查询失败");
+                                resolve({code:100,msg:"查询失败"});
+                                return false;
                           }
                           if(data.length==0){
-                                return base.returnjson(res,202,"用户不存在");
+                                resolve({code:202,msg:"用户不存在"});
+                                return false;
                           }
                           delete data[0].password;
-                            return base.returnjson(res,200,'查询成功',data[0]);
+                          resolve({code:200,msg:"查询成功",result:data[0]});
                       })
               }
               // 加入房间
               socket.on('room join',function(obj){roomJoin(obj)});
-              var roomJoin = (obj) => {
+              var roomJoin = async (obj) => {
                     console.log(obj);
                     if(obj&&obj.rid){
                         rid = obj.rid;
                     }
-                    if(obj&&obj.rid){
+                    if(obj&&obj.uid){
                         uid = obj.uid;
                     }
                     // console.log(obj);
                     // 获取用户信息
-                    userInfo = getUserInfo(uid);
-                    // console.log(userInfo);
-                    // console.log('============')
+                    userInfo = await asyncAwait(function(resolve,reject){
+                         getUserInfo(resolve,reject,uid)
+                    });
+                    console.log(userInfo);
+                    console.log('============')
                     if(!global.ioRooms[rid]){
                          global.ioRooms[rid] = [];
                     }
@@ -94,7 +110,7 @@ const room = function(){
                     }
                     // console.log('----------------ioRooms---------------------');
                     // console.log(ioRooms);
-                    room.to(rid).emit('room sys', userInfo['username'] + '加入', ioRooms , ioRooms[rid]);
+                    room.to(rid).emit('room sys', userInfo['result']['username'] + '加入', ioRooms , ioRooms[rid]);
               }
               
               //roomJoin();   
@@ -109,10 +125,14 @@ const room = function(){
                     // 给某个房间触发信息
                     var smsg = {
                             msg:data.sendMsg,//信息内容
-                            from:userInfo,// 谁发送
+                            from:userInfo['result'],// 谁发送
                             status:false,//false=>未读 true =>已读
                             type:'text',//信息类型
                             times:new Date().getTime() //发送时间
+                    }
+                    console.log(chatRecord);
+                    if(!chatRecord[rid]){
+                         chatRecord[rid] = [];
                     }
                     chatRecord[rid].push(smsg)
                     room.to(rid).emit('room msg', smsg );
