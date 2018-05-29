@@ -30,6 +30,7 @@ const _home = function(){
                           if(err){
                                 return false;
                           }
+                          console.log(data);
                           for(var i=0;i<data.length;i++){
                                reHomeChatNum(uid,data[i].rid,data[i].counts);
                           }                                  
