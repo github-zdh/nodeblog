@@ -255,8 +255,8 @@ const room = function(){
 
                     storeAllChatMsg(smsg.times,JSON.stringify(smsg));
 
-                    //  更新首页 群聊天未读信息数量
-                    reHomeChatNum(uid,rid,num);
+                    //  更新自己首页 群聊天信息列表
+                    reHomeChatNum(uid,rid,0);
 
                     // 存储未读消息
                     await asyncAwait(function(resolve,reject){
