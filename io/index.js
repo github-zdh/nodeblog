@@ -28,4 +28,6 @@ var io = require('socket.io')(server);
 
 // 
 var room = io.of('/room');
+var home = io.of('/home');
 require('./room')(room);
+require('./home')(home);

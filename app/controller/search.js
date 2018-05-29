@@ -46,3 +46,27 @@ exports.newfriend=function (req, res, next) {
 		            return base.returnjson(res,200,'查询成功',data);
           })
 };
+
+// 查询群信息
+exports.roomInfo=function (req, res, next) {
+	      var rid = req.body.rid;
+	      var uid = req.body.uid;	       
+          var email = 'SELECT * from z_room where id= '+ rid;
+          sql.runSql(email,function(err,data){
+		     	    if(err){
+		     	    	    return base.returnjson(res,100,"查询失败");
+		     	    }
+		     	    console.log(data);
+		     	    if(data[0]['type']==0){
+                         var getsql = 'SELECT a.rename,u.user_img,u.username from z_mail a LEFT JOIN z_member u on u.id=a.fid  WHERE uid='+uid+' and fid=(SELECT uid from z_user_room where rid='+rid+' and uid<>'+uid+')'
+				          sql.runSql(email,function(err,data){
+						     	    if(err){
+						     	    	    return base.returnjson(res,100,"查询失败");
+						     	    }
+						            return base.returnjson(res,200,'查询成功',data);
+				          })
+		     	    }else{
+		     	    	  return base.returnjson(res,200,'查询成功',data[0]);
+		     	    }
+          })
+};

@@ -51,9 +51,6 @@ global.chatRecord = {
         times:12346 //发送时间
     }
  */
-const chatMsgToText = (rid,msg) => {
-      
-}
 
 const room = function(){
     this.init = async (room) => {
@@ -193,7 +190,7 @@ const room = function(){
                            return this.filter(function(i){return a.indexOf(i) < 0 ; })
                       }
                       var uroom = roomArr.diff(uArr);
-                      var insertValues = ''
+                      var insertValues = '';
                       for(var i=0;i<uroom.length;i++){
                            if(i==0){
                                  insertValues = '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+')';
@@ -204,12 +201,26 @@ const room = function(){
                       var email = 'insert into z_room_unread (rid,uid,msg,addtime) VALUES '+insertValues;
                       // console.log(email);
                       sql.runSql(email,function(err,data){
+                            GetReHomeChatNum();
                             if(err){
                                   resolve({code:100,msg:"查询失败",result:[]});
                                   return false;
-                            }
+                            }                            
                             resolve({code:200,msg:"查询成功",result:data});
                       })
+                      // 触发未读消息在首页显示未读数量
+                      function GetReHomeChatNum(){
+                            var selectNum = 'select uid, COUNT(*) as counts from z_room_unread where status =0 and rid='+rid+' group by uid ';
+                            sql.runSql(selectNum,function(err,data){
+                                  if(err){
+                                        return false;
+                                  }
+                                  for(var i=0;i<data.length;i++){
+                                       reHomeChatNum(data[i].uid,rid,data[i].counts);
+                                  }                                  
+                            })
+                      }
+                      
               }
               // 存储所有的聊天记录
               var storeAllChatMsg = function(addtime,msg){
@@ -221,6 +232,10 @@ const room = function(){
                             }
                             return false;
                       })
+              }
+              // 更新首页 群聊天未读信息数量
+              function reHomeChatNum(uid,rid,num){
+                   socket.server.nsps['/home'].emit('uid_'+uid+'_num',{rid:rid,num:num})
               }
 
               // 接收发的信息
@@ -241,14 +256,13 @@ const room = function(){
                     storeAllChatMsg(smsg.times,JSON.stringify(smsg));
 
                     // 存储未读消息
-                     await asyncAwait(function(resolve,reject){
+                    await asyncAwait(function(resolve,reject){
                            storeUnread(resolve,reject,rid,uid,JSON.stringify(smsg),smsg.times)
                      });
                      
                     // var getStoreUnread = await asyncAwait(function(resolve,reject){
                     //        storeUnread(resolve,reject,rid,uid,msg)
                     //  });
-
                     if(callback){callback(data)};
               })
               //断网或者离开当前聊天页面

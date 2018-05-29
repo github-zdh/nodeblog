@@ -59,7 +59,7 @@ exports.friendIsPass=function (req, res, next) {
      	    }
        	})
        .then(()=>{//创建一个房间
-       	    return 'INSERT INTO z_room (description) VALUES ("个人群")';
+       	    return 'INSERT INTO z_room (name,description) VALUES ("聊天群","个人群")';
         },
        	(data,_this)=>{
      	    rid = data['insertId'];  

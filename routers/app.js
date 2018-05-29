@@ -50,6 +50,8 @@ router.post('/search/user' , require(config.__app_c__+'/search').user );
 router.post('/search/mail' , require(config.__app_c__+'/search').mail );
 // 查询新朋友
 router.post('/search/newfriend' , require(config.__app_c__+'/search').newfriend );
+// 查询群信息
+router.post('/search/roomInfo' , require(config.__app_c__+'/search').roomInfo );
 
 // 添加朋友
 router.post('/add/friend' , require(config.__app_c__+'/add').friend );
