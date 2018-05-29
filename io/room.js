@@ -142,7 +142,7 @@ const room = function(){
               // 读取该用户 存储未读消息
               var getStoreUnread = function(resolve,reject){
                       var email = 'SELECT msg  from z_room_unread where status = 0 and uid='+uid+' and rid='+rid+' order by addtime ASC';
-                      console.log(email);
+                      // console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
                                   resolve([]);
@@ -173,7 +173,6 @@ const room = function(){
                     for(var i=0;i<getUnread.length;i++){
                         newUnreadMsg.push(getUnread[i].msg);
                     }
-                    console.log(newUnreadMsg);
 
                     socket.emit('room unread',newUnreadMsg);
               }
