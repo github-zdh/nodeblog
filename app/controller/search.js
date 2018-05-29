@@ -57,6 +57,9 @@ exports.roomInfo=function (req, res, next) {
 		     	    	    return base.returnjson(res,100,"查询失败");
 		     	    }
 		     	    console.log(data);
+		     	    console.log(data[0]['type']);
+		     	    console.log(data[0]['type']==0)
+		     	    console.log(data['type'])
 		     	    if(data[0]['type']==0){
                          var getsql = 'SELECT a.rename,u.user_img,u.username from z_mail a LEFT JOIN z_member u on u.id=a.fid  WHERE uid='+uid+' and fid=(SELECT uid from z_user_room where rid='+rid+' and uid<>'+uid+')'
 				          sql.runSql(email,function(err,data){
