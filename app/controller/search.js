@@ -70,3 +70,15 @@ exports.roomInfo=function (req, res, next) {
 		     	    }
           })
 };
+
+// 查询群
+exports.GroupChat=function (req, res, next) {
+	      var uid = req.body.uid;	       
+          var email = 'SELECT r.* from z_user_room ur LEFT JOIN z_room r on ur.rid = r.id where r.type = 1 and ur.uid ='+ uid;
+          sql.runSql(email,function(err,data){
+		     	    if(err){
+		     	    	    return base.returnjson(res,100,"查询失败");
+		     	    }
+		     	    return base.returnjson(res,200,'查询成功',data);
+          })
+};
