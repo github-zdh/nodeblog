@@ -21,10 +21,6 @@ const _home = function(){
          _home.on('connection', function (socket) {
               // 更新首页 群聊天未读信息数量
               function reHomeChatNum(uid,rid,num){
-
-                   console.log('uid----->'+uid);
-                   console.log('rid----->'+rid);
-                   console.log('num----->'+num);
                    socket.emit('uid_'+uid+'_num',{rid:rid,num:num})
               }
               // 触发未读消息在首页显示未读数量
@@ -34,7 +30,7 @@ const _home = function(){
                           if(err){
                                 return false;
                           }
-                          console.log(data);
+                          // console.log(data);
                           for(var i=0;i<data.length;i++){
                                reHomeChatNum(uid,data[i].rid,data[i].counts);
                           }                                  

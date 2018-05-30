@@ -18,6 +18,10 @@ function asyncAwait(fun){
 
 // 房间信息
 global.ioRooms = {};
+ // global.ioRooms[rid] = {
+ //       info:{}, //房间信息
+ //       room:[]  //有哪些人在房间中
+ // };
 
 // 用户信息(数据库读取)
 // global.ioUserInfo = [{id:0,username:'user_0'},{id:1,username:'user_1'},{id:2,username:'user_2'},{id:3,username:'user_3'}];
@@ -281,7 +285,9 @@ const room = function(){
                     var userSplice = ioRooms[rid].room.indexOf(userInfo);
                     if(userSplice>-1){
                          ioRooms[rid].room.splice(userSplice,1);
-                    }                    
+                    }      
+                    console.log(userInfo['username'] + '离开'); 
+                    console.log(ioRooms[rid]);             
                     // 告诉当前房间离开的用户
                     room.to(rid).emit('room sys', userInfo['username'] + '离开', ioRooms , ioRooms[rid]);
               })
