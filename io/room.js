@@ -199,7 +199,8 @@ const room = function(){
                            }
                       }
                       var email = 'insert into z_room_unread (rid,uid,msg,addtime) VALUES '+insertValues;
-                      // console.log(email);
+                      console.log('insertValues------>'+insertValues);
+                      console.log(email);
                       sql.runSql(email,function(err,data){
                             GetReHomeChatNum();
                             if(err){
@@ -211,6 +212,7 @@ const room = function(){
                       // 触发未读消息在首页显示未读数量
                       function GetReHomeChatNum(){
                             var selectNum = 'select uid, COUNT(*) as counts from z_room_unread where status =0 and rid='+rid+' group by uid ';
+                            console.log('selectNum----->'+selectNum)
                             sql.runSql(selectNum,function(err,data){
                                   if(err){
                                         return false;
