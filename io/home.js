@@ -25,7 +25,7 @@ const _home = function(){
                    console.log('uid----->'+uid);
                    console.log('rid----->'+rid);
                    console.log('num----->'+num);
-                   socket.server.nsps['/home'].emit('uid_'+uid+'_num',{rid:rid,num:num})
+                   socket.emit('uid_'+uid+'_num',{rid:rid,num:num})
               }
               // 触发未读消息在首页显示未读数量
               function GetReHomeChatNum(uid){
