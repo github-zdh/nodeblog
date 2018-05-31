@@ -86,11 +86,12 @@ exports.GroupChat=function (req, res, next) {
 // 查询聊天记录
 exports.ChatRecord=function (req, res, next) {
 	      var rid = req.body.rid;
-	      var page = req.body.page&&req.body.page>0 ? req.body.page-1 : 0;
-	      var pageSize = page*(req.body.pageSize?req.body.pageSize:10);	       
+	      var pageSize = req.body.pageSize?req.body.pageSize:10;
+	      var page = (req.body.page&&req.body.page>0 ? req.body.page-1 : 0)*pageSize;
+	      	       
           var email = 'SELECT rm.* from z_room_msg rm WHERE rid='+rid+' LIMIT '+page+','+ pageSize;
           console.log(email);
-          
+
           sql.runSql(email,function(err,data){
 		     	    if(err){
 		     	    	    return base.returnjson(res,100,"查询失败");
