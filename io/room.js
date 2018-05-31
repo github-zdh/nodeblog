@@ -254,20 +254,20 @@ const room = function(){
                             type:'text',//信息类型
                             times:parseInt(new Date().getTime()/1000) //发送时间
                     }
-                    console.log('smsg----------------')
-                    console.log(smsg);
-                    console.log(JSON.stringify(smsg));
 
                     room.to(rid).emit('room msg', smsg );
-               
-                    storeAllChatMsg(smsg.times,JSON.stringify(smsg));
+                    
+                    var _smsg = JSON.stringify(smsg);
+                    var reg = /(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/g;//过滤emoji表情图片
+                    _smsg = _smsg.replace(reg,'emoji');
+                    storeAllChatMsg(smsg.times,_smsg);
 
                     //  更新自己首页 群聊天信息列表
                     reHomeChatNum(uid,rid,0);
 
                     // 存储未读消息
                     await asyncAwait(function(resolve,reject){
-                           storeUnread(resolve,reject,rid,uid,JSON.stringify(smsg),smsg.times)
+                           storeUnread(resolve,reject,rid,uid,_smsg,smsg.times)
                      });
                      
                     // var getStoreUnread = await asyncAwait(function(resolve,reject){
