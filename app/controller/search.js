@@ -82,3 +82,17 @@ exports.GroupChat=function (req, res, next) {
 		     	    return base.returnjson(res,200,'查询成功',data);
           })
 };
+
+// 查询聊天记录
+exports.ChatRecord=function (req, res, next) {
+	      var rid = req.body.rid;
+	      var page = req.body.page&&req.body.page>0 ? req.body.page-1 : 0;
+	      var pageSize = page*(req.body.pageSize?req.body.pageSize:10);	       
+          var email = 'SELECT rm.* from z_room_msg rm WHERE rid='+rid+' LIMIT '+page+','+ pageSize;
+          sql.runSql(email,function(err,data){
+		     	    if(err){
+		     	    	    return base.returnjson(res,100,"查询失败");
+		     	    }
+		     	    return base.returnjson(res,200,'查询成功',data);
+          })
+};
