@@ -89,7 +89,7 @@ exports.ChatRecord=function (req, res, next) {
 	      var pageSize = req.body.pageSize?req.body.pageSize:10;
 	      var page = (req.body.page&&req.body.page>0 ? req.body.page-1 : 0)*pageSize;
 	      	       
-          var email = 'SELECT rm.* from z_room_msg rm WHERE rid='+rid+' LIMIT '+page+','+ pageSize;
+          var email = 'SELECT rm.* from z_room_msg rm WHERE rid='+rid+' ORDER BY id DESC LIMIT '+page+','+ pageSize;
           // console.log(email);
 
           sql.runSql(email,function(err,data){
