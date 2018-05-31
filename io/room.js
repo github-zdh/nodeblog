@@ -203,8 +203,8 @@ const room = function(){
                            }
                       }
                       var email = 'insert into z_room_unread (rid,uid,msg,addtime) VALUES '+insertValues;
-                      console.log('insertValues------>'+insertValues);
-                      console.log(email);
+                      // console.log('insertValues------>'+insertValues);
+                      // console.log(email);
                       sql.runSql(email,function(err,data){
                             GetReHomeChatNum();
                             if(err){
@@ -216,7 +216,7 @@ const room = function(){
                       // 触发未读消息在首页显示未读数量
                       function GetReHomeChatNum(){
                             var selectNum = 'select uid, COUNT(*) as counts from z_room_unread where status =0 and rid='+rid+' group by uid ';
-                            console.log('selectNum----->'+selectNum)
+                            // console.log('selectNum----->'+selectNum)
                             sql.runSql(selectNum,function(err,data){
                                   if(err){
                                         return false;
@@ -231,7 +231,7 @@ const room = function(){
               // 存储所有的聊天记录
               var storeAllChatMsg = function(addtime,msg){
                       var email = 'insert into z_room_msg (rid,msg,addtime) VALUES ('+rid+',\''+msg+'\','+addtime+')';
-                      // console.log(email);
+                      console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
                                   return false;
@@ -254,11 +254,12 @@ const room = function(){
                             type:'text',//信息类型
                             times:parseInt(new Date().getTime()/1000) //发送时间
                     }
-                     
-                    // console.log(JSON.stringify(smsg));
+                    console.log('smsg----------------')
+                    console.log(smsg);
+                    console.log(JSON.stringify(smsg));
 
                     room.to(rid).emit('room msg', smsg );
-
+               
                     storeAllChatMsg(smsg.times,JSON.stringify(smsg));
 
                     //  更新自己首页 群聊天信息列表
@@ -286,8 +287,8 @@ const room = function(){
                     if(userSplice>-1){
                          ioRooms[rid].room.splice(userSplice,1);
                     }      
-                    console.log(userInfo['username'] + '离开'); 
-                    console.log(ioRooms[rid]);             
+                    // console.log(userInfo['username'] + '离开'); 
+                    // console.log(ioRooms[rid]);             
                     // 告诉当前房间离开的用户
                     room.to(rid).emit('room sys', userInfo['username'] + '离开', ioRooms , ioRooms[rid]);
               })
