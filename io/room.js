@@ -231,7 +231,7 @@ const room = function(){
               // 存储所有的聊天记录
               var storeAllChatMsg = function(addtime,msg){
                       var email = 'insert into z_room_msg (rid,msg,addtime) VALUES ('+rid+',\''+msg+'\','+addtime+')';
-                      // console.log(email);
+                      console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
                                   return false;
@@ -249,7 +249,7 @@ const room = function(){
                     // 给某个房间触发信息
                     // 默认发送文字
                     var smsg = {
-                            msg:data.sendMsg.replace(/"/g,"\\'"),//信息内容
+                            msg:data.sendMsg.replace(/"/g,"\'"),//信息内容
                             from:userInfo,// 谁发送
                             status:false,//false=>未读 true =>已读
                             type:data.type?data.type:'text',//信息类型 text/img/video
