@@ -247,11 +247,12 @@ const room = function(){
               // 接收发的信息
               socket.on('room sendMsg', async function(data,callback){
                     // 给某个房间触发信息
+                    // 默认发送文字
                     var smsg = {
                             msg:data.sendMsg,//信息内容
                             from:userInfo,// 谁发送
                             status:false,//false=>未读 true =>已读
-                            type:'text',//信息类型
+                            type:data.type?data.type:'text',//信息类型 text/img/video
                             times:parseInt(new Date().getTime()/1000) //发送时间
                     }
 
