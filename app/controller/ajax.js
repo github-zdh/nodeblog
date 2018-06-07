@@ -140,6 +140,7 @@ exports.fsaddaudio=function (req, res, next) {
 
               console.log(req.query);
               console.log(req.body);
+              console.log(req.params);
 
               var date = new Date();
                 //loadPath=>发布文章 富文本编辑器上传的 图片文件夹
