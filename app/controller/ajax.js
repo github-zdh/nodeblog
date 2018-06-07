@@ -135,18 +135,19 @@ exports.fsaddaudio=function (req, res, next) {
                 // return false;
               var rid = req.query.rid;
               var uid = req.query.uid;
-              // var myfile = req.query.path;
+              var myfile = req.query.path;
 
               var date = new Date();
                 //loadPath=>发布文章 富文本编辑器上传的 图片文件夹
               var loadPath = 'public/upload/audio/'+uid;
-              const myfile = 'D:/github/app/nodeapp/audio/friendship.mp3';
+              // const myfile = 'D:/github/app/nodeapp/audio/friendship.mp3';
               // const myfile = 'E:/html/1528354834237.mp3';
+              // var myfile = 'http://www.w3school.com.cn/i/horse.ogg';
               // http://www.w3school.com.cn/i/horse.ogg
               // 
                // fs.createReadStream('horse.ogg').pipe(request.put('http://www.w3school.com.cn/i/horse.ogg'))
 
-              request('http://www.w3school.com.cn/i/horse.ogg', function (error, response, body) {
+              request(myfile, function (error, response, body) {
                      if(error){consoel.log(error)};
                      if (!error && response.statusCode == 200) {
                           // console.log(body) // 打印google首页
