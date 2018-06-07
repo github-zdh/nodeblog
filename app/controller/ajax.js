@@ -96,7 +96,7 @@ exports.addaudio=function (req, res, next) {
 
               var date = new Date();
                 //loadPath=>发布文章 富文本编辑器上传的 图片文件夹
-              var loadPath = loadPath = 'public/upload/audio/'+req.body.uid;
+              var loadPath = loadPath = 'public/upload/audio/'+uid;
 
               // var filesTmp = req.body.fromOption;
               // filesTmp = JSON.stringify(filesTmp,null,2);
@@ -116,7 +116,7 @@ exports.addaudio=function (req, res, next) {
                                 console.log();
                                 file = Object.prototype.toString.call(file) == '[object String]'?JSON.parse(file):file;
                                 var url = file['audio'][0]['path'].replace(/\\/g,'/').replace('public','');
-                                return res.end(JSON.stringify({"code": 0,"msg": "error","data": {"src":url,"title": "图片名称"}}));
+                                return res.end(JSON.stringify({"code": 200,"msg": "success","data": {"src":url,"title": "音频"}}));
                   },//最后回调
               })
 
