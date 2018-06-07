@@ -135,7 +135,11 @@ exports.fsaddaudio=function (req, res, next) {
                 // return false;
               var rid = req.query.rid;
               var uid = req.query.uid;
+
               var myfile = req.query.path;
+
+              console.log(req.query);
+              console.log(req.body);
 
               var date = new Date();
                 //loadPath=>发布文章 富文本编辑器上传的 图片文件夹
