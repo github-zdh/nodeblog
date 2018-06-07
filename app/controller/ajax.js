@@ -1,5 +1,6 @@
 var express = require('express');
 var fs = require('fs');
+var request = require('request')
 var fse = require('fs-extra');
 var crypto = require('crypto');
 var ejs = require('ejs');
@@ -134,65 +135,93 @@ exports.fsaddaudio=function (req, res, next) {
                 // return false;
               var rid = req.query.rid;
               var uid = req.query.uid;
-              var myfile = req.query.path;
+              // var myfile = req.query.path;
 
               var date = new Date();
                 //loadPath=>发布文章 富文本编辑器上传的 图片文件夹
               var loadPath = 'public/upload/audio/'+uid;
-              // const myfile = 'D:/github/app/nodeapp/audio/friendship.mp3';
+              const myfile = 'D:/github/app/nodeapp/audio/friendship.mp3';
               // const myfile = 'E:/html/1528354834237.mp3';
+              // http://www.w3school.com.cn/i/horse.ogg
               // 
+               // fs.createReadStream('horse.ogg').pipe(request.put('http://www.w3school.com.cn/i/horse.ogg'))
 
-              //读取（推荐）
-              fs.readFile(myfile, {flag: 'r+'}, function (err, data) {
-                  if(err) {
-                   console.error(err);
-                   return;
-                  }
-                  var fswritedata = data;
-                  fs.access(loadPath,(err) => {
-                       // console.log(err ? 'no access!' : 'can read/write');
-                       if(err){
-                               // console.log('文件不存在');
-                               fs.mkdir(loadPath,function(err){
-                                      if(err){
-                                         console.log('文件夹创建失败');
-                                         fswrite('public/upload/audio/');
-                                      }else{
-                                         console.log('文件夹已经创建成功');
-                                         fswrite(fswritedata);
-                                      }
-                               })
-                       }else{
-                             console.log('文件已存在');
-                             fswrite(fswritedata);
-                       }
-                  }) 
-              });
+              request('http://www.w3school.com.cn/i/horse.ogg', function (error, response, body) {
+                     if(error){consoel.log(error)};
+                     if (!error && response.statusCode == 200) {
+                          // console.log(body) // 打印google首页
+                              // 创建一个可以写入的流，写入到文件 output.txt 中
+                              var writerStream = fs.createWriteStream(loadPath+'/horse.ogg');
 
-               //写入（推荐）
-               function fswrite(w_data){
-                     console.log('开始写入');
-                    // fs.writeFile(filename,data,[options],callback);
-                    // var w_data = '这是一段通过fs.writeFile函数写入的内容；\r\n';
-                    var w_data = new Buffer(w_data);
+                              // 使用 utf8 编码写入数据
+                              writerStream.write(body);
 
-                    /**
-                     * filename, 必选参数，文件名
-                     * data, 写入的数据，可以字符或一个Buffer对象
-                     * [options],flag,mode(权限),encoding
-                     * callback 读取文件后的回调函数，参数默认第一个err,第二个data 数据
-                     */
-                    var myfilearr = myfile.split('.');
-                    var writeDir = loadPath + '/'+new Date().getTime()+'.'+myfilearr[myfilearr.length-1];
-                    fs.writeFile(writeDir, w_data, {flag: 'a'}, function (err,data) {
-                          if(err) {
-                          console.error(err);
-                          } else {
-                             console.log('写入成功');
-                          }
-                    });
-               }
+                              // 标记文件末尾
+                              writerStream.end();
+
+                              // 处理流事件 --> data, end, and error
+                              writerStream.on('finish', function() {
+                                  console.log("写入完成。");
+                              });
+
+                              writerStream.on('error', function(err){
+                                 console.log(err.stack);
+                              });
+                      }
+               })
+
+              // //读取（推荐）
+              // fs.readFile(myfile, {flag: 'r+'}, function (err, data) {
+              //     if(err) {
+              //      console.error(err);
+              //      return;
+              //     }
+              //     // console.log(data);
+              //     var fswritedata = data;
+              //     fs.access(loadPath,(err) => {
+              //          // console.log(err ? 'no access!' : 'can read/write');
+              //          if(err){
+              //                  // console.log('文件不存在');
+              //                  fs.mkdir(loadPath,function(err){
+              //                         if(err){
+              //                            console.log('文件夹创建失败');
+              //                            fswrite('public/upload/audio/');
+              //                         }else{
+              //                            console.log('文件夹已经创建成功');
+              //                            fswrite(fswritedata);
+              //                         }
+              //                  })
+              //          }else{
+              //                console.log('文件已存在');
+              //                fswrite(fswritedata);
+              //          }
+              //     }) 
+              // });
+
+              //  //写入（推荐）
+              //  function fswrite(w_data){
+              //        console.log('开始写入');
+              //       // fs.writeFile(filename,data,[options],callback);
+              //       // var w_data = '这是一段通过fs.writeFile函数写入的内容；\r\n';
+              //       // console.log(w_data);
+              //       var w_data = new Buffer(w_data);
+
+              //       /**
+              //        * filename, 必选参数，文件名
+              //        * data, 写入的数据，可以字符或一个Buffer对象
+              //        * [options],flag,mode(权限),encoding
+              //        * callback 读取文件后的回调函数，参数默认第一个err,第二个data 数据
+              //        */
+              //       var myfilearr = myfile.split('.');
+              //       var writeDir = loadPath + '/'+new Date().getTime()+'.'+myfilearr[myfilearr.length-1];
+              //       fs.writeFile(writeDir, w_data, {flag: 'a'}, function (err,data) {
+              //             if(err) {
+              //             console.error(err);
+              //             } else {
+              //                console.log('写入成功');
+              //             }
+              //       });
+              //  }
 
 };
 
