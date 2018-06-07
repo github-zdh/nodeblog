@@ -341,6 +341,7 @@ base.UploadImages=function(req,res,params){
 
       // 主要是检测有没有这个文件夹；如果没有就创建；
       var loadPath = global.__ROOTDIR__+'/'+params.path;
+      // console.log(loadPath);
 
 	  base.testdir(req,res,{
 		  	path:loadPath,
@@ -362,34 +363,18 @@ base.UploadImages=function(req,res,params){
 		        var form = new multiparty.Form({uploadDir: params.path});
 		        //上传完成后处理
 		        form.parse(req, function(err, fields, files) {
-				          var filesTmp = JSON.stringify(files,null,2);
-				          var suffix_name = files.file[0].headers['content-type'].split('image/')[1];
+		        	// console.log(files);
+                          var filesTmp = JSON.stringify(files,null,2);
+				          // var suffix_name = files.file[0].headers['content-type'].split('image/')[1];
 				          if(err){
 				                // console.log('parse error: ' + err);
 				                if(params.uploadError){
 				                	   params.uploadError(err);
 				                }
-				          } else {
-				          	  //   // console.log(filesTmp.path);
-					            // var uploadedPath = files.file[0].path;
-					            // var dstPath = params.path +'/'+ params.fileName+'.'+suffix_name;
-					            // //重命名为真实文件名
-					            // fs.rename(uploadedPath, dstPath, function(err) {
-						           //    if(err){
-						           //           if(params.renameError){
-						           //           	  params.renameError(err);
-						           //           }
-						           //    } else {
-						           //           console.log('rename ok');
-						           //           // console.log(dstPath);
-						           //           uploadedPath=dstPath;
-						           //    }
-					            // });
-				          }      
-				          util.inspect({fields: fields, files: filesTmp})
+				          }
 				          if(params.endCallback){
-			          	     
-				          	     params.endCallback(files.file[0].path);
+				          	     // console.log(files);
+				          	     params.endCallback(files);
 				          }else{
 				          	     res.end();
 				          }			      

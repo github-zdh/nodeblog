@@ -63,6 +63,9 @@ router.post('/add/friend' , require(config.__app_c__+'/add').friend );
 // 查询朋友、通讯录
 router.post('/add/friendIsPass' , require(config.__app_c__+'/add').friendIsPass );
 
+// 提交音频、录音
+router.post('/ajax/addaudio' , require(config.__app_c__+'/ajax').addaudio );
+router.post('/ajax/fsaddaudio' , require(config.__app_c__+'/ajax').fsaddaudio );
 
 
 module.exports = router;

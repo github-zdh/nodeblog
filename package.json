@@ -8,6 +8,7 @@
 		"body-parser": "^1.18.2",
 		"bower": "^1.8.2",
 		"casper": "^0.1.1",
+		"connect-multiparty": "^2.1.0",
 		"cookie-parser": "^1.4.3",
 		"crypto": "^1.0.1",
 		"ejs": "^2.5.7",
