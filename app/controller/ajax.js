@@ -96,7 +96,7 @@ exports.addaudio=function (req, res, next) {
 
               var date = new Date();
                 //loadPath=>发布文章 富文本编辑器上传的 图片文件夹
-              var loadPath = loadPath = 'public/upload/audio/'+uid;
+              var loadPath = loadPath = 'public/upload/audio/'+rid;
 
               // var filesTmp = req.body.fromOption;
               // filesTmp = JSON.stringify(filesTmp,null,2);
