@@ -197,9 +197,9 @@ const room = function(){
                       var insertValues = '';
                       for(var i=0;i<uroom.length;i++){
                            if(i==0){
-                                 insertValues = '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+')';
+                                 insertValues = '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+uid+')';
                            }else{
-                                 insertValues = insertValues + ','+ '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+')';
+                                 insertValues = insertValues + ','+ '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+uid+')';
                            }
                       }
                       var email = 'insert into z_room_unread (rid,uid,msg,addtime) VALUES '+insertValues;
@@ -267,7 +267,7 @@ const room = function(){
 
                     // 存储未读消息
                     await asyncAwait(function(resolve,reject){
-                           storeUnread(resolve,reject,rid,uid,_smsg,smsg.times)
+                           storeUnread(resolve,reject,rid,uid,_smsg,smsg.times,userInfo['id'])
                      });
                      
                     // var getStoreUnread = await asyncAwait(function(resolve,reject){
