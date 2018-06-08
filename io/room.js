@@ -181,7 +181,7 @@ const room = function(){
               
 
               // 检查不在线人并且把信息存到数据库  存储未读消息
-              var storeUnread = function(resolve,reject,rid,uid,msg,addtime){
+              var storeUnread = function(resolve,reject,rid,uid,msg,addtime,fromUid){
                       var roomArr = [];
                       for(var i=0;i<ioRooms[rid]['info']['result'].length;i++){
                            roomArr.push(ioRooms[rid]['info']['result'][i].uid)
@@ -197,12 +197,12 @@ const room = function(){
                       var insertValues = '';
                       for(var i=0;i<uroom.length;i++){
                            if(i==0){
-                                 insertValues = '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+uid+')';
+                                 insertValues = '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+fromUid+')';
                            }else{
-                                 insertValues = insertValues + ','+ '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+uid+')';
+                                 insertValues = insertValues + ','+ '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+fromUid+')';
                            }
                       }
-                      var email = 'insert into z_room_unread (rid,uid,msg,addtime) VALUES '+insertValues;
+                      var email = 'insert into z_room_unread (rid,uid,msg,addtime,fromUid) VALUES '+insertValues;
                       // console.log('insertValues------>'+insertValues);
                       // console.log(email);
                       sql.runSql(email,function(err,data){
