@@ -171,12 +171,11 @@ const room = function(){
                          getStoreUnread(resolve,reject);
                     })
                     reStoreUnread();
-                    var newUnreadMsg = [];
-                    for(var i=0;i<getUnread.length;i++){
-                        newUnreadMsg.push(getUnread[i].msg);
-                    }
-
-                    socket.emit('room unread',newUnreadMsg);
+                    // var newUnreadMsg = [];
+                    // for(var i=0;i<getUnread.length;i++){
+                    //     newUnreadMsg.push(getUnread[i]);
+                    // }
+                    socket.emit('room unread',getUnread);
               }
 
               
