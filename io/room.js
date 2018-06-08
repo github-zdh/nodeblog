@@ -229,8 +229,8 @@ const room = function(){
                       
               }
               // 存储所有的聊天记录
-              var storeAllChatMsg = function(addtime,msg){
-                      var email = 'insert into z_room_msg (rid,msg,addtime) VALUES ('+rid+',\''+msg+'\','+addtime+')';
+              var storeAllChatMsg = function(addtime,msg,uid){
+                      var email = 'insert into z_room_msg (rid,msg,addtime,fromUid) VALUES ('+rid+',\''+msg+'\','+addtime+','+uid+')';
                       console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
@@ -243,7 +243,6 @@ const room = function(){
               function reHomeChatNum(uid,rid,num){
                    socket.server.nsps['/home'].emit('uid_'+uid+'_num',{rid:rid,num:num})
               }
-
               // 接收发的信息
               socket.on('room sendMsg', async function(data,callback){
                     // 给某个房间触发信息
@@ -257,11 +256,11 @@ const room = function(){
                     }
 
                     room.to(rid).emit('room msg', smsg );
-                    
-                    var _smsg = JSON.stringify(smsg);
+                                        
+                    // var _smsg = JSON.stringify(smsg);
                     var reg = /(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/g;//过滤emoji表情图片
-                    _smsg = _smsg.replace(reg,'emoji');
-                    storeAllChatMsg(smsg.times,_smsg);
+                    _smsg = _smsg.msg.replace(reg,'emoji');
+                    storeAllChatMsg(smsg.times,_smsg,userInfo['id']);
 
                     //  更新自己首页 群聊天信息列表
                     reHomeChatNum(uid,rid,0);
