@@ -51,13 +51,13 @@ exports.newfriend=function (req, res, next) {
 exports.roomInfo=function (req, res, next) {
 	      var rid = req.body.rid;
 	      var uid = req.body.uid;	       
-          var email = 'SELECT r.*,m.msg from z_room r INNER JOIN z_room_msg m on m.rid = r.id where r.id ='+ rid;
+          var email = 'SELECT r.*,m.msg,m.addtime,m.fromUid from z_room r INNER JOIN z_room_msg m on m.rid = r.id where r.id ='+ rid;
           sql.runSql(email,function(err,data){
 		     	    if(err){
 		     	    	    return base.returnjson(res,100,"查询失败");
 		     	    }
 		     	    if(data[0]['type']==0){
-                         var getsql = 'SELECT a.rename,u.user_img,u.username,m.msg from z_mail a LEFT JOIN z_member u on u.id=a.fid  LEFT JOIN z_room_msg m on m.rid=a.rid  WHERE uid='+uid+' and fid=(SELECT uid from z_user_room where rid='+rid+' and uid<>'+uid+') order by m.addtime desc LIMIT 1'
+                         var getsql = 'SELECT a.rename,u.user_img,u.username,m.msg,m.addtime,m.fromUid from z_mail a LEFT JOIN z_member u on u.id=a.fid  LEFT JOIN z_room_msg m on m.rid=a.rid  WHERE uid='+uid+' and fid=(SELECT uid from z_user_room where rid='+rid+' and uid<>'+uid+') order by m.addtime desc LIMIT 1'
                          // SELECT a.rename,u.user_img,u.username,m.msg,m.addtime  from z_mail a LEFT JOIN z_member u on u.id=a.fid LEFT JOIN z_room_msg m on m.rid=a.rid  WHERE uid=1 and fid=(SELECT uid from z_user_room where rid=19 and uid<>1) order by m.addtime desc LIMIT 1;
 				          sql.runSql(getsql,function(err,data){
 						     	    if(err){
