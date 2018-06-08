@@ -249,7 +249,10 @@ const room = function(){
                     // 默认发送文字
                     var smsg = {
                             msg:data.sendMsg.replace(/"/g,"\\\""),//信息内容
-                            from:userInfo,// 谁发送
+                            fromUid:userInfo['id'],// 谁发送
+                            username:userInfo['username'],
+                            user_img:userInfo['user_img'],
+                            nickname:userInfo['nickname'],
                             status:false,//false=>未读 true =>已读
                             type:data.type?data.type:'text',//信息类型 text/img/video
                             times:parseInt(new Date().getTime()/1000) //发送时间
@@ -268,7 +271,7 @@ const room = function(){
                     // 存储未读消息
                     await asyncAwait(function(resolve,reject){
                            storeUnread(resolve,reject,rid,uid,_smsg,smsg.times,userInfo['id'])
-                     });
+                    });
                      
                     // var getStoreUnread = await asyncAwait(function(resolve,reject){
                     //        storeUnread(resolve,reject,rid,uid,msg)
