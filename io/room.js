@@ -142,7 +142,8 @@ const room = function(){
               
               // 读取该用户 存储未读消息
               var getStoreUnread = function(resolve,reject){
-                      var email = 'SELECT msg  from z_room_unread where status = 0 and uid='+uid+' and rid='+rid+' order by addtime ASC';
+                      // var email = 'SELECT msg  from z_room_unread where status = 0 and uid='+uid+' and rid='+rid+' order by addtime ASC';
+                      var email = 'SELECT ru.*,m.username,m.user_img,m.nickname  from z_room_unread ru INNER JOIN z_member m on m.id=ru.fromUid where ru.status = 0 and ru.uid='+uid+' and ru.rid='+rid+' order by ru.addtime ASC';
                       // console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
@@ -231,7 +232,7 @@ const room = function(){
               // 存储所有的聊天记录
               var storeAllChatMsg = function(addtime,msg,uid){
                       var email = 'insert into z_room_msg (rid,msg,addtime,fromUid) VALUES ('+rid+',\''+msg+'\','+addtime+','+uid+')';
-                      console.log(email);
+                      // console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
                                   return false;
