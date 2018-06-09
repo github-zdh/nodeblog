@@ -9,8 +9,11 @@ var base = require(__ROOTDIR__+'/config/base');
 
 // 查询用户
 exports.user=function (req, res, next) {
-	
-          var email = 'select * from z_member where email="'+req.body.email+'" or id='+req.body.uid;
+          if(req.body.email){
+          	  var email = 'select * from z_member where email="'+req.body.email+'"';
+          }else{
+          	  var email = 'select * from z_member where id='+req.body.uid;
+          }
           sql.runSql(email,function(err,data){
 		     	    if(err){
 		     	    	    return base.returnjson(res,100,"查询失败");

@@ -11,6 +11,9 @@ var base = require(__ROOTDIR__+'/config/base');
 exports.friend=function (req, res, next) {
        var uid = req.body.uid;
        var fid = req.body.fid;
+       if(uid==fid){
+           return base.returnjson(res,100,"不能添加自己为好友");
+       }
        function addFriend(uid,fid){
 		          var email = 'insert into z_add_friend_request (uid,fid) values ('+uid+','+fid+')';
 		          sql.runSql(email,function(err,data){
