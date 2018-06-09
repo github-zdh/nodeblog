@@ -57,7 +57,8 @@ router.post('/search/GroupChat' , require(config.__app_c__+'/search').GroupChat 
 // 查询聊天记录
 router.post('/search/ChatRecord' , require(config.__app_c__+'/search').ChatRecord );
 
-
+// 版本更新
+router.post('/search/appUpdate' , require(config.__app_c__+'/search').appUpdate );
 // 添加朋友
 router.post('/add/friend' , require(config.__app_c__+'/add').friend );
 // 查询朋友、通讯录
