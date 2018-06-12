@@ -98,7 +98,9 @@ const room = function(){
                       })
               }
               // 加入房间
-              socket.on('room join',function(obj){roomJoin(obj)});
+              socket.on('room join',function(obj){
+                  roomJoin(obj)
+              });
               var roomJoin = async (obj) => {
                     // console.log(obj);
                     if(obj&&obj.rid){
@@ -141,7 +143,7 @@ const room = function(){
               }
 
               //roomJoin();   
-              // 发送未读消息
+              // 修改未读消息状态
               const reRoomUnread = async () => {
                       var email = 'DELETE FROM z_room_unread where and uid='+uid+' and rid='+rid;
                       // console.log(email);
