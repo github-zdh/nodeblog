@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded',function(){
+
 layui.use(['jquery','form','element','laypage','table','layer','util'], function(){       
         var $ = layui.jquery
           ,form = layui.form
@@ -152,10 +154,6 @@ layui.use(['jquery','form','element','laypage','table','layer','util'], function
             getCode($('.register_email_input')[0].value);
             return false;
       }
-      z.getId('emailLogindCode').onclick=function(){
-            getCode($('.email_login_input')[0].value);
-            return false;
-      }
       z.getId('findPasswordCode').onclick=function(){
             getCode($('.fp_email_input')[0].value);
             return false;
@@ -185,6 +183,6 @@ layui.use(['jquery','form','element','laypage','table','layer','util'], function
                   }
              })
       }
-      
-    
 });
+
+},false)
