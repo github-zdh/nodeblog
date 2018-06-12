@@ -145,9 +145,9 @@ const room = function(){
               //roomJoin();   
               // 修改未读消息状态
               const reRoomUnread = async () => {
-                      var email = 'DELETE FROM z_room_unread where and uid='+uid+' and rid='+rid;
-                      console.log('----修改未读消息状态--------')
-                      console.log(email);
+                      var email = 'DELETE FROM z_room_unread where uid='+uid+' and rid='+rid;
+                      // console.log('----修改未读消息状态--------')
+                      // console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
                                   return false;
