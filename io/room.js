@@ -200,7 +200,13 @@ const room = function(){
                                         return false;
                                   }
                                   for(var i=0;i<data.length;i++){
-                                       reHomeChatNum(data[i].uid,rid,data[i].counts);
+                                       console.log(data[i].uid);
+                                       console.log(uid);
+                                       console.log(data[i].uid!=uid);
+                                       console.log('---data[i].uid!=uid----')
+                                       if(data[i].uid!=uid){
+                                            reHomeChatNum(data[i].uid,rid,data[i].counts);
+                                       }
                                   }                                  
                             })
                       }
