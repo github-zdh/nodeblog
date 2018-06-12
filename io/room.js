@@ -182,7 +182,7 @@ const room = function(){
                       }
                       var email = 'insert into z_room_unread (rid,uid,addtime,fromUid) VALUES '+insertValues;
                       // console.log('insertValues------>'+insertValues);
-                      // console.log(email);
+                      console.log(email);
                       sql.runSql(email,function(err,data){
                             GetReHomeChatNum();
                             if(err){
