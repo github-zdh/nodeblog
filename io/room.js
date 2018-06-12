@@ -147,10 +147,9 @@ const room = function(){
                       // console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
-                                  resolve([]);
                                   return false;
                             }
-                            resolve(data);
+                            return false;
                       })
                     // socket.emit('room unread',getUnread);
               }
