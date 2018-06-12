@@ -54,7 +54,7 @@ exports.newfriend=function (req, res, next) {
 exports.roomInfo=function (req, res, next) {
 	      var rid = req.body.rid;
 	      var uid = req.body.uid;	       
-          var email = 'SELECT r.*,m.msg,m.addtime,m.fromUid from z_room r INNER JOIN z_room_msg m on m.rid = r.id where r.id ='+ rid;
+          var email = 'SELECT r.*,m.msg,m.addtime,m.fromUid from z_room r INNER JOIN z_room_msg m on m.rid = r.id where r.id ='+ rid+' order by m.addtime desc LIMIT 1';
           sql.runSql(email,function(err,data){
 		     	    if(err){
 		     	    	    return base.returnjson(res,100,"查询失败");
