@@ -146,7 +146,8 @@ const room = function(){
               // 修改未读消息状态
               const reRoomUnread = async () => {
                       var email = 'DELETE FROM z_room_unread where and uid='+uid+' and rid='+rid;
-                      // console.log(email);
+                      console.log('----修改未读消息状态--------')
+                      console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
                                   return false;
@@ -182,7 +183,7 @@ const room = function(){
                       }
                       var email = 'insert into z_room_unread (rid,uid,addtime,fromUid) VALUES '+insertValues;
                       // console.log('insertValues------>'+insertValues);
-                      console.log(email);
+                      // console.log(email);
                       sql.runSql(email,function(err,data){
                             GetReHomeChatNum();
                             if(err){
@@ -200,10 +201,6 @@ const room = function(){
                                         return false;
                                   }
                                   for(var i=0;i<data.length;i++){
-                                       console.log(data[i].uid);
-                                       console.log(uid);
-                                       console.log(data[i].uid!=uid);
-                                       console.log('---data[i].uid!=uid----')
                                        if(data[i].uid!=uid){
                                             reHomeChatNum(data[i].uid,rid,data[i].counts);
                                        }
