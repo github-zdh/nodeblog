@@ -134,16 +134,16 @@ const room = function(){
                     // console.log(ioRooms);
                     room.to(rid).emit('room sys', userInfo['username'] + '加入', ioRooms , ioRooms[rid]);
 
-                    // 发送未读消息
+                    // 修改未读消息状态
                     // console.log(unread());
-                    sendRoomUnread();
+                    reRoomUnread();
                     
               }
-              
-              // 读取该用户 存储未读消息
-              var getStoreUnread = function(resolve,reject){
-                      // var email = 'SELECT msg  from z_room_unread where status = 0 and uid='+uid+' and rid='+rid+' order by addtime ASC';
-                      var email = 'SELECT ru.*,m.username,m.user_img,m.nickname  from z_room_unread ru INNER JOIN z_member m on m.id=ru.fromUid where ru.status = 0 and ru.uid='+uid+' and ru.rid='+rid+' order by ru.addtime ASC';
+
+              //roomJoin();   
+              // 发送未读消息
+              const reRoomUnread = async () => {
+                      var email = 'DELETE FROM z_room_unread where and uid='+uid+' and rid='+rid;
                       // console.log(email);
                       sql.runSql(email,function(err,data){
                             if(err){
@@ -152,36 +152,13 @@ const room = function(){
                             }
                             resolve(data);
                       })
-              }
-              // 修改该用户 存储未读消息 状态
-              var reStoreUnread = function(){
-                      var email = 'update z_room_unread set status = 1 where uid='+uid+' and rid='+rid;
-                      // console.log(email);
-                      sql.runSql(email,function(err,data){
-                            if(err){
-                                  return false;
-                            }
-                            return false;
-                      })
-              }
-              //roomJoin();   
-              // 发送未读消息
-              const sendRoomUnread = async () => {
-                    var getUnread = await asyncAwait(function(resolve,reject){
-                         getStoreUnread(resolve,reject);
-                    })
-                    reStoreUnread();
-                    // var newUnreadMsg = [];
-                    // for(var i=0;i<getUnread.length;i++){
-                    //     newUnreadMsg.push(getUnread[i]);
-                    // }
-                    socket.emit('room unread',getUnread);
+                    // socket.emit('room unread',getUnread);
               }
 
               
 
               // 检查不在线人并且把信息存到数据库  存储未读消息
-              var storeUnread = function(resolve,reject,rid,uid,msg,addtime,fromUid){
+              var storeUnread = function(resolve,reject,rid,uid,addtime,fromUid){
                       var roomArr = [];
                       for(var i=0;i<ioRooms[rid]['info']['result'].length;i++){
                            roomArr.push(ioRooms[rid]['info']['result'][i].uid)
@@ -197,12 +174,12 @@ const room = function(){
                       var insertValues = '';
                       for(var i=0;i<uroom.length;i++){
                            if(i==0){
-                                 insertValues = '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+fromUid+')';
+                                 insertValues = '('+rid+','+uroom[i]+','+addtime+','+fromUid+')';
                            }else{
-                                 insertValues = insertValues + ','+ '('+rid+','+uroom[i]+',\''+msg+'\','+addtime+','+fromUid+')';
+                                 insertValues = insertValues + ','+ '('+rid+','+uroom[i]+','+addtime+','+fromUid+')';
                            }
                       }
-                      var email = 'insert into z_room_unread (rid,uid,msg,addtime,fromUid) VALUES '+insertValues;
+                      var email = 'insert into z_room_unread (rid,uid,addtime,fromUid) VALUES '+insertValues;
                       // console.log('insertValues------>'+insertValues);
                       // console.log(email);
                       sql.runSql(email,function(err,data){
@@ -261,8 +238,8 @@ const room = function(){
                     room.to(rid).emit('room msg', smsg );
 
                     // var _smsg = JSON.stringify(smsg);
-                    var reg = /(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/g;//过滤emoji表情图片
-                    var _smsg = smsg.msg.replace(reg,'emoji');
+                    // var reg = /(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/g;//过滤emoji表情图片
+                    // var _smsg = smsg.msg.replace(reg,'emoji');
                     storeAllChatMsg(smsg.times,_smsg,userInfo['id']);
 
                     //  更新自己首页 群聊天信息列表
@@ -270,12 +247,8 @@ const room = function(){
 
                     // 存储未读消息
                     await asyncAwait(function(resolve,reject){
-                           storeUnread(resolve,reject,rid,uid,_smsg,smsg.times,userInfo['id'])
+                           storeUnread(resolve,reject,rid,uid,smsg.times,userInfo['id'])
                     });
-                     
-                    // var getStoreUnread = await asyncAwait(function(resolve,reject){
-                    //        storeUnread(resolve,reject,rid,uid,msg)
-                    //  });
                     if(callback){callback(data)};
               })
               //断网或者离开当前聊天页面
