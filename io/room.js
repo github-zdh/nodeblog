@@ -239,8 +239,8 @@ const room = function(){
                     room.to(rid).emit('room msg', smsg );
 
                     // var _smsg = JSON.stringify(smsg);
-                    // var reg = /(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/g;//过滤emoji表情图片
-                    // var _smsg = smsg.msg.replace(reg,'emoji');
+                    var reg = /(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/g;//过滤emoji表情图片
+                    var _smsg = smsg.msg.replace(reg,'emoji');
                     storeAllChatMsg(smsg.times,_smsg,userInfo['id']);
 
                     //  更新自己首页 群聊天信息列表
