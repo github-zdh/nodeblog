@@ -132,12 +132,12 @@
             a.reported:hover{color:red;}
 
 @media screen and (max-width: 768px){
-    .layui-container,.articleDetails{width: 100%}
+    .layui-container{width: 100%}
     .header_nav,.header_nav .logo{height: 46px;}
     .header_nav .logo,.layui-nav .layui-nav-item{line-height: 46px;}
     body {padding-top: 47px;}
     .index_art_container.artice_content{border-radius:0;}
-    .index_art_container{padding:0;}
+    .index_art_container,.articleDetails{padding:0;}
     .index_art_container .artice_ul li .user_img img{width: 60px;height: 60px;}
     .index_art_container .artice_ul li {padding: 10px 10px 10px 95px;}
     .index_art_container .artice_ul li p.description{display:none;}
