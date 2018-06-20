@@ -132,7 +132,7 @@
             a.reported:hover{color:red;}
 
 @media screen and (max-width: 768px){
-    .layui-container{width: 100%}
+    .layui-container,.articleDetails{width: 100%}
     .header_nav,.header_nav .logo{height: 46px;}
     .header_nav .logo,.layui-nav .layui-nav-item{line-height: 46px;}
     body {padding-top: 47px;}
