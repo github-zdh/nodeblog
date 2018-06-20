@@ -12,7 +12,7 @@
                                 <ul class="artice_ul">
                                     <% __webPageInfo__.isTop.forEach(function(item,index){ %>
                                      <li>
-                                            <a href="/index/articleDetails/<%= item.user_id %>" class="block user_img"><img src="<%= item.user_img %>"></a>
+                                            <a href="/index/articleDetails/<%= item.id %>" class="block user_img"><img src="<%= item.user_img %>"></a>
                                             <h2>
                                                   <span class="layui-span layui-badge"><%= item.clas_name %></span>
                                                   <a href="/index/articleDetails/<%= item.id %>" class="layui-col-xs7"><%= item.title %></a>
@@ -86,7 +86,7 @@
                                          if(data.code==200){
                                                 function articeItem(obj){
                                                     return '<li>'+
-                                                                    '<a href="/index/articleDetails/'+obj.user_id+'" class="block user_img">'+
+                                                                    '<a href="/index/articleDetails/'+obj.id+'" class="block user_img">'+
                                                                          '<img src="'+(obj.img!=''?obj.img:obj.user_img)+'">'+
                                                                     '</a>'+
                                                                     '<h2>'+
