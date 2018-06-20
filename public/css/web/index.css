@@ -130,7 +130,7 @@
             .form-search{position: relative;}
             .form-search .layui-btn{position: absolute;top:0;right: 0;}
             a.reported:hover{color:red;}
-            
+
 @media screen and (max-width: 768px){
     .layui-container{width: 100%}
     .header_nav,.header_nav .logo{height: 46px;}
@@ -139,8 +139,10 @@
     .artice_content{border:0;}
     .index_art_container{padding:0;}
     .index_art_container .artice_ul li .user_img img{width: 60px;height: 60px;}
-    .index_art_container .artice_ul li {padding-left:95px;}
+    .index_art_container .artice_ul li {padding: 5px 5px 5px 95px;}
     .index_art_container .artice_ul li p.description{display:none;}
+    .index_art_container .artice_ul li h2 a{max-width: 100%;display: block;top:0px; }
+    .index_art_container .artice_ul li .user_img{top:5px;}
 }
 
             
