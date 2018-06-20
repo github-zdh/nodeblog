@@ -130,6 +130,17 @@
             .form-search{position: relative;}
             .form-search .layui-btn{position: absolute;top:0;right: 0;}
             a.reported:hover{color:red;}
+@media screen and (min-width: 768px){
+    .layui-container{width: 100%}
+    .header_nav,.header_nav .logo{height: 46px;}
+    .header_nav .logo,.layui-nav .layui-nav-item{line-height: 60px;}
+    body {padding-top: 47px;}
+    .artice_content{border:0;}
+    .index_art_container{padding:0;}
+    .index_art_container .artice_ul li .user_img img{width: 60px;height: 60px;}
+    .index_art_container .artice_ul li {padding-left:95px;}
+    .index_art_container .artice_ul li p.description{display:none;}
+}
 
             
        
