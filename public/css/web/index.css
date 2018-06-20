@@ -136,12 +136,13 @@
     .header_nav,.header_nav .logo{height: 46px;}
     .header_nav .logo,.layui-nav .layui-nav-item{line-height: 60px;}
     body {padding-top: 47px;}
-    .artice_content{border:0;}
+    .index_art_container.artice_content{border-radius:0;}
     .index_art_container{padding:0;}
     .index_art_container .artice_ul li .user_img img{width: 60px;height: 60px;}
-    .index_art_container .artice_ul li {padding: 5px 5px 5px 95px;}
+    .index_art_container .artice_ul li {padding: 10px 10px 10px 95px;}
     .index_art_container .artice_ul li p.description{display:none;}
-    .index_art_container .artice_ul li h2 a{max-width: 100%;display: block;top:0px; }
+    .index_art_container .artice_ul li h2{height: 50px;}
+    .index_art_container .artice_ul li h2 a{width: 100%;max-width: 100%;display: block;top:0px; }
     .index_art_container .artice_ul li .user_img{top:5px;}
 }
 
